@@ -133,15 +133,26 @@
   }
   .case h3 { font-size: 18px; margin-bottom: 10px; font-weight: 700; }
   .case p { color: var(--ink-mute); font-size: 15px; margin-bottom: 16px; }
-  .metric {
-    display: flex;
-    align-items: baseline;
-    gap: 8px;
-    padding-top: 14px;
-    border-top: 1px dashed var(--line);
+  .case-status {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    margin-top: 14px;
   }
-  .metric .was { color: var(--ink-mute); text-decoration: line-through; font-size: 14px; }
-  .metric .now { color: var(--accent); font-weight: 700; font-size: 18px; }
+  .case-status.ready { background: var(--accent-soft); color: var(--accent); }
+  .case-status.wip { background: #fff3e6; color: var(--warn); }
+  .case-status.next { background: #f0f0f0; color: var(--ink-mute); }
+  .case-goal {
+    padding-top: 14px;
+    margin-top: 12px;
+    border-top: 1px dashed var(--line);
+    font-size: 14px;
+    color: var(--ink-mute);
+  }
+  .case-goal strong { color: var(--ink); }
 
   /* About */
   .about-grid {
@@ -180,7 +191,10 @@
     font-size: 13px;
     color: var(--ink-mute);
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    text-decoration: none;
+    transition: border-color 0.15s ease, color 0.15s ease;
   }
+  .badge:hover { border-color: var(--accent); color: var(--accent); }
 
   /* How we work */
   .how {
@@ -267,9 +281,9 @@
 <section class="hero">
   <div class="wrap">
     <div class="eyebrow">Игорь Шевчик · разработка для Битрикс24</div>
-    <h1>AI-агент в вашем Битрикс24</h1>
-    <p class="lede">Документы, заказы, запросы — разбирает сам. Менеджер только согласует в привычной карточке.</p>
-    <a href="#form" class="cta">Рассказать о задаче →</a>
+    <h1>AI-агент внутри вашего Битрикс24</h1>
+    <p class="lede">Поставщик прислал Excel — менеджер открывает в Б24 готовую сделку с подсвеченными проблемами. Без копипаста и переноса вручную.</p>
+    <a href="#form" class="cta">Получить оценку задачи →</a>
     <span class="cta-sub">Отвечу в течение рабочего дня</span>
   </div>
 </section>
@@ -278,7 +292,7 @@
 <section>
   <div class="wrap">
     <h2>Как это работает</h2>
-    <p class="section-lede">AI делает черновую работу. Битрикс24 остаётся местом, где решения принимает человек.</p>
+    <p class="section-lede">Один маршрут на разные входы. Финальное «да» всегда остаётся за человеком — в той же карточке Б24, где он уже работает каждый день.</p>
 
     <div class="schema">
       <div class="step">
@@ -322,35 +336,29 @@
 <!-- CASES — три конкретных применения -->
 <section>
   <div class="wrap">
-    <h2>Что я уже делал</h2>
-    <p class="section-lede">Три типа задач. Один подход — AI внутри Б24 + человек на финальном решении.</p>
+    <h2>Три задачи, под которые сделан подход</h2>
+    <p class="section-lede">Один метод, три применения. Прямо сейчас глубоко проработан первый, второй — рабочий прототип, третий — следующий в очереди. Честно, без вранья.</p>
 
     <div class="cases">
       <div class="case">
         <h3>Входящие КП от поставщиков</h3>
         <p>Поставщик прислал Excel или PDF. Агент находит товары в вашем каталоге, сверяет цены с историей, отмечает новые позиции и аномалии. Менеджер открывает готовую сделку.</p>
-        <div class="metric">
-          <span class="was">~1 час</span>
-          <span class="now">→ 3 минуты</span>
-        </div>
+        <div class="case-goal"><strong>Цель пилота:</strong> &lt; 10 минут на КП вместо часа. Замеряем на ваших данных.</div>
+        <span class="case-status ready">проработан, готов к пилоту</span>
       </div>
 
       <div class="case">
         <h3>Сборка комплектов в каталоге</h3>
-        <p>Тренд или сезонная идея → агент собирает образ из товаров каталога, генерирует hero-картинку, готовит карточку «комплект» для публикации на сайт.</p>
-        <div class="metric">
-          <span class="was">~1 день</span>
-          <span class="now">→ 20 минут</span>
-        </div>
+        <p>Тренд или сезонная идея → агент собирает образ из товаров каталога, генерирует hero-картинку через Gemini, готовит карточку «комплект» для публикации на сайт.</p>
+        <div class="case-goal"><strong>Статус:</strong> рабочий прототип на каталоге fashion-ритейлера, пилот в стадии согласования.</div>
+        <span class="case-status wip">прототип, идёт пилот</span>
       </div>
 
       <div class="case">
         <h3>Чат с корпоративными данными</h3>
         <p>Сотрудник спрашивает в Б24 «какие условия по поставщику X?» — агент ищет в документах, регламентах, прошлых сделках и отвечает со ссылкой на источник.</p>
-        <div class="metric">
-          <span class="was">«спрошу у Маши»</span>
-          <span class="now">→ сразу</span>
-        </div>
+        <div class="case-goal"><strong>Статус:</strong> архитектура продумана, реализация — после первого клиента, который запросит.</div>
+        <span class="case-status next">в очереди</span>
       </div>
     </div>
   </div>
@@ -360,17 +368,14 @@
 <section>
   <div class="wrap">
     <h2>Кто это делает</h2>
-    <div class="about-grid">
-      <div class="avatar">ИШ</div>
-      <div class="about-body">
-        <p><strong>Игорь Шевчик</strong> — разработчик, Амстердам. Делаю инструменты для платформы Битрикс24 и для бизнесов, которые на ней работают.</p>
-        <p>Коммитер в официальных репозиториях Битрикс24: JavaScript SDK, UI-Kit и шаблоны для разработчиков. Те же библиотеки, которыми пользуются интеграторы, написаны при моём участии.</p>
-        <p>Веду собственные проекты на стыке Б24 и AI — MCP-серверы, AI-агенты, автоматизация процессов.</p>
-        <div class="badges">
-          <span class="badge">bitrix24/b24jssdk</span>
-          <span class="badge">bitrix24/b24ui</span>
-          <span class="badge">bitrix24/templates-mcp</span>
-        </div>
+    <div class="about-body" style="max-width: 640px;">
+      <p><strong>Игорь Шевчик</strong> — разработчик, Амстердам. Делаю инструменты для платформы Битрикс24 и для бизнесов, которые на ней работают.</p>
+      <p>Контрибьютил в открытые библиотеки Битрикс24 — JavaScript SDK и UI-Kit. Это не «свой человек внутри Б24», но это значит, что я знаю их код изнутри, а не по документации.</p>
+      <p>Делаю собственный шаблон MCP-сервера для Битрикс24 — на нём строится этот подход.</p>
+      <div class="badges">
+        <a class="badge" href="https://github.com/bitrix24/b24jssdk" target="_blank" rel="noopener">bitrix24/b24jssdk</a>
+        <a class="badge" href="https://github.com/bitrix24/b24ui" target="_blank" rel="noopener">bitrix24/b24ui</a>
+        <a class="badge" href="https://github.com/IgorShevchik" target="_blank" rel="noopener">github.com/IgorShevchik</a>
       </div>
     </div>
   </div>
@@ -380,28 +385,28 @@
 <section>
   <div class="wrap">
     <h2>Формат работы</h2>
-    <p class="section-lede">Шесть недель до работающего пилота. После каждой недели — точка решения: продолжаем, корректируем, останавливаем.</p>
+    <p class="section-lede">4–8 недель до работающего пилота — в зависимости от объёма данных и согласований доступов. После каждого этапа — точка решения: продолжаем, корректируем, останавливаем. Без предоплаты, которую невозможно отбить.</p>
 
     <div class="how">
       <div class="how-item">
-        <div class="week">Неделя 1</div>
+        <div class="week">Этап 1</div>
         <strong>Discovery</strong>
-        <span>5 ключевых вопросов: объём, форматы, бюджет, доступы, кто оператор</span>
+        <span>5 ключевых вопросов: объём, форматы, доступы, кто оператор, можно ли в облачную LLM</span>
       </div>
       <div class="how-item">
-        <div class="week">Недели 2–3</div>
-        <strong>Ядро</strong>
-        <span>Парсинг и матчинг на реальных данных вашей задачи</span>
+        <div class="week">Этап 2</div>
+        <strong>Парсинг и матчинг</strong>
+        <span>Скрипт на реальных данных вашей задачи. Точность измеряем на размеченных примерах</span>
       </div>
       <div class="how-item">
-        <div class="week">Недели 4–5</div>
+        <div class="week">Этап 3</div>
         <strong>Карточка в Б24</strong>
-        <span>Smart-процесс, интерфейс оператора, триггеры на исполнение</span>
+        <span>Smart-процесс, две корзины «принять/посмотреть», триггеры на исполнение</span>
       </div>
       <div class="how-item">
-        <div class="week">Неделя 6</div>
+        <div class="week">Этап 4</div>
         <strong>Прогон с оператором</strong>
-        <span>Метрики на реальных задачах. Решение: production или коррекция</span>
+        <span>Метрики на реальных задачах. Решение: production, коррекция или стоп</span>
       </div>
     </div>
   </div>
@@ -411,7 +416,7 @@
 <section id="form">
   <div class="wrap">
     <h2>Расскажите о задаче</h2>
-    <p class="section-lede">Отвечу в течение рабочего дня. По итогам короткого созвона — гипотеза, оценка и план первого шага.</p>
+    <p class="section-lede">Отвечу в течение рабочего дня. Бюджет и сроки обсудим в созвоне — заранее в форму их не вгоняю, чтобы не якорить разговор раньше времени.</p>
 
     <form class="form-wrap" name="brief" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/thank-you.html">
       <input type="hidden" name="form-name" value="brief">
@@ -420,48 +425,16 @@
       <div class="form-row">
         <label for="task">Что нужно сделать <span class="req">*</span></label>
         <textarea id="task" name="task" placeholder="Например: к нам приходит 30 КП в месяц от разных поставщиков, менеджер тратит на каждое около часа. Хотим автоматизировать матчинг с каталогом и создание сделки." required></textarea>
-        <div class="form-hint">Чем конкретнее — тем точнее оценка. Если пока неясно — напишите как есть.</div>
+        <div class="form-hint">Чем конкретнее — тем точнее ответ. Если пока неясно — напишите как есть, разберём вместе.</div>
       </div>
 
-      <div class="form-grid-2">
-        <div class="form-row">
-          <label for="budget">Бюджет</label>
-          <select id="budget" name="budget">
-            <option value="">— выберите —</option>
-            <option>до $5 000 — посмотреть, что возможно</option>
-            <option>$5–15 000 — пилот на одной задаче</option>
-            <option>$15–40 000 — полноценное внедрение</option>
-            <option>$40 000+ — несколько процессов под ключ</option>
-            <option>Пока не определён — нужна консультация</option>
-          </select>
-        </div>
-
-        <div class="form-row">
-          <label for="deadline">Сроки</label>
-          <select id="deadline" name="deadline">
-            <option value="">— выберите —</option>
-            <option>Срочно — нужно вчера</option>
-            <option>В ближайший месяц</option>
-            <option>Квартал, есть время на discovery</option>
-            <option>Просто изучаю варианты</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="form-grid-2">
-        <div class="form-row">
-          <label for="name">Имя <span class="req">*</span></label>
-          <input type="text" id="name" name="name" required>
-        </div>
-
-        <div class="form-row">
-          <label for="contact">Контакт для связи <span class="req">*</span></label>
-          <input type="text" id="contact" name="contact" placeholder="email или telegram" required>
-        </div>
+      <div class="form-row">
+        <label for="contact">Как с вами связаться <span class="req">*</span></label>
+        <input type="text" id="contact" name="contact" placeholder="имя, email или telegram" required>
       </div>
 
       <button type="submit">Отправить →</button>
-      <div class="form-meta">Никакого спама. Использую данные только для ответа на ваш запрос.</div>
+      <div class="form-meta">Никакого спама. Данные использую только для ответа на ваш запрос.</div>
     </form>
   </div>
 </section>
