@@ -5,8 +5,8 @@ import TelegramIcon from '@bitrix24/b24icons-vue/outline/TelegramIcon'
 
 const config = useRuntimeConfig()
 
-const title = 'AI-агент внутри вашего Битрикс24 — Игорь Шевчик'
-const description = 'AI разбирает документы поставщиков и готовит сделки в Битрикс24. Менеджер только согласует.'
+const title = 'Кастомная разработка под Битрикс24 — AI, интеграции, MCP — Игорь Шевчик'
+const description = 'AI-помощники, интеграции с внешними системами, MCP-серверы для Битрикс24. Там, где коробки и маркетплейса уже не хватает.'
 const ogImage = `${config.public.siteUrl}/og-image.png`
 
 useSeoMeta({

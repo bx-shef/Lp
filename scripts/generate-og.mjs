@@ -65,8 +65,8 @@ const html = `<!DOCTYPE html>
   .badge .label { color: var(--cyan); font-weight: 700; font-size: 18px; letter-spacing: -0.01em; }
   .badge .sub { color: rgba(255,255,255,0.75); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 600; }
   h1 {
-    font-size: 92px; line-height: 1.04; font-weight: 800;
-    letter-spacing: -0.025em; margin-top: 36px; color: white;
+    font-size: 80px; line-height: 1.05; font-weight: 800;
+    letter-spacing: -0.025em; margin-top: 32px; color: white;
   }
   h1 .accent { color: var(--cyan); }
   p {
@@ -92,8 +92,8 @@ const html = `<!DOCTYPE html>
         <span class="label">Битрикс24</span>
         <span class="sub">Партнёр</span>
       </div>
-      <h1>AI-агент внутри<br>вашего <span class="accent">Битрикс24</span></h1>
-      <p>AI разбирает документы поставщиков и готовит сделки.<br>Менеджер только согласует.</p>
+      <h1>Кастомная разработка<br>под <span class="accent">Битрикс24</span></h1>
+      <p>AI-помощники, интеграции, MCP —<br>там, где коробки и маркетплейса уже не хватает.</p>
     </div>
     <div class="footer">
       <div class="author">Игорь Шевчик<span class="dot">.</span></div>
