@@ -93,7 +93,7 @@ const html = `<!DOCTYPE html>
         <span class="sub">Партнёр</span>
       </div>
       <h1>Кастомная разработка<br>под <span class="accent">Битрикс24</span></h1>
-      <p>AI-помощники, интеграции, MCP —<br>там, где коробки и маркетплейса уже не хватает.</p>
+      <p>AI, интеграции, MCP. То, чего нет в маркетплейсе —<br>собираю под вас.</p>
     </div>
     <div class="footer">
       <div class="author">Игорь Шевчик<span class="dot">.</span></div>

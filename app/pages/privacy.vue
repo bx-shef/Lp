@@ -32,14 +32,14 @@ useSeoMeta({
     <ul class="list-disc list-outside ml-5 space-y-2 mb-6">
       <li>Данные формы — только для ответа на ваш запрос и последующей коммуникации.</li>
       <li>Третьим лицам данные не передаются, в рассылки не включаются.</li>
-      <li>По запросу данные удаляются — напишите на <a href="mailto:hi@bx-shef.by" class="text-[rgb(var(--color-accent-primary-ch))] hover:underline">hi@bx-shef.by</a>.</li>
+      <li>По запросу данные удаляются — напишите на <a href="mailto:shevchik.mail@gmail.com" class="text-[rgb(var(--color-accent-primary-ch))] hover:underline">shevchik.mail@gmail.com</a>.</li>
     </ul>
 
     <h2 class="text-2xl font-bold text-white mt-8 mb-3">
       Контакты оператора
     </h2>
     <ul class="list-disc list-outside ml-5 space-y-1">
-      <li>Email: <a href="mailto:hi@bx-shef.by" class="text-[rgb(var(--color-accent-primary-ch))] hover:underline">hi@bx-shef.by</a></li>
+      <li>Email: <a href="mailto:shevchik.mail@gmail.com" class="text-[rgb(var(--color-accent-primary-ch))] hover:underline">shevchik.mail@gmail.com</a></li>
       <li>Telegram: <a href="https://t.me/IgorShevchik" class="text-[rgb(var(--color-accent-primary-ch))] hover:underline">@IgorShevchik</a></li>
     </ul>
   </div>

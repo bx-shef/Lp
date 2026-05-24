@@ -48,7 +48,7 @@ onMounted(() => {
             <a href="https://t.me/IgorShevchik" class="text-[rgb(var(--color-accent-primary-ch))] hover:underline">@IgorShevchik</a>
           </li>
           <li>Email:
-            <a href="mailto:hi@bx-shef.by" class="text-[rgb(var(--color-accent-primary-ch))] hover:underline">hi@bx-shef.by</a>
+            <a href="mailto:shevchik.mail@gmail.com" class="text-[rgb(var(--color-accent-primary-ch))] hover:underline">shevchik.mail@gmail.com</a>
           </li>
         </ul>
       </div>
