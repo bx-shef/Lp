@@ -21,7 +21,10 @@ const formatted = computed(() => count.value === null ? '…' : count.value.toLo
 </script>
 
 <template>
-  <span v-if="!isErr" class="text-white/40 text-xs">
+  <span
+    v-if="!isErr"
+    class="text-white/40 text-xs"
+  >
     Посещений: <span class="font-mono text-white/70">{{ formatted }}</span>
   </span>
 </template>

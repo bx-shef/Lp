@@ -64,7 +64,10 @@ onMounted(() => {
   <div class="rounded-2xl border border-white/10 bg-black/30 backdrop-blur-sm p-6 sm:p-8">
     <div id="b24-form-host" />
 
-    <div v-if="!hasForm" class="space-y-4">
+    <div
+      v-if="!hasForm"
+      class="space-y-4"
+    >
       <div class="text-white/55 text-sm">
         Здесь будет форма Битрикс24. Подключите её через переменные окружения
         <code class="px-1.5 py-0.5 bg-white/10 rounded text-xs font-mono text-[rgb(var(--color-accent-primary-ch))]">NUXT_PUBLIC_B24_FORM_*</code>
@@ -74,11 +77,19 @@ onMounted(() => {
           А пока — прямые контакты:
         </p>
         <ul class="space-y-1 list-disc list-inside text-white/70">
-          <li>Telegram:
-            <a href="https://t.me/bxshefby" class="text-[rgb(var(--color-accent-primary-ch))] hover:underline">@bxshefby</a>
+          <li>
+            Telegram:
+            <a
+              href="https://t.me/bxshefby"
+              class="text-[rgb(var(--color-accent-primary-ch))] hover:underline"
+            >@bxshefby</a>
           </li>
-          <li>Email:
-            <a href="mailto:shevchik.mail@gmail.com" class="text-[rgb(var(--color-accent-primary-ch))] hover:underline">shevchik.mail@gmail.com</a>
+          <li>
+            Email:
+            <a
+              href="mailto:shevchik.mail@gmail.com"
+              class="text-[rgb(var(--color-accent-primary-ch))] hover:underline"
+            >shevchik.mail@gmail.com</a>
           </li>
         </ul>
       </div>

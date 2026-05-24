@@ -41,7 +41,11 @@ const bank = [
         Юридические данные
       </h2>
       <div class="rounded-2xl border border-white/10 bg-white/[0.03] divide-y divide-white/5">
-        <div v-for="([k, v], i) in rows" :key="i" class="grid grid-cols-1 sm:grid-cols-[260px_1fr] gap-2 sm:gap-6 px-5 py-3.5">
+        <div
+          v-for="([k, v], i) in rows"
+          :key="i"
+          class="grid grid-cols-1 sm:grid-cols-[260px_1fr] gap-2 sm:gap-6 px-5 py-3.5"
+        >
           <div class="text-sm text-white/55">
             {{ k }}
           </div>
@@ -57,12 +61,21 @@ const bank = [
         Контакты
       </h2>
       <div class="rounded-2xl border border-white/10 bg-white/[0.03] divide-y divide-white/5">
-        <div v-for="([k, v, href], i) in contacts" :key="i" class="grid grid-cols-1 sm:grid-cols-[260px_1fr] gap-2 sm:gap-6 px-5 py-3.5">
+        <div
+          v-for="([k, v, href], i) in contacts"
+          :key="i"
+          class="grid grid-cols-1 sm:grid-cols-[260px_1fr] gap-2 sm:gap-6 px-5 py-3.5"
+        >
           <div class="text-sm text-white/55">
             {{ k }}
           </div>
           <div class="text-sm text-white/90">
-            <a :href="href" target="_blank" rel="noopener" class="text-[rgb(var(--color-accent-primary-ch))] hover:underline">{{ v }}</a>
+            <a
+              :href="href"
+              target="_blank"
+              rel="noopener"
+              class="text-[rgb(var(--color-accent-primary-ch))] hover:underline"
+            >{{ v }}</a>
           </div>
         </div>
       </div>
@@ -73,7 +86,11 @@ const bank = [
         Банковские реквизиты
       </h2>
       <div class="rounded-2xl border border-white/10 bg-white/[0.03] divide-y divide-white/5">
-        <div v-for="([k, v], i) in bank" :key="i" class="grid grid-cols-1 sm:grid-cols-[260px_1fr] gap-2 sm:gap-6 px-5 py-3.5">
+        <div
+          v-for="([k, v], i) in bank"
+          :key="i"
+          class="grid grid-cols-1 sm:grid-cols-[260px_1fr] gap-2 sm:gap-6 px-5 py-3.5"
+        >
           <div class="text-sm text-white/55">
             {{ k }}
           </div>
@@ -85,7 +102,10 @@ const bank = [
     </section>
 
     <p class="text-xs text-white/45">
-      Документы и счета по запросу — напишите на <a href="mailto:shevchik.mail@gmail.com" class="text-[rgb(var(--color-accent-primary-ch))] hover:underline">shevchik.mail@gmail.com</a>.
+      Документы и счета по запросу — напишите на <a
+        href="mailto:shevchik.mail@gmail.com"
+        class="text-[rgb(var(--color-accent-primary-ch))] hover:underline"
+      >shevchik.mail@gmail.com</a>.
     </p>
   </div>
 </template>

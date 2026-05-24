@@ -20,13 +20,30 @@ const legal = {
       <VisitCounter />
     </div>
     <div class="flex flex-wrap items-center gap-x-4 gap-y-1">
-      <a :href="`mailto:${legal.email}`" class="hover:text-white hover:underline">{{ legal.email }}</a>
-      <a :href="`tel:${legal.phone.replace(/\s|-/g, '')}`" class="hover:text-white hover:underline">{{ legal.phone }}</a>
-      <a :href="`https://t.me/${legal.telegram.replace('@', '')}`" target="_blank" rel="noopener" class="hover:text-white hover:underline">{{ legal.telegram }}</a>
-      <NuxtLink to="/legal" class="hover:text-white hover:underline">
+      <a
+        :href="`mailto:${legal.email}`"
+        class="hover:text-white hover:underline"
+      >{{ legal.email }}</a>
+      <a
+        :href="`tel:${legal.phone.replace(/\s|-/g, '')}`"
+        class="hover:text-white hover:underline"
+      >{{ legal.phone }}</a>
+      <a
+        :href="`https://t.me/${legal.telegram.replace('@', '')}`"
+        target="_blank"
+        rel="noopener"
+        class="hover:text-white hover:underline"
+      >{{ legal.telegram }}</a>
+      <NuxtLink
+        to="/legal"
+        class="hover:text-white hover:underline"
+      >
         Реквизиты
       </NuxtLink>
-      <NuxtLink to="/privacy" class="hover:text-white hover:underline">
+      <NuxtLink
+        to="/privacy"
+        class="hover:text-white hover:underline"
+      >
         Политика конфиденциальности
       </NuxtLink>
     </div>
