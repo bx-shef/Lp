@@ -8,7 +8,6 @@ import MagicImageIcon from '@bitrix24/b24icons-vue/main/MagicImageIcon'
 import CloudTransferDataIcon from '@bitrix24/b24icons-vue/main/CloudTransferDataIcon'
 import CodeIcon from '@bitrix24/b24icons-vue/common-service/CodeIcon'
 import RocketIcon from '@bitrix24/b24icons-vue/main/RocketIcon'
-import ShieldCheckedIcon from '@bitrix24/b24icons-vue/outline/ShieldCheckedIcon'
 
 useCardGlow()
 
@@ -168,7 +167,10 @@ const process: ProcessStep[] = [
     </section>
 
     <!-- НАПРАВЛЕНИЯ УСЛУГ -->
-    <section id="services" class="px-[22px] lg:px-8 py-[64px] sm:py-[108px]">
+    <section
+      id="services"
+      class="px-[22px] lg:px-8 py-[64px] sm:py-[108px]"
+    >
       <div class="max-w-[1200px] mx-auto">
         <div class="max-w-[720px] mb-12 sm:mb-16">
           <h2 class="text-3xl sm:text-5xl font-bold tracking-tight text-white mb-4">
@@ -188,7 +190,10 @@ const process: ProcessStep[] = [
             class="rounded-2xl border border-white/10 bg-white/[0.03] p-7 flex flex-col gap-4 hover:border-white/25 transition-colors"
           >
             <div class="inline-flex items-center justify-center size-12 rounded-xl bg-[rgb(var(--color-accent-primary-ch)/0.15)] text-[rgb(var(--color-accent-primary-ch))]">
-              <component :is="s.icon" class="size-6" />
+              <component
+                :is="s.icon"
+                class="size-6"
+              />
             </div>
             <h3 class="text-xl font-bold text-white leading-tight">
               {{ s.title }}
@@ -231,7 +236,10 @@ const process: ProcessStep[] = [
               v-else
               class="inline-flex items-center justify-center size-11 rounded-xl bg-[rgb(var(--color-accent-partner-ch)/0.18)] text-[rgb(var(--color-accent-partner-ch))] mb-4"
             >
-              <component :is="d.icon" class="size-5" />
+              <component
+                :is="d.icon"
+                class="size-5"
+              />
             </div>
             <div class="font-bold text-white mb-2 text-lg">
               {{ d.title }}
@@ -239,7 +247,10 @@ const process: ProcessStep[] = [
             <div class="text-sm text-white/60 leading-relaxed">
               {{ d.text }}
             </div>
-            <div v-if="d.caption" class="mt-auto pt-4 text-xs text-white/45 font-mono">
+            <div
+              v-if="d.caption"
+              class="mt-auto pt-4 text-xs text-white/45 font-mono"
+            >
               — {{ d.caption }}
             </div>
           </div>
@@ -266,7 +277,11 @@ const process: ProcessStep[] = [
               Возьмусь, если
             </div>
             <ul class="flex flex-col gap-3">
-              <li v-for="(t, i) in takeIf" :key="i" class="flex items-start gap-3 text-white/85 text-sm sm:text-base leading-relaxed">
+              <li
+                v-for="(t, i) in takeIf"
+                :key="i"
+                class="flex items-start gap-3 text-white/85 text-sm sm:text-base leading-relaxed"
+              >
                 <CheckLIcon class="size-4 mt-1 shrink-0 text-[rgb(var(--color-accent-success-ch))]" />
                 <span>{{ t }}</span>
               </li>
@@ -278,7 +293,11 @@ const process: ProcessStep[] = [
               Не возьмусь, если
             </div>
             <ul class="flex flex-col gap-3">
-              <li v-for="(t, i) in skipIf" :key="i" class="flex items-start gap-3 text-white/65 text-sm sm:text-base leading-relaxed">
+              <li
+                v-for="(t, i) in skipIf"
+                :key="i"
+                class="flex items-start gap-3 text-white/65 text-sm sm:text-base leading-relaxed"
+              >
                 <CircleMinusIcon class="size-4 mt-1 shrink-0 text-white/40" />
                 <span>{{ t }}</span>
               </li>
@@ -316,7 +335,10 @@ const process: ProcessStep[] = [
             <div class="text-sm text-white/60 leading-relaxed">
               {{ p.text }}
             </div>
-            <ul v-if="p.list" class="mt-3 flex flex-col gap-1.5">
+            <ul
+              v-if="p.list"
+              class="mt-3 flex flex-col gap-1.5"
+            >
               <li
                 v-for="(q, j) in p.list"
                 :key="j"
@@ -332,7 +354,10 @@ const process: ProcessStep[] = [
     </section>
 
     <!-- ФОРМА -->
-    <section id="brief" class="px-[22px] lg:px-8 py-[64px] sm:py-[108px]">
+    <section
+      id="brief"
+      class="px-[22px] lg:px-8 py-[64px] sm:py-[108px]"
+    >
       <div class="max-w-[900px] mx-auto">
         <div class="rounded-3xl border border-white/10 bg-gradient-to-br from-[rgb(var(--color-accent-partner-ch)/0.15)] to-[rgb(var(--color-accent-special-ch)/0.08)] p-8 sm:p-12">
           <h2 class="text-3xl sm:text-5xl font-bold tracking-tight text-white mb-4">

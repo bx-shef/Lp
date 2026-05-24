@@ -13,32 +13,6 @@ export default defineNuxtConfig({
     enabled: false
   },
 
-  css: ['~/assets/css/main.css'],
-
-  // Static generation: nitro обходит ссылки с главной и преренедерит всё,
-  // что найдёт (/, /privacy, /legal). routeRules для '/' не нужен — дубль.
-  nitro: {
-    prerender: {
-      crawlLinks: true,
-      routes: ['/']
-    }
-  },
-
-  runtimeConfig: {
-    public: {
-      siteUrl,
-      // Битрикс24 веб-форма (embed). Эти параметры — публичные
-      // идентификаторы, не секреты. По умолчанию вшита форма Игоря Шевчика
-      // (форма #1 на портале b37817748); смена формы — через ENV без перебилда.
-      b24FormId: process.env.NUXT_PUBLIC_B24_FORM_ID || '1',
-      b24FormSecret: process.env.NUXT_PUBLIC_B24_FORM_SECRET || '3c735r',
-      b24FormScriptUrl: process.env.NUXT_PUBLIC_B24_FORM_SCRIPT_URL || 'https://cdn-ru.bitrix24.by/b37817748/crm/form/loader_1.js',
-      // Счётчик посещений (https://counterapi.dev — бесплатно, без регистрации)
-      counterNamespace: process.env.NUXT_PUBLIC_COUNTER_NAMESPACE || 'bx-shef',
-      counterKey: process.env.NUXT_PUBLIC_COUNTER_KEY || 'lp-visits'
-    }
-  },
-
   app: {
     head: {
       htmlAttrs: { lang: 'ru', class: 'dark' },
@@ -51,7 +25,7 @@ export default defineNuxtConfig({
         // form-action ограничен своим origin + Б24 для веб-формы.
         {
           'http-equiv': 'Content-Security-Policy',
-          content: [
+          'content': [
             'default-src \'self\'',
             'script-src \'self\' \'unsafe-inline\' https:',
             'style-src \'self\' \'unsafe-inline\'',
@@ -71,7 +45,33 @@ export default defineNuxtConfig({
     }
   },
 
+  css: ['~/assets/css/main.css'],
+
+  runtimeConfig: {
+    public: {
+      siteUrl,
+      // Битрикс24 веб-форма (embed). Эти параметры — публичные
+      // идентификаторы, не секреты. По умолчанию вшита форма Игоря Шевчика
+      // (форма #1 на портале b37817748); смена формы — через ENV без перебилда.
+      b24FormId: process.env.NUXT_PUBLIC_B24_FORM_ID || '1',
+      b24FormSecret: process.env.NUXT_PUBLIC_B24_FORM_SECRET || '3c735r',
+      b24FormScriptUrl: process.env.NUXT_PUBLIC_B24_FORM_SCRIPT_URL || 'https://cdn-ru.bitrix24.by/b37817748/crm/form/loader_1.js',
+      // Счётчик посещений (https://counterapi.dev — бесплатно, без регистрации)
+      counterNamespace: process.env.NUXT_PUBLIC_COUNTER_NAMESPACE || 'bx-shef',
+      counterKey: process.env.NUXT_PUBLIC_COUNTER_KEY || 'lp-visits'
+    }
+  },
+
   compatibilityDate: '2025-01-15',
+
+  // Static generation: nitro обходит ссылки с главной и преренедерит всё,
+  // что найдёт (/, /privacy, /legal). routeRules для '/' не нужен — дубль.
+  nitro: {
+    prerender: {
+      crawlLinks: true,
+      routes: ['/']
+    }
+  },
 
   vite: {
     server: {
