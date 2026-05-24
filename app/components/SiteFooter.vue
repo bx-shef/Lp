@@ -6,7 +6,7 @@ const legal = {
   unp: 'УНП 192049017',
   phone: '+375 29 736-01-26',
   email: 'shevchik.mail@gmail.com',
-  telegram: '@IgorShevchik',
+  telegram: '@bxshefby',
   city: 'Минск, Беларусь'
 }
 </script>

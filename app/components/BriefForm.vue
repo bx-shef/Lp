@@ -2,31 +2,21 @@
 /**
  * Слот для встройки Битрикс24 веб-формы.
  *
- * Как подключить новую форму:
- * 1. Битрикс24 → CRM → CRM-формы → Создать. Поля:
- *    - Имя (обязательное)
- *    - Email (обязательное)
- *    - Описание задачи (textarea, обязательное)
- * 2. Тексты в форме:
- *    - Заголовок: «Расскажите о задаче»
- *    - Подзаголовок: «Прочитаю и отвечу в течение рабочего дня. Бюджет и сроки обсудим в созвоне.»
- *    - Кнопка: «Отправить задачу»
- *    - После отправки: «Получил вашу заявку. Отвечу в течение рабочего дня на указанный контакт.»
- *    - При ошибке: «Не удалось отправить. Проверьте подключение или напишите в Telegram @IgorShevchik»
- * 3. Embed-код из вкладки «Встраивание» — атрибуты:
- *    - src= → NUXT_PUBLIC_B24_FORM_SCRIPT_URL
- *    - data-b24-form="inline/ID/SECRET" → ID/SECRET в соответствующие переменные
+ * Точное воспроизведение оригинальной B24-встройки. Оригинал состоит из inline
+ * script-тега с атрибутом data-b24-form и тела-IIFE, который создаёт второй
+ * script с loader_1.js?(timestamp). Loader при загрузке ищет на странице тег
+ * с атрибутом data-b24-form и рендерит форму на его месте.
  *
- * Безопасность: src скрипта валидируется против allowlist доменов Битрикс24
- * (cdn-ru.bitrix24.*, cdn.bitrix24.*). Если URL не из allowlist — скрипт не
- * добавляется, форма не загружается. При HMR в dev предотвращается дубль
- * через проверку, не вставлен ли скрипт ранее.
+ * Воссоздаём оба тега программно:
+ *  1) marker-script с data-b24-form (БЕЗ src) — отмечает позицию формы
+ *  2) loader-script с src и cache-busting timestamp (без data-b24-form)
+ *
+ * Безопасность: src loader проверяется против allowlist доменов Битрикс24,
+ * при HMR в dev-режиме не делаем повторную вставку.
  */
 const config = useRuntimeConfig()
 const hasForm = computed(() => !!config.public.b24FormScriptUrl)
 
-// Allowlist хостов Битрикс24-CDN для встроенных форм.
-// Любой URL вне этого списка — НЕ загружается (защита от подмены ENV).
 const B24_HOST_ALLOWLIST = [
   '.bitrix24.com',
   '.bitrix24.by',
@@ -49,19 +39,24 @@ onMounted(() => {
   if (!hasForm.value) return
   const host = document.getElementById('b24-form-host')
   if (!host) return
-  // Защита от HMR-дубля: если форма уже добавлена при пред. mount — пропускаем
+  // HMR-guard
   if (host.querySelector('script[data-b24-form]')) return
-  // Защита от подмены ENV: src должен быть с домена Битрикс24
   if (!isAllowedB24Host(config.public.b24FormScriptUrl)) {
     console.warn('[BriefForm] script URL не из allowlist Битрикс24, форма не загружена')
     return
   }
-  const s = document.createElement('script')
-  s.async = true
-  s.src = config.public.b24FormScriptUrl
-  s.setAttribute('data-b24-form', `inline/${config.public.b24FormId || ''}/${config.public.b24FormSecret || ''}`)
-  s.setAttribute('data-skip-moving', 'true')
-  host.appendChild(s)
+
+  // 1. Marker — отмечает позицию, куда B24-loader вставит форму
+  const marker = document.createElement('script')
+  marker.setAttribute('data-b24-form', `inline/${config.public.b24FormId || ''}/${config.public.b24FormSecret || ''}`)
+  marker.setAttribute('data-skip-moving', 'true')
+  host.appendChild(marker)
+
+  // 2. Loader с cache-busting (как в оригинальном IIFE: Date.now()/180000|0 = новое значение каждые 3 минуты)
+  const loader = document.createElement('script')
+  loader.async = true
+  loader.src = `${config.public.b24FormScriptUrl}?${Math.floor(Date.now() / 180000)}`
+  host.appendChild(loader)
 })
 </script>
 
@@ -80,7 +75,7 @@ onMounted(() => {
         </p>
         <ul class="space-y-1 list-disc list-inside text-white/70">
           <li>Telegram:
-            <a href="https://t.me/IgorShevchik" class="text-[rgb(var(--color-accent-primary-ch))] hover:underline">@IgorShevchik</a>
+            <a href="https://t.me/bxshefby" class="text-[rgb(var(--color-accent-primary-ch))] hover:underline">@bxshefby</a>
           </li>
           <li>Email:
             <a href="mailto:shevchik.mail@gmail.com" class="text-[rgb(var(--color-accent-primary-ch))] hover:underline">shevchik.mail@gmail.com</a>
