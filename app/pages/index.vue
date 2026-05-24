@@ -41,9 +41,10 @@ const differentiators = [
     text: 'Не комплексное внедрение Б24 «с нуля». Захожу туда, где базовый интегратор уже сказал «это не делается».'
   },
   {
-    icon: ShieldCheckedIcon,
+    photo: '/igor.jpg',
     title: 'Один разработчик — но не bus factor',
-    text: 'Код остаётся в вашем Битрикс24 и в вашем git. Захотите передать другому — это займёт час, а не месяц аудита.'
+    text: 'Код остаётся в вашем Битрикс24 и в вашем git. Захотите передать другому — это займёт час, а не месяц аудита.',
+    caption: 'Игорь Шевчик, Амстердам'
   }
 ]
 
@@ -193,9 +194,19 @@ const process = [
             v-for="(d, i) in differentiators"
             :key="i"
             data-glow-card
-            class="rounded-2xl border border-white/10 bg-white/[0.03] p-6"
+            class="rounded-2xl border border-white/10 bg-white/[0.03] p-6 flex flex-col"
           >
-            <div class="inline-flex items-center justify-center size-11 rounded-xl bg-[rgb(var(--color-accent-partner-ch)/0.18)] text-[rgb(var(--color-accent-partner-ch))] mb-4">
+            <img
+              v-if="d.photo"
+              :src="d.photo"
+              :alt="d.caption || d.title"
+              class="size-16 rounded-full object-cover mb-4 border-2 border-[rgb(var(--color-accent-primary-ch)/0.5)] shadow-[0_0_24px_rgba(0,212,255,0.18)]"
+              loading="lazy"
+            >
+            <div
+              v-else
+              class="inline-flex items-center justify-center size-11 rounded-xl bg-[rgb(var(--color-accent-partner-ch)/0.18)] text-[rgb(var(--color-accent-partner-ch))] mb-4"
+            >
               <component :is="d.icon" class="size-5" />
             </div>
             <div class="font-bold text-white mb-2 text-lg">
@@ -203,6 +214,9 @@ const process = [
             </div>
             <div class="text-sm text-white/60 leading-relaxed">
               {{ d.text }}
+            </div>
+            <div v-if="d.caption" class="mt-auto pt-4 text-xs text-white/45 font-mono">
+              — {{ d.caption }}
             </div>
           </div>
         </div>

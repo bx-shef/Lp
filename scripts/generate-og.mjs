@@ -4,12 +4,22 @@
  * Запуск: pnpm og
  */
 import { chromium } from 'playwright'
-import { mkdirSync } from 'node:fs'
+import { mkdirSync, readFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const out = resolve(__dirname, '../public/og-image.png')
+const photoPath = resolve(__dirname, '../public/igor.jpg')
+
+// Встраиваем фото как data: URL, чтобы playwright не зависел от dev-сервера
+let photoDataUri = ''
+try {
+  const buf = readFileSync(photoPath)
+  photoDataUri = `data:image/jpeg;base64,${buf.toString('base64')}`
+} catch {
+  console.warn('public/igor.jpg не найден — OG будет без портрета')
+}
 
 const html = `<!DOCTYPE html>
 <html lang="ru"><head><meta charset="UTF-8">
@@ -54,7 +64,7 @@ const html = `<!DOCTYPE html>
     background-size: 60px 60px;
     mask-image: linear-gradient(180deg, transparent 0%, black 30%, black 70%, transparent 100%);
   }
-  .content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: space-between; }
+  .content { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: space-between; padding-right: 220px; }
   .badge {
     display: inline-flex; align-items: center; gap: 10px;
     padding: 8px 14px; border-radius: 8px;
@@ -65,13 +75,13 @@ const html = `<!DOCTYPE html>
   .badge .label { color: var(--cyan); font-weight: 700; font-size: 18px; letter-spacing: -0.01em; }
   .badge .sub { color: rgba(255,255,255,0.75); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 600; }
   h1 {
-    font-size: 80px; line-height: 1.05; font-weight: 800;
-    letter-spacing: -0.025em; margin-top: 32px; color: white;
+    font-size: 76px; line-height: 1.05; font-weight: 800;
+    letter-spacing: -0.025em; margin-top: 28px; color: white;
   }
   h1 .accent { color: var(--cyan); }
   p {
-    font-size: 30px; color: rgba(255, 255, 255, 0.72);
-    margin-top: 22px; max-width: 940px; line-height: 1.35;
+    font-size: 28px; color: rgba(255, 255, 255, 0.72);
+    margin-top: 20px; max-width: 820px; line-height: 1.35;
   }
   .footer {
     display: flex; justify-content: space-between; align-items: flex-end;
@@ -82,10 +92,22 @@ const html = `<!DOCTYPE html>
     font-size: 20px; color: rgba(255,255,255,0.55);
     font-family: 'Roboto Mono', ui-monospace, monospace;
   }
+  .portrait {
+    position: absolute;
+    right: 80px; top: 50%;
+    transform: translateY(-50%);
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid rgba(0, 212, 255, 0.5);
+    box-shadow: 0 0 60px rgba(0, 212, 255, 0.25), 0 8px 24px rgba(0, 0, 0, 0.4);
+    z-index: 3;
+  }
 </style></head><body>
   <div class="glow1"></div>
   <div class="glow2"></div>
   <div class="grid"></div>
+  ${photoDataUri ? `<img class="portrait" src="${photoDataUri}" alt="Игорь Шевчик">` : ''}
   <div class="content">
     <div>
       <div class="badge">
@@ -109,7 +131,7 @@ const browser = await chromium.launch({
 })
 const page = await browser.newPage({ viewport: { width: 1200, height: 630 } })
 await page.setContent(html, { waitUntil: 'networkidle' })
-await page.waitForTimeout(800) // дать шрифтам отрисоваться
+await page.waitForTimeout(800)
 await page.screenshot({ path: out, type: 'png' })
 await browser.close()
 
