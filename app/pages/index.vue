@@ -68,7 +68,7 @@ const differentiators: DifferentiatorItem[] = [
     photo: '/igor.jpg',
     title: 'Один разработчик — но не bus factor',
     text: 'Код остаётся в вашем Битрикс24 и в вашем git. Захотите передать другому — это займёт час, а не месяц аудита.',
-    caption: 'Игорь Шевчик, Амстердам'
+    caption: 'Игорь Шевчик, Минск'
   }
 ]
 
@@ -252,7 +252,7 @@ const process: ProcessStep[] = [
       <div class="max-w-[1200px] mx-auto">
         <div class="max-w-[720px] mb-12 sm:mb-16">
           <h2 class="text-3xl sm:text-5xl font-bold tracking-tight text-white mb-4">
-            Берусь — не за всё
+            Возьмусь — не за всё
           </h2>
           <p class="text-lg text-white/65">
             Чтобы не тратить ваше и моё время на discovery,
