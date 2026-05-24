@@ -1,0 +1,90 @@
+name: Deploy to Pages 📰
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ ubuntu-latest ]
+        node: [ 22 ]
+
+    env:
+      # Custom domain bx-shef.by — base URL is root, not /repo/
+      NUXT_APP_BASE_URL: '/'
+      NUXT_PUBLIC_SITE_URL: 'https://bx-shef.by'
+      # B24 form embed-параметры — это публичные идентификаторы (видны в HTML),
+      # поэтому хранятся в Variables (vars), а не Secrets. Если переменные
+      # не заданы в Repository → Settings → Variables — используется fallback
+      # из nuxt.config.ts (форма Игоря Шевчика).
+      NUXT_PUBLIC_B24_FORM_ID: ${{ vars.NUXT_PUBLIC_B24_FORM_ID }}
+      NUXT_PUBLIC_B24_FORM_SECRET: ${{ vars.NUXT_PUBLIC_B24_FORM_SECRET }}
+      NUXT_PUBLIC_B24_FORM_SCRIPT_URL: ${{ vars.NUXT_PUBLIC_B24_FORM_SCRIPT_URL }}
+      NUXT_PUBLIC_COUNTER_NAMESPACE: ${{ vars.NUXT_PUBLIC_COUNTER_NAMESPACE || 'bx-shef' }}
+      NUXT_PUBLIC_COUNTER_KEY: ${{ vars.NUXT_PUBLIC_COUNTER_KEY || 'lp-visits' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6
+
+      - name: Install node
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.node }}
+          cache: pnpm
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Lint
+        run: pnpm run lint
+
+      - name: Typecheck
+        run: pnpm run typecheck
+
+      - name: Generate
+        run: pnpm run generate
+
+      # Защита от деплоя пустой страницы / без OG / без CNAME
+      - name: Validate output
+        run: |
+          test -f .output/public/index.html || (echo "ERR: index.html missing" && exit 1)
+          test -f .output/public/og-image.png || (echo "ERR: og-image.png missing" && exit 1)
+          test -f .output/public/CNAME || (echo "ERR: CNAME missing" && exit 1)
+          grep -q 'og:image' .output/public/index.html || (echo "ERR: og:image meta missing" && exit 1)
+          echo "OK: артефакт валиден"
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .output/public
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    needs: build
+    runs-on: ubuntu-latest
+    name: Deploy
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
