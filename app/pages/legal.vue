@@ -17,7 +17,7 @@ const rows = [
 const contacts = [
   ['Телефон', '+375 29 736-01-26', 'tel:+375297360126'],
   ['Email', 'shevchik.mail@gmail.com', 'mailto:shevchik.mail@gmail.com'],
-  ['Telegram', '@IgorShevchik', 'https://t.me/IgorShevchik']
+  ['Telegram', '@bxshefby', 'https://t.me/bxshefby']
 ]
 
 const bank = [

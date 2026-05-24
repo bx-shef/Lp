@@ -41,7 +41,7 @@ useSeoMeta({
     </h2>
     <ul class="list-disc list-outside ml-5 space-y-1">
       <li>Email: <a href="mailto:shevchik.mail@gmail.com" class="text-[rgb(var(--color-accent-primary-ch))] hover:underline">shevchik.mail@gmail.com</a></li>
-      <li>Telegram: <a href="https://t.me/IgorShevchik" class="text-[rgb(var(--color-accent-primary-ch))] hover:underline">@IgorShevchik</a></li>
+      <li>Telegram: <a href="https://t.me/bxshefby" class="text-[rgb(var(--color-accent-primary-ch))] hover:underline">@bxshefby</a></li>
     </ul>
   </div>
 </template>

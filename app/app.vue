@@ -44,7 +44,7 @@ useHead({
       <template #right>
         <ClientOnly>
           <B24Button
-            to="https://t.me/IgorShevchik"
+            to="https://t.me/bxshefby"
             target="_blank"
             aria-label="Telegram"
             color="air-tertiary-no-accent"
