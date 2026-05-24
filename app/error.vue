@@ -5,17 +5,12 @@ defineProps<{
   error: NuxtError
 }>()
 
+// Тема и язык наследуются из nuxt.config.ts (htmlAttrs).
+// Здесь оставляем только то, что специфично для страницы ошибки.
 useHead({
-  meta: [
-    { name: 'viewport', content: 'width=device-width, initial-scale=1' }
-  ],
   link: [
     { rel: 'icon', href: '/favicon.ico' }
-  ],
-  htmlAttrs: {
-    lang: 'en',
-    class: 'light'
-  }
+  ]
 })
 </script>
 

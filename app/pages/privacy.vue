@@ -21,9 +21,10 @@ useSeoMeta({
       Какие данные собираются
     </h2>
     <ul class="list-disc list-outside ml-5 space-y-2 mb-6">
-      <li><strong class="text-white">Данные формы:</strong> имя, email и текст описания задачи. Передаются в CRM Битрикс24 для обработки обращения.</li>
-      <li><strong class="text-white">Счётчик посещений:</strong> анонимный, через counterapi.dev. Без cookies, без долговременного хранения IP.</li>
-      <li><strong class="text-white">Серверные логи:</strong> стандартные access-логи хостинга, не более 30 дней.</li>
+      <li><strong class="text-white">Данные формы:</strong> имя, email и текст описания задачи. Отправляются на сторону Битрикс24 (cdn-ru.bitrix24.by) при сабмите формы и попадают в CRM для обработки обращения.</li>
+      <li><strong class="text-white">Счётчик посещений:</strong> анонимный пинг к стороннему сервису <a href="https://counterapi.dev" target="_blank" rel="noopener" class="text-[rgb(var(--color-accent-primary-ch))] hover:underline">counterapi.dev</a>. Счётчик не использует cookies; IP-адрес проходит через серверы counterapi для подсчёта уникальности — мы не имеем к нему доступа.</li>
+      <li><strong class="text-white">Шрифты:</strong> загружаются с того же домена (self-hosted) — не уходят в Google Fonts CDN.</li>
+      <li><strong class="text-white">Серверные логи:</strong> стандартные access-логи GitHub Pages, нашему контролю не подвластны.</li>
     </ul>
 
     <h2 class="text-2xl font-bold text-white mt-8 mb-3">

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { Component } from 'vue'
 import ArrowRightLIcon from '@bitrix24/b24icons-vue/outline/ArrowRightLIcon'
 import CheckLIcon from '@bitrix24/b24icons-vue/outline/CheckLIcon'
 import CircleMinusIcon from '@bitrix24/b24icons-vue/outline/CircleMinusIcon'
@@ -11,7 +12,30 @@ import ShieldCheckedIcon from '@bitrix24/b24icons-vue/outline/ShieldCheckedIcon'
 
 useCardGlow()
 
-const services = [
+interface ServiceItem {
+  icon: Component
+  title: string
+  text: string
+}
+
+interface DifferentiatorItem {
+  /** Иконка ИЛИ фото — одно из двух обязательно */
+  icon?: Component
+  photo?: string
+  caption?: string
+  title: string
+  text: string
+}
+
+interface ProcessStep {
+  step: string
+  title: string
+  text: string
+  /** Опциональный список деталей (используется в Discovery) */
+  list?: readonly string[]
+}
+
+const services: ServiceItem[] = [
   {
     icon: CopilotAi1Icon,
     title: 'AI-помощник в Битрикс24',
@@ -29,7 +53,7 @@ const services = [
   }
 ]
 
-const differentiators = [
+const differentiators: DifferentiatorItem[] = [
   {
     icon: CodeIcon,
     title: 'Контрибьютор в SDK Битрикс24',
@@ -60,7 +84,7 @@ const skipIf = [
   'Нет готовности вкладываться в исследование: нужен готовый коробочный продукт'
 ]
 
-const process = [
+const process: ProcessStep[] = [
   {
     step: '01',
     title: 'Discovery',

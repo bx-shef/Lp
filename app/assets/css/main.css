@@ -2,16 +2,28 @@
 @import "@bitrix24/b24ui-nuxt";
 
 /**
- * Стилистика взята с vibecode.bitrix24.tech — официального лендинга
- * Битрикс24 Вайбкод. Тёмная база, неоновый cyan-акцент (#00d4ff),
- * шрифт Rubik. Согласуется с брендбуком (партнёрский цвет #0044e4)
- * и не нарушает запрет на копирование дизайна сайтов Битрикс24 —
- * мы заимствуем токены design system, не готовый layout.
+ * Шрифты — self-hosted (без вызовов Google Fonts CDN):
+ *  - убирает render-blocking зависимость от fonts.googleapis.com
+ *  - не утекает IP пользователя в Google (GDPR / законодательство РБ)
+ *  - работает даже если Google заблокирован
  */
+@import "@fontsource/rubik/400.css";
+@import "@fontsource/rubik/500.css";
+@import "@fontsource/rubik/600.css";
+@import "@fontsource/rubik/700.css";
+@import "@fontsource/rubik/800.css";
+@import "@fontsource/roboto-mono/400.css";
+@import "@fontsource/roboto-mono/500.css";
+@import "@fontsource/roboto-mono/600.css";
 
+/**
+ * Брендовые токены палитры с vibecode.bitrix24.tech (CSS-переменные),
+ * адаптированы под наш лендинг. Токены объявлены на :root и наследуются
+ * в обе темы — b24ui переопределяет только свои air-theme значения в .dark/.light.
+ */
 @layer base {
-  :root, .dark, .light {
-    /* Палитра вайбкода */
+  :root {
+    /* Палитра */
     --color-bg-body-primary-ch: 3 0 34;        /* #030022 */
     --color-bg-body-secondary-ch: 10 6 52;     /* #0a0634 */
     --color-accent-primary-ch: 0 212 255;      /* #00d4ff cyan */
@@ -31,7 +43,7 @@
     --brand-partner: rgb(var(--color-accent-partner-ch));
   }
 
-  /* Подменяем фон b24ui под dark vibecode */
+  /* Фон b24ui под dark vibecode (light оставлен для будущего toggle) */
   .dark {
     --air-theme-bg-color: rgb(var(--color-bg-body-primary-ch));
   }
@@ -39,7 +51,6 @@
     --air-theme-bg-color: #ffffff;
   }
 
-  /* Шрифты */
   html {
     font-family: 'Rubik', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   }
@@ -53,8 +64,7 @@
   }
   html { scroll-behavior: smooth; }
 
-  /* Фон страницы с лёгким радиальным сиянием в верху,
-     как у vibecode — даёт глубину без перегруза */
+  /* Фон страницы — два слоя радиального сияния (cyan сверху, purple снизу-справа) */
   body {
     background-color: rgb(var(--color-bg-body-primary-ch));
     background-image:
@@ -64,7 +74,7 @@
     color: rgb(var(--color-base-0-ch) / 0.92);
   }
 
-  /* Hero fade-in — мягкое появление, как у vibecode (.ds-hero-fade-in) */
+  /* Hero fade-in — мягкое появление как на vibecode */
   .hero-fade-in {
     opacity: 0;
     animation: hero-fade-in 0.6s ease-out 0.05s forwards;
@@ -73,8 +83,7 @@
     to { opacity: 1; }
   }
 
-  /* Glow за курсором на карточках — фирменный приём vibecode.
-     Координаты прокидываются через JS (см. useCardGlow). */
+  /* Glow за курсором (см. composables/useCardGlow). Координаты прокидывает JS. */
   [data-glow-card] {
     position: relative;
     isolation: isolate;

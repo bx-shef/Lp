@@ -15,7 +15,8 @@ export default defineNuxtConfig({
 
   css: ['~/assets/css/main.css'],
 
-  // Static generation: prerender the landing
+  // Static generation: nitro обходит ссылки с главной и преренедерит всё,
+  // что найдёт (/, /privacy, /legal). routeRules для '/' не нужен — дубль.
   nitro: {
     prerender: {
       crawlLinks: true,
@@ -23,18 +24,17 @@ export default defineNuxtConfig({
     }
   },
 
-  routeRules: {
-    '/': { prerender: true }
-  },
-
   runtimeConfig: {
     public: {
       siteUrl,
-      // Bitrix24 web form embed details — заполняются после создания формы в Б24
-      b24FormId: process.env.NUXT_PUBLIC_B24_FORM_ID || '',
-      b24FormSecret: process.env.NUXT_PUBLIC_B24_FORM_SECRET || '',
-      b24FormScriptUrl: process.env.NUXT_PUBLIC_B24_FORM_SCRIPT_URL || '',
-      // Visit counter (https://counterapi.dev — free, no signup)
+      // Бitrix24 веб-форма — embed-параметры. Это **публичные** идентификаторы
+      // (видны в HTML на любом сайте, где встроена форма), не секреты.
+      // По умолчанию — ID/SECRET формы Игоря Шевчика; можно переопределить
+      // через ENV NUXT_PUBLIC_B24_FORM_* без перебилда контейнера.
+      b24FormId: process.env.NUXT_PUBLIC_B24_FORM_ID || '1',
+      b24FormSecret: process.env.NUXT_PUBLIC_B24_FORM_SECRET || '3c735r',
+      b24FormScriptUrl: process.env.NUXT_PUBLIC_B24_FORM_SCRIPT_URL || 'https://cdn-ru.bitrix24.by/b37817748/crm/form/loader_1.js',
+      // Счётчик посещений (https://counterapi.dev — бесплатно, без регистрации)
       counterNamespace: process.env.NUXT_PUBLIC_COUNTER_NAMESPACE || 'bx-shef',
       counterKey: process.env.NUXT_PUBLIC_COUNTER_KEY || 'lp-visits'
     }
@@ -46,13 +46,28 @@ export default defineNuxtConfig({
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-        { name: 'theme-color', content: '#030022' }
+        { name: 'theme-color', content: '#030022' },
+        // Базовый CSP. Разрешён https для скриптов/стилей/коннектов — нужно
+        // для Битрикс24-формы (cdn-домены могут меняться), counterapi и Google.
+        // form-action ограничен своим origin + Б24 для веб-формы.
+        {
+          'http-equiv': 'Content-Security-Policy',
+          content: [
+            'default-src \'self\'',
+            'script-src \'self\' \'unsafe-inline\' https:',
+            'style-src \'self\' \'unsafe-inline\'',
+            'img-src \'self\' data: blob: https:',
+            'font-src \'self\' data:',
+            'connect-src \'self\' https:',
+            'frame-src https:',
+            'base-uri \'self\'',
+            'form-action \'self\' https://*.bitrix24.com https://*.bitrix24.by https://*.bitrix24.ru',
+            'object-src \'none\''
+          ].join('; ')
+        }
       ],
       link: [
-        { rel: 'icon', href: '/favicon.ico?v=3' },
-        { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
-        { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
-        { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800&family=Roboto+Mono:wght@400;500;600&display=swap' }
+        { rel: 'icon', href: '/favicon.ico?v=3' }
       ]
     }
   },

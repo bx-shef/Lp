@@ -11,9 +11,6 @@ jobs:
         os: [ubuntu-latest]
         node: [22]
 
-    env:
-      SOME_ENV: some_value
-
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -36,5 +33,20 @@ jobs:
       - name: Typecheck
         run: pnpm run typecheck
 
-      - name: Build
-        run: pnpm run build
+      # Используем `generate` (статика) вместо `build` (SSR), чтобы CI и deploy
+      # шли через одну сборочную тропу — иначе ошибки пресборки видны только в деплое.
+      - name: Generate (static)
+        run: pnpm run generate
+
+      # Базовая валидация: артефакт существует и содержит обязательные мета.
+      # Дешёвая страховка от пустых страниц / выпавших SEO-тегов.
+      - name: Validate output
+        run: |
+          test -f .output/public/index.html || (echo "ERR: index.html missing" && exit 1)
+          test -f .output/public/privacy/index.html || (echo "ERR: privacy missing" && exit 1)
+          test -f .output/public/legal/index.html || (echo "ERR: legal missing" && exit 1)
+          test -f .output/public/og-image.png || (echo "ERR: og-image.png missing" && exit 1)
+          grep -q '<title>' .output/public/index.html || (echo "ERR: <title> missing" && exit 1)
+          grep -q 'og:image' .output/public/index.html || (echo "ERR: og:image meta missing" && exit 1)
+          grep -q 'canonical' .output/public/index.html || (echo "ERR: canonical link missing" && exit 1)
+          echo "OK: все обязательные артефакты на месте"

@@ -5,9 +5,20 @@
   "lockFileMaintenance": {
     "enabled": true
   },
-  "packageRules": [{
-    "matchDepTypes": ["resolutions"],
-    "enabled": false
-  }],
+  "github-actions": {
+    "enabled": true
+  },
+  "packageRules": [
+    {
+      "matchDepTypes": ["resolutions"],
+      "enabled": false
+    },
+    {
+      "description": "Не автоапдейтить мажорные версии — могут сломать билд",
+      "matchUpdateTypes": ["major"],
+      "automerge": false,
+      "dependencyDashboardApproval": true
+    }
+  ],
   "postUpdateOptions": ["pnpmDedupe"]
 }

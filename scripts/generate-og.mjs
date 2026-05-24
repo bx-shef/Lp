@@ -21,6 +21,9 @@ try {
   console.warn('public/igor.jpg не найден — OG будет без портрета')
 }
 
+// OG-картинку рендерим с Google Fonts (одноразовая локальная генерация —
+// без render-blocking рисков для пользователя). Альтернатива через
+// data: URI .woff2 — громоздко и не даёт визуального выигрыша.
 const html = `<!DOCTYPE html>
 <html lang="ru"><head><meta charset="UTF-8">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -131,7 +134,9 @@ const browser = await chromium.launch({
 })
 const page = await browser.newPage({ viewport: { width: 1200, height: 630 } })
 await page.setContent(html, { waitUntil: 'networkidle' })
-await page.waitForTimeout(800)
+// Дожидаемся реальной готовности шрифтов вместо ненадёжного таймаута —
+// иначе на медленном CI скриншот может попасть с fallback-шрифтом.
+await page.evaluate(() => document.fonts.ready)
 await page.screenshot({ path: out, type: 'png' })
 await browser.close()
 
