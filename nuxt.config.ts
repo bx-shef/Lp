@@ -42,14 +42,17 @@ export default defineNuxtConfig({
 
   app: {
     head: {
-      htmlAttrs: { lang: 'ru' },
+      htmlAttrs: { lang: 'ru', class: 'dark' },
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-        { name: 'theme-color', content: '#2fc7f7' }
+        { name: 'theme-color', content: '#030022' }
       ],
       link: [
-        { rel: 'icon', href: '/favicon.ico?v=3' }
+        { rel: 'icon', href: '/favicon.ico?v=3' },
+        { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+        { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
+        { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800&family=Roboto+Mono:wght@400;500;600&display=swap' }
       ]
     }
   },

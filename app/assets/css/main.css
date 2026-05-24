@@ -2,31 +2,100 @@
 @import "@bitrix24/b24ui-nuxt";
 
 /**
- * Брендовые цвета Битрикс24 (брендбук, страница «Цветовые схемы»):
- *   #2fc7f7 — фирменный голубой
- *   #0066a1 — фирменный тёмно-синий
- *   #cfcfd2 — серый
- *   #292426 — Neutral Black
- *
- * Используем как акценты в кастомном дизайне, без модификации логотипа Битрикс24.
+ * Стилистика взята с vibecode.bitrix24.tech — официального лендинга
+ * Битрикс24 Вайбкод. Тёмная база, неоновый cyan-акцент (#00d4ff),
+ * шрифт Rubik. Согласуется с брендбуком (партнёрский цвет #0044e4)
+ * и не нарушает запрет на копирование дизайна сайтов Битрикс24 —
+ * мы заимствуем токены design system, не готовый layout.
  */
+
 @layer base {
-  .light, :root {
-    --air-theme-bg-color: #ffffff;
-    --brand-cyan: #2fc7f7;
-    --brand-blue: #0066a1;
-    --brand-gray: #cfcfd2;
-    --brand-ink: #292426;
+  :root, .dark, .light {
+    /* Палитра вайбкода */
+    --color-bg-body-primary-ch: 3 0 34;        /* #030022 */
+    --color-bg-body-secondary-ch: 10 6 52;     /* #0a0634 */
+    --color-accent-primary-ch: 0 212 255;      /* #00d4ff cyan */
+    --color-accent-partner-ch: 0 68 228;       /* #0044e4 brand-blue */
+    --color-accent-success-ch: 52 232 187;     /* #34e8bb */
+    --color-accent-warning-ch: 255 187 0;      /* #ffbb00 */
+    --color-accent-alert-ch: 239 90 1;         /* #ef5a01 */
+    --color-accent-special-ch: 188 74 255;     /* #bc4aff */
+
+    --color-base-0-ch: 255 255 255;
+    --color-base-3-ch: 179 179 179;
+    --color-base-5-ch: 128 128 128;
+    --color-base-7-ch: 77 77 77;
+    --color-base-9-ch: 26 26 26;
+
+    --brand-cyan: rgb(var(--color-accent-primary-ch));
+    --brand-partner: rgb(var(--color-accent-partner-ch));
   }
 
+  /* Подменяем фон b24ui под dark vibecode */
   .dark {
-    --air-theme-bg-color: #0b0b0c;
+    --air-theme-bg-color: rgb(var(--color-bg-body-primary-ch));
+  }
+  .light {
+    --air-theme-bg-color: #ffffff;
   }
 
-  /* Плавный скролл для anchor-CTA */
+  /* Шрифты */
+  html {
+    font-family: 'Rubik', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  }
+  code, kbd, samp, pre, .font-mono {
+    font-family: 'Roboto Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+
+  /* Якоря не уходят под фиксированный B24Header */
+  section[id], div[id] {
+    scroll-margin-top: 96px;
+  }
   html { scroll-behavior: smooth; }
-  /* Чтобы фиксированный B24Header не закрывал якорь */
-  section[id], div[id] { scroll-margin-top: 96px; }
+
+  /* Фон страницы с лёгким радиальным сиянием в верху,
+     как у vibecode — даёт глубину без перегруза */
+  body {
+    background-color: rgb(var(--color-bg-body-primary-ch));
+    background-image:
+      radial-gradient(900px circle at 50% -10%, rgba(0, 212, 255, 0.10), transparent 60%),
+      radial-gradient(700px circle at 90% 30%, rgba(188, 74, 255, 0.06), transparent 65%);
+    background-attachment: fixed;
+    color: rgb(var(--color-base-0-ch) / 0.92);
+  }
+
+  /* Hero fade-in — мягкое появление, как у vibecode (.ds-hero-fade-in) */
+  .hero-fade-in {
+    opacity: 0;
+    animation: hero-fade-in 0.6s ease-out 0.05s forwards;
+  }
+  @keyframes hero-fade-in {
+    to { opacity: 1; }
+  }
+
+  /* Glow за курсором на карточках — фирменный приём vibecode.
+     Координаты прокидываются через JS (см. useCardGlow). */
+  [data-glow-card] {
+    position: relative;
+    isolation: isolate;
+  }
+  [data-glow-card]::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    z-index: 2;
+    background: radial-gradient(
+      300px circle at var(--glow-x, -200px) var(--glow-y, -200px),
+      rgba(0, 212, 255, 0.14),
+      transparent 70%
+    );
+    mix-blend-mode: plus-lighter;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  [data-glow-card]:hover::after { opacity: 1; }
 }
 
 @theme static {

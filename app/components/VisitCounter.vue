@@ -1,6 +1,5 @@
 <script setup lang="ts">
-// Простой публичный счётчик посещений через counterapi.dev
-// Бесплатно, без регистрации, без cookies. На каждый mount — +1 к счётчику.
+// Публичный счётчик через counterapi.dev (бесплатно, без регистрации, без cookies).
 const config = useRuntimeConfig()
 const count = ref<number | null>(null)
 const isErr = ref(false)
@@ -9,7 +8,6 @@ onMounted(async () => {
   try {
     const ns = config.public.counterNamespace
     const k = config.public.counterKey
-    // up = инкремент и возврат текущего значения
     const res = await fetch(`https://api.counterapi.dev/v1/${ns}/${k}/up`)
     if (!res.ok) throw new Error('counter')
     const data = await res.json()
@@ -23,7 +21,7 @@ const formatted = computed(() => count.value === null ? '…' : count.value.toLo
 </script>
 
 <template>
-  <span v-if="!isErr" class="text-(--air-base-50) text-xs">
-    Посещений: <span class="font-mono">{{ formatted }}</span>
+  <span v-if="!isErr" class="text-white/40 text-xs">
+    Посещений: <span class="font-mono text-white/70">{{ formatted }}</span>
   </span>
 </template>

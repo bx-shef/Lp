@@ -6,32 +6,41 @@ useSeoMeta({
 </script>
 
 <template>
-  <div class="max-w-[760px] mx-auto px-[22px] lg:px-8 py-16 prose prose-zinc">
-    <ProseH1>Политика конфиденциальности</ProseH1>
+  <div class="max-w-[760px] mx-auto px-[22px] lg:px-8 py-16 text-white/80">
+    <h1 class="text-4xl font-bold text-white mb-6 tracking-tight">
+      Политика конфиденциальности
+    </h1>
 
-    <ProseP>
-      Сайт <a href="https://bx-shef.by">bx-shef.by</a> принадлежит ИП Шевчик Игорь
-      (далее — оператор). Текст ниже описывает, какие данные собираются и как используются.
-    </ProseP>
+    <p class="mb-6">
+      Сайт <a href="https://bx-shef.by" class="text-[rgb(var(--color-accent-primary-ch))] hover:underline">bx-shef.by</a>
+      принадлежит ИП Шевчик Игорь (далее — оператор). Текст ниже описывает, какие данные
+      собираются и как используются.
+    </p>
 
-    <ProseH2>Какие данные собираются</ProseH2>
-    <ul>
-      <li><strong>Данные формы:</strong> имя, email и текст описания задачи. Передаются в CRM Битрикс24 для обработки обращения.</li>
-      <li><strong>Счётчик посещений:</strong> анонимный, через сервис counterapi.dev. Не использует cookies, не сохраняет IP и user-agent в долговременную базу.</li>
-      <li><strong>Серверные логи:</strong> стандартные access-логи хостинга (IP, время запроса), хранятся не более 30 дней для целей безопасности.</li>
+    <h2 class="text-2xl font-bold text-white mt-8 mb-3">
+      Какие данные собираются
+    </h2>
+    <ul class="list-disc list-outside ml-5 space-y-2 mb-6">
+      <li><strong class="text-white">Данные формы:</strong> имя, email и текст описания задачи. Передаются в CRM Битрикс24 для обработки обращения.</li>
+      <li><strong class="text-white">Счётчик посещений:</strong> анонимный, через counterapi.dev. Без cookies, без долговременного хранения IP.</li>
+      <li><strong class="text-white">Серверные логи:</strong> стандартные access-логи хостинга, не более 30 дней.</li>
     </ul>
 
-    <ProseH2>Как используются данные</ProseH2>
-    <ul>
-      <li>Данные формы — только для ответа на ваш запрос и последующей коммуникации в рамках обсуждения проекта.</li>
+    <h2 class="text-2xl font-bold text-white mt-8 mb-3">
+      Как используются данные
+    </h2>
+    <ul class="list-disc list-outside ml-5 space-y-2 mb-6">
+      <li>Данные формы — только для ответа на ваш запрос и последующей коммуникации.</li>
       <li>Третьим лицам данные не передаются, в рассылки не включаются.</li>
-      <li>По вашему запросу данные могут быть удалены — напишите на <a href="mailto:hi@bx-shef.by">hi@bx-shef.by</a>.</li>
+      <li>По запросу данные удаляются — напишите на <a href="mailto:hi@bx-shef.by" class="text-[rgb(var(--color-accent-primary-ch))] hover:underline">hi@bx-shef.by</a>.</li>
     </ul>
 
-    <ProseH2>Контакты оператора</ProseH2>
-    <ul>
-      <li>Email: <a href="mailto:hi@bx-shef.by">hi@bx-shef.by</a></li>
-      <li>Telegram: <a href="https://t.me/IgorShevchik">@IgorShevchik</a></li>
+    <h2 class="text-2xl font-bold text-white mt-8 mb-3">
+      Контакты оператора
+    </h2>
+    <ul class="list-disc list-outside ml-5 space-y-1">
+      <li>Email: <a href="mailto:hi@bx-shef.by" class="text-[rgb(var(--color-accent-primary-ch))] hover:underline">hi@bx-shef.by</a></li>
+      <li>Telegram: <a href="https://t.me/IgorShevchik" class="text-[rgb(var(--color-accent-primary-ch))] hover:underline">@IgorShevchik</a></li>
     </ul>
   </div>
 </template>
