@@ -27,13 +27,19 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       siteUrl,
-      // Бitrix24 веб-форма — embed-параметры. Это **публичные** идентификаторы
-      // (видны в HTML на любом сайте, где встроена форма), не секреты.
-      // По умолчанию — ID/SECRET формы Игоря Шевчика; можно переопределить
-      // через ENV NUXT_PUBLIC_B24_FORM_* без перебилда контейнера.
+      // Битрикс24 веб-форма (embed-fallback). Эти параметры — публичные
+      // идентификаторы, не секреты. Используются только если веб-хук ниже
+      // не настроен — тогда показываем embed формы Битрикс24 как есть.
       b24FormId: process.env.NUXT_PUBLIC_B24_FORM_ID || '1',
       b24FormSecret: process.env.NUXT_PUBLIC_B24_FORM_SECRET || '3c735r',
       b24FormScriptUrl: process.env.NUXT_PUBLIC_B24_FORM_SCRIPT_URL || 'https://cdn-ru.bitrix24.by/b37817748/crm/form/loader_1.js',
+      // Битрикс24 incoming webhook — для прямого crm.lead.add из нашего UI.
+      // ВНИМАНИЕ: webhook URL содержит токен и фактически даёт право на CRM-операции
+      // всем, кто откроет сайт. Используйте webhook с минимальными правами
+      // (только crm.lead.add), без user-token. Без значения = форма работает через
+      // embed-fallback (см. компонент BriefForm).
+      // Пример: https://b37817748.bitrix24.by/rest/1/<webhook_token>/
+      b24WebhookUrl: process.env.NUXT_PUBLIC_B24_WEBHOOK_URL || '',
       // Счётчик посещений (https://counterapi.dev — бесплатно, без регистрации)
       counterNamespace: process.env.NUXT_PUBLIC_COUNTER_NAMESPACE || 'bx-shef',
       counterKey: process.env.NUXT_PUBLIC_COUNTER_KEY || 'lp-visits'
