@@ -21,7 +21,7 @@ export default defineNuxtConfig({
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
         { name: 'theme-color', content: '#030022' },
         // Базовый CSP. Разрешён https для скриптов/стилей/коннектов — нужно
-        // для Битрикс24-формы (cdn-домены могут меняться), counterapi и Google.
+        // для Битрикс24-формы (cdn-домены могут меняться), Яндекс Метрики и Google.
         // form-action ограничен своим origin + Б24 для веб-формы.
         {
           'http-equiv': 'Content-Security-Policy',
@@ -41,6 +41,15 @@ export default defineNuxtConfig({
       ],
       link: [
         { rel: 'icon', href: '/favicon.ico?v=3' }
+      ],
+      script: [
+        {
+          type: 'text/javascript',
+          innerHTML: `(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};m[i].l=1*new Date();for(var j=0;j<document.scripts.length;j++){if(document.scripts[j].src===r){return;}}k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})(window,document,'script','https://mc.yandex.ru/metrika/tag.js?id=109399587','ym');ym(109399587,'init',{ssr:true,webvisor:true,clickmap:true,ecommerce:"dataLayer",referrer:document.referrer,url:location.href,accurateTrackBounce:true,trackLinks:true});`
+        }
+      ],
+      noscript: [
+        { innerHTML: '<div><img src="https://mc.yandex.ru/watch/109399587" style="position:absolute;left:-9999px;" alt="" /></div>' }
       ]
     }
   },
@@ -55,10 +64,7 @@ export default defineNuxtConfig({
       // (форма #1 на портале b37817748); смена формы — через ENV без перебилда.
       b24FormId: process.env.NUXT_PUBLIC_B24_FORM_ID || '1',
       b24FormSecret: process.env.NUXT_PUBLIC_B24_FORM_SECRET || '3c735r',
-      b24FormScriptUrl: process.env.NUXT_PUBLIC_B24_FORM_SCRIPT_URL || 'https://cdn-ru.bitrix24.by/b37817748/crm/form/loader_1.js',
-      // Счётчик посещений (https://counterapi.dev — бесплатно, без регистрации)
-      counterNamespace: process.env.NUXT_PUBLIC_COUNTER_NAMESPACE || 'bx-shef',
-      counterKey: process.env.NUXT_PUBLIC_COUNTER_KEY || 'lp-visits'
+      b24FormScriptUrl: process.env.NUXT_PUBLIC_B24_FORM_SCRIPT_URL || 'https://cdn-ru.bitrix24.by/b37817748/crm/form/loader_1.js'
     }
   },
 

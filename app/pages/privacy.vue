@@ -26,12 +26,17 @@ useSeoMeta({
     <ul class="list-disc list-outside ml-5 space-y-2 mb-6">
       <li><strong class="text-white">Данные формы:</strong> имя, email и текст описания задачи. Отправляются на сторону Битрикс24 (cdn-ru.bitrix24.by) при сабмите формы и попадают в CRM для обработки обращения.</li>
       <li>
-        <strong class="text-white">Счётчик посещений:</strong> анонимный пинг к стороннему сервису <a
-          href="https://counterapi.dev"
+        <strong class="text-white">Аналитика:</strong> сайт использует <a
+          href="https://metrika.yandex.ru"
           target="_blank"
           rel="noopener"
           class="text-[rgb(var(--color-accent-primary-ch))] hover:underline"
-        >counterapi.dev</a>. Счётчик не использует cookies; IP-адрес проходит через серверы counterapi для подсчёта уникальности — мы не имеем к нему доступа.
+        >Яндекс Метрику</a>. Сервис собирает обезличенные данные о посещениях (страницы, источники трафика, действия на сайте). Данные передаются на серверы Яндекса; персональные данные посетителей нам не доступны. Подробнее — в <a
+          href="https://yandex.ru/legal/confidential/"
+          target="_blank"
+          rel="noopener"
+          class="text-[rgb(var(--color-accent-primary-ch))] hover:underline"
+        >политике конфиденциальности Яндекса</a>.
       </li>
       <li><strong class="text-white">Шрифты:</strong> загружаются с того же домена (self-hosted) — не уходят в Google Fonts CDN.</li>
       <li><strong class="text-white">Серверные логи:</strong> стандартные access-логи GitHub Pages, нашему контролю не подвластны.</li>
