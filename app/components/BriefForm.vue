@@ -61,7 +61,7 @@ onMounted(() => {
     <iframe
       v-if="srcdoc"
       :srcdoc="srcdoc"
-      class="w-full min-h-[600px] border-0 rounded-2xl"
+      class="w-full min-h-[800px] sm:min-h-[600px] border-0 rounded-2xl"
       title="Форма обратной связи"
       loading="lazy"
     />
