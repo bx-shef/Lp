@@ -31,6 +31,60 @@ useSeoMeta({
 useHead({
   link: [
     { rel: 'canonical', href: config.public.siteUrl }
+  ],
+  script: [
+    {
+      type: 'application/ld+json',
+      innerHTML: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@graph': [
+          {
+            '@type': 'ProfessionalService',
+            '@id': `${config.public.siteUrl}/#organization`,
+            name: 'ИП Шевчик И. С.',
+            alternateName: 'bx-shef.by',
+            url: config.public.siteUrl,
+            telephone: '+375297360126',
+            email: 'shevchik.mail@gmail.com',
+            address: {
+              '@type': 'PostalAddress',
+              addressLocality: 'Минск',
+              addressCountry: 'BY'
+            },
+            description: 'Кастомная разработка под Битрикс24: AI-помощники, интеграции, MCP-серверы. Discovery — 30 минут, бесплатно.',
+            founder: {
+              '@type': 'Person',
+              '@id': `${config.public.siteUrl}/#igor`,
+              name: 'Игорь Шевчик',
+              jobTitle: 'Разработчик Битрикс24',
+              image: `${config.public.siteUrl}/igor.jpg`,
+              sameAs: [
+                'https://github.com/IgorShevchik',
+                'https://t.me/bxshefby'
+              ]
+            },
+            areaServed: {
+              '@type': 'Place',
+              name: 'Беларусь'
+            },
+            sameAs: [
+              'https://github.com/IgorShevchik',
+              'https://t.me/bxshefby'
+            ]
+          },
+          {
+            '@type': 'WebSite',
+            '@id': `${config.public.siteUrl}/#website`,
+            url: config.public.siteUrl,
+            name: 'bx-shef.by',
+            inLanguage: 'ru-RU',
+            publisher: {
+              '@id': `${config.public.siteUrl}/#organization`
+            }
+          }
+        ]
+      })
+    }
   ]
 })
 </script>
