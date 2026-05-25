@@ -26,29 +26,6 @@ export default defineNuxtConfig({
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
         { name: 'theme-color', content: '#030022' },
         { name: 'referrer', content: 'strict-origin-when-cross-origin' },
-        // CSP. script-src без unsafe-inline — скрипт Метрики вынесен в /metrika.js.
-        // style-src сохраняет unsafe-inline: Vue :style-биндинги генерируют inline
-        // style-атрибуты в DOM, убрать без переписывания шаблонов нельзя.
-        // https: в script-src нужен для B24-формы (cdn-домены могут меняться).
-        // form-action ограничен своим origin + Б24 для веб-формы.
-        {
-          'http-equiv': 'Content-Security-Policy',
-          'content': [
-            'default-src \'self\'',
-            'script-src \'self\' https:',
-            // https: required for Bitrix24 form CDN stylesheets (e.g. bel.bitrix24.by)
-            'style-src \'self\' \'unsafe-inline\' https:',
-            'img-src \'self\' data: blob: https:',
-            'font-src \'self\' data: https:',
-            // wss://mc.yandex.ru — Метрика использует WebSocket для real-time аналитики
-            'connect-src \'self\' https: wss://mc.yandex.ru',
-            'frame-src https:',
-            'worker-src blob:',
-            'base-uri \'self\'',
-            'form-action \'self\' https://*.bitrix24.com https://*.bitrix24.by https://*.bitrix24.ru',
-            'object-src \'none\''
-          ].join('; ')
-        },
         ...(metrikaId ? [{ name: 'ym-id', content: metrikaId }] : [])
       ],
       link: [
@@ -91,6 +68,25 @@ export default defineNuxtConfig({
     server: {
       allowedHosts: [...extraAllowedHosts],
       cors: true
+    },
+    optimizeDeps: {
+      include: [
+        '@bitrix24/b24icons-vue/actions/DownloadIcon',
+        '@bitrix24/b24icons-vue/common-service/Bitrix24Icon',
+        '@bitrix24/b24icons-vue/common-service/CodeIcon',
+        '@bitrix24/b24icons-vue/main/OpenBookIcon',
+        '@bitrix24/b24icons-vue/outline/CheckLIcon',
+        '@bitrix24/b24icons-vue/outline/ContactDetailsIcon',
+        '@bitrix24/b24icons-vue/outline/CrossLIcon',
+        '@bitrix24/b24icons-vue/outline/PhoneAddIcon',
+        '@bitrix24/b24icons-vue/outline/ReceiptIcon',
+        '@bitrix24/b24icons-vue/outline/TelegramIcon',
+        '@bitrix24/b24icons-vue/outline/ThemeIcon',
+        '@bitrix24/b24icons-vue/social/GitHubIcon',
+        '@bitrix24/b24icons-vue/solid/AppsIcon',
+        '@bitrix24/b24icons-vue/solid/DeveloperResourcesIcon',
+        'qrcode' // CJS
+      ]
     }
   },
 
