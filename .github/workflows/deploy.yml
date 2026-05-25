@@ -70,6 +70,14 @@ jobs:
       - name: Sync to server
         run: |
           rsync -az --delete --checksum \
+            --exclude='bitrix'      \
+            --exclude='local'       \
+            --exclude='personal'    \
+            --exclude='support'     \
+            --exclude='upload'      \
+            --exclude='.access.php' \
+            --exclude='.htaccess'   \
+            --exclude='.htsecure'   \
             -e "ssh -p ${{ secrets.DEPLOY_PORT }} -o StrictHostKeyChecking=yes" \
             dist/ \
             ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:${{ secrets.DEPLOY_PATH }}/

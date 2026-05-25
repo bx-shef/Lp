@@ -35,13 +35,12 @@ jobs:
     env:
       NUXT_APP_BASE_URL: '/'
       NUXT_PUBLIC_SITE_URL: ${{ inputs.site-url }}
-      # Публичные идентификаторы B24-формы — хранятся в Variables, не в Secrets.
-      # Пустая строка → fallback к дефолтам в nuxt.config.ts.
-      NUXT_PUBLIC_B24_FORM_ID: ${{ inputs.b24-form-id }}
-      NUXT_PUBLIC_B24_FORM_SECRET: ${{ inputs.b24-form-secret }}
-      NUXT_PUBLIC_B24_FORM_SCRIPT_URL: ${{ inputs.b24-form-script-url }}
-      NUXT_PUBLIC_METRIKA_ID: ${{ inputs.metrika-id }}
       NUXT_PUBLIC_BUILD_ID: ${{ inputs.build-id }}
+      # Metrika: пустая строка безопасна — nuxt.config.ts фильтрует \D
+      NUXT_PUBLIC_METRIKA_ID: ${{ inputs.metrika-id }}
+      # B24-форма: НЕ задаём здесь, чтобы пустая строка не перебивала дефолты
+      # nuxt.config.ts. Реальные значения выставляются в шаге ниже только
+      # когда inputs ненулевые. Nuxt автоматически читает NUXT_PUBLIC_* из env.
 
     steps:
       - uses: actions/checkout@v6
@@ -52,6 +51,16 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
+
+      - name: Set B24 form env vars (skip when input is empty)
+        run: |
+          [ -n "$ID" ]  && echo "NUXT_PUBLIC_B24_FORM_ID=$ID"             >> $GITHUB_ENV || true
+          [ -n "$SEC" ] && echo "NUXT_PUBLIC_B24_FORM_SECRET=$SEC"         >> $GITHUB_ENV || true
+          [ -n "$URL" ] && echo "NUXT_PUBLIC_B24_FORM_SCRIPT_URL=$URL"     >> $GITHUB_ENV || true
+        env:
+          ID:  ${{ inputs.b24-form-id }}
+          SEC: ${{ inputs.b24-form-secret }}
+          URL: ${{ inputs.b24-form-script-url }}
 
       - name: Install dependencies
         run: pnpm install
