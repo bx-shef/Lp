@@ -3,10 +3,36 @@ import GitHubIcon from '@bitrix24/b24icons-vue/social/GitHubIcon'
 import Bitrix24Icon from '@bitrix24/b24icons-vue/common-service/Bitrix24Icon'
 import TelegramIcon from '@bitrix24/b24icons-vue/outline/TelegramIcon'
 import ContactDetailsIcon from '@bitrix24/b24icons-vue/outline/ContactDetailsIcon'
+import ReceiptIcon from '@bitrix24/b24icons-vue/outline/ReceiptIcon'
+import OpenBookIcon from '@bitrix24/b24icons-vue/main/OpenBookIcon'
+import ThemeIcon from '@bitrix24/b24icons-vue/outline/ThemeIcon'
+import CodeIcon from '@bitrix24/b24icons-vue/common-service/CodeIcon'
+import AppsIcon from '@bitrix24/b24icons-vue/solid/AppsIcon'
+import DeveloperResourcesIcon from '@bitrix24/b24icons-vue/solid/DeveloperResourcesIcon'
 
 const cardOpen = ref(false)
 
 const config = useRuntimeConfig()
+
+const navItems = [
+  [
+    {
+      label: 'Реквизиты',
+      icon: ReceiptIcon,
+      to: '/legal'
+    },
+    {
+      label: 'Документация',
+      icon: OpenBookIcon,
+      children: [
+        { label: 'b24ui', icon: ThemeIcon, to: 'https://bitrix24.github.io/b24ui/', target: '_blank' },
+        { label: 'b24jssdk', icon: CodeIcon, to: 'https://bitrix24.github.io/b24jssdk/', target: '_blank' },
+        { label: 'b24icons', icon: AppsIcon, to: 'https://bitrix24.github.io/b24icons/', target: '_blank' },
+        { label: 'REST API', icon: DeveloperResourcesIcon, to: 'https://apidocs.bitrix24.ru/', target: '_blank' }
+      ]
+    }
+  ]
+]
 
 const title = 'Кастомная разработка под Битрикс24: AI, интеграции, MCP-серверы | bx-shef.by'
 const description = 'Разрабатываю AI-помощников, интеграции и MCP-серверы для Битрикс24. Беру задачи, которые маркетплейс не закрывает. Разбор задачи — 30 минут, бесплатно.'
@@ -100,6 +126,8 @@ useHead({
         </NuxtLink>
       </template>
 
+      <B24NavigationMenu :items="navItems" />
+
       <template #right>
         <ClientOnly>
           <B24Button
@@ -132,6 +160,9 @@ useHead({
           size="sm"
           @click="cardOpen = true"
         />
+      </template>
+      <template #body>
+        <B24NavigationMenu :items="navItems" orientation="vertical" />
       </template>
     </B24Header>
 
