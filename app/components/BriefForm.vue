@@ -35,6 +35,13 @@ function isAllowedB24Host(rawUrl: string): boolean {
   }
 }
 
+type YmFn = (id: number, method: string, goal: string) => void
+
+function onB24Submit() {
+  const w = window as Window & { ym?: YmFn }
+  w.ym?.(109399587, 'reachGoal', 'brief_submit')
+}
+
 onMounted(() => {
   if (!hasForm.value) return
   const host = document.getElementById('b24-form-host')
@@ -57,6 +64,12 @@ onMounted(() => {
   loader.async = true
   loader.src = `${config.public.b24FormScriptUrl}?${Math.floor(Date.now() / 180000)}`
   host.appendChild(loader)
+
+  document.addEventListener('b24:form:submit', onB24Submit)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('b24:form:submit', onB24Submit)
 })
 </script>
 
