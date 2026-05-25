@@ -3,7 +3,7 @@
 Лендинг ИП Шевчик: «Кастомная разработка под Битрикс24. AI, интеграции, MCP».
 
 **Стек:** Nuxt 4 + `@bitrix24/b24ui-nuxt` + Tailwind v4 + TypeScript, статическая
-генерация (`pnpm generate`), деплой на GitHub Pages с кастомным доменом `bx-shef.by`.
+генерация (`pnpm generate`), деплой на собственный хостинг с доменом `bx-shef.by`.
 
 ## Старт
 
@@ -37,14 +37,13 @@ GitHub Actions Variables (для деплой-окружения).
 
 ## Деплой
 
-GitHub Pages через `.github/workflows/deploy.yml`:
+Через `.github/workflows/deploy.yml`:
 
 1. `push` в `main` (или ручной запуск) → CI чекает lint, typecheck, generate
-2. Артефакт `.output/public` уезжает в GitHub Pages
-3. Кастомный домен берётся из `public/CNAME`
+2. Артефакт `.output/public` упаковывается и готов к выгрузке на хостинг
+3. Залить содержимое `.output/public/` в корень веб-хоста (FTP, rsync или панель хостинга)
 
-DNS у регистратора домена: `CNAME bx-shef.by → <username>.github.io`.
-SSL автоматически выдаётся GitHub Pages при включённой опции «Enforce HTTPS».
+SSL настраивается на стороне хостинга (Let's Encrypt или сертификат провайдера).
 
 ## Структура
 
@@ -60,7 +59,7 @@ app/
 public/
   igor.jpg             # фото в карточке «не bus factor»
   og-image.png         # OG (генерируется через pnpm og)
-  CNAME                # bx-shef.by для GH Pages
+  CNAME                # домен bx-shef.by
   favicon.ico
 scripts/
   generate-og.mjs      # Playwright-рендер OG из HTML-шаблона

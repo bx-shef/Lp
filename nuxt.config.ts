@@ -31,11 +31,13 @@ export default defineNuxtConfig({
           'content': [
             'default-src \'self\'',
             'script-src \'self\' \'unsafe-inline\' https:',
-            'style-src \'self\' \'unsafe-inline\'',
+            // https: required for Bitrix24 form CDN stylesheets (e.g. bel.bitrix24.by)
+            'style-src \'self\' \'unsafe-inline\' https:',
             'img-src \'self\' data: blob: https:',
-            'font-src \'self\' data:',
+            'font-src \'self\' data: https:',
             'connect-src \'self\' https:',
             'frame-src https:',
+            'worker-src blob:',
             'base-uri \'self\'',
             'form-action \'self\' https://*.bitrix24.com https://*.bitrix24.by https://*.bitrix24.ru',
             'object-src \'none\''
