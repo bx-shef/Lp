@@ -49,6 +49,12 @@ const legal = {
       >
         Политика конфиденциальности
       </NuxtLink>
+      <a
+        href="https://currency-converter.bx-shef.by/"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="hover:text-white hover:underline"
+      >Конвертер валют</a>
     </div>
   </div>
 </template>

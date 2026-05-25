@@ -164,7 +164,9 @@ const process: ProcessStep[] = [
             <div class="flex flex-wrap items-center gap-3">
               <B24Button
                 label="Описать задачу за 5 минут"
-                to="#brief"
+                href="#brief"
+                :external="true"
+                :no-rel="true"
                 color="air-primary"
                 size="xl"
               >
@@ -174,7 +176,9 @@ const process: ProcessStep[] = [
               </B24Button>
               <B24Button
                 label="Посмотреть, что делаю"
-                to="#services"
+                href="#services"
+                :external="true"
+                :no-rel="true"
                 color="air-secondary-no-accent"
                 size="xl"
               />
