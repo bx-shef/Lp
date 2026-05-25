@@ -64,6 +64,8 @@ jobs:
         run: |
           test -f .output/public/index.html || (echo "ERR: index.html missing" && exit 1)
           test -f .output/public/og-image.png || (echo "ERR: og-image.png missing" && exit 1)
+          test -f .output/public/CNAME || (echo "ERR: CNAME missing" && exit 1)
+          grep -q '<title>[^<]' .output/public/index.html || (echo "ERR: <title> пустой или отсутствует" && exit 1)
           grep -q 'og:image' .output/public/index.html || (echo "ERR: og:image meta missing" && exit 1)
           grep -q 'mc.yandex.ru/metrika/tag.js' .output/public/index.html || (echo "ERR: Yandex Metrika script missing" && exit 1)
           echo "OK: артефакт валиден"
@@ -74,3 +76,65 @@ jobs:
           name: site
           path: .output/public
           retention-days: 7
+
+  deploy-vps:
+    needs: build
+    runs-on: ubuntu-latest
+    name: Deploy to VPS
+    # Пропускаем если секрет не задан — безопасно для форков/PRs
+    if: ${{ secrets.DEPLOY_HOST != '' }}
+    steps:
+      - name: Download artifact
+        # upload-artifact@v4 раскладывает файлы напрямую в path (без tar-обёртки)
+        uses: actions/download-artifact@v4
+        with:
+          name: site
+          path: dist
+
+      - name: Verify dist not empty
+        run: test "$(ls -A dist)" || (echo "ERR: dist/ пуст — rsync с --delete отменён" && exit 1)
+
+      - name: Setup SSH
+        env:
+          DEPLOY_HOST_KEY: ${{ secrets.DEPLOY_HOST_KEY }}
+        run: |
+          install -m 600 -D /dev/null ~/.ssh/id_ed25519
+          printf '%s\n' "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/id_ed25519
+          # DEPLOY_HOST_KEY — строка вида "hostname ssh-ed25519 AAAA..." из ssh-keyscan на доверенной машине.
+          # Если не задан — fallback к keyscan (менее безопасно, MITM-риск).
+          # Получить: ssh-keyscan -p PORT HOST | grep ed25519
+          if [ -n "$DEPLOY_HOST_KEY" ]; then
+            printf '%s\n' "$DEPLOY_HOST_KEY" >> ~/.ssh/known_hosts
+          else
+            ssh-keyscan -p "${{ secrets.DEPLOY_PORT }}" -H "${{ secrets.DEPLOY_HOST }}" >> ~/.ssh/known_hosts
+          fi
+
+      - name: Backup current version on server
+        run: |
+          ssh -p "${{ secrets.DEPLOY_PORT }}" \
+            -o StrictHostKeyChecking=yes \
+            ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} \
+            "cp -al ${{ secrets.DEPLOY_PATH }} ${{ secrets.DEPLOY_PATH }}.bak 2>/dev/null || true"
+
+      - name: Sync to server
+        run: |
+          rsync -az --delete --checksum \
+            -e "ssh -p ${{ secrets.DEPLOY_PORT }} -o StrictHostKeyChecking=yes" \
+            dist/ \
+            ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:${{ secrets.DEPLOY_PATH }}/
+
+      - name: Verify deployment
+        run: |
+          ssh -p "${{ secrets.DEPLOY_PORT }}" \
+            -o StrictHostKeyChecking=yes \
+            ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} \
+            "test -f ${{ secrets.DEPLOY_PATH }}/index.html && echo OK \
+              || (echo 'ERR: index.html не найден на сервере' && exit 1)"
+
+      - name: Smoke test
+        run: |
+          ssh -p "${{ secrets.DEPLOY_PORT }}" \
+            -o StrictHostKeyChecking=yes \
+            ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} \
+            "curl -sf --max-time 10 http://localhost/ | grep -q 'og:image' \
+              || (echo 'ERR: nginx не отдаёт страницу с og:image' && exit 1)"

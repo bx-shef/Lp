@@ -45,6 +45,38 @@ GitHub Actions Variables (для деплой-окружения).
 
 SSL настраивается на стороне хостинга (Let's Encrypt или сертификат провайдера).
 
+### VPS (автоматический деплой через rsync)
+
+Тот же артефакт синхронизируется на сервер через rsync/SSH. Job пропускается
+автоматически если `DEPLOY_HOST` не задан — безопасно для форков и PRs.
+
+**Секреты** (Settings → Secrets and variables → Actions → New repository secret):
+
+| Секрет | Что | Пример |
+|---|---|---|
+| `DEPLOY_SSH_KEY` | Приватный ed25519-ключ для подключения | `-----BEGIN OPENSSH...` |
+| `DEPLOY_HOST` | IP или hostname сервера | `192.168.1.1` |
+| `DEPLOY_PORT` | SSH-порт | `2202` |
+| `DEPLOY_USER` | SSH-пользователь | `bitrix` |
+| `DEPLOY_PATH` | Путь к веб-руту на сервере | `/home/bitrix/www` |
+| `DEPLOY_HOST_KEY` | *(опционально)* Строка fingerprint сервера — защита от MITM. Получить: `ssh-keyscan -p PORT HOST \| grep ed25519` | `hostname ssh-ed25519 AAAA...` |
+
+**Настройка ключа на сервере (один раз):**
+
+```bash
+mkdir -p /home/bitrix/.ssh
+# Сгенерировать ключ (приватный → в GitHub Secret DEPLOY_SSH_KEY):
+ssh-keygen -t ed25519 -C "github-deploy" -f /root/.ssh/github_deploy -N ""
+# Разрешить подключение от этого ключа для юзера bitrix:
+cat /root/.ssh/github_deploy.pub >> /home/bitrix/.ssh/authorized_keys
+chmod 700 /home/bitrix/.ssh && chmod 600 /home/bitrix/.ssh/authorized_keys
+chown -R bitrix:bitrix /home/bitrix/.ssh
+```
+
+После rsync job проверяет что `index.html` появился на сервере и что nginx
+отдаёт страницу на `localhost`. Перед синхронизацией создаётся backup
+предыдущей версии (`DEPLOY_PATH.bak`) для ручного rollback.
+
 ## Структура
 
 ```
@@ -66,7 +98,6 @@ scripts/
 docs/
   copy-v6-proposal.md  # актуальная редакторская версия текстов
   copy-v5.md           # устаревшая (для истории)
-  kp-pipeline-*.md     # внутренние методички (не отображается на сайте)
 legacy/                # архив пред. итераций (статический HTML v1/v2)
 ```
 
@@ -83,7 +114,7 @@ legacy/                # архив пред. итераций (статичес
   Не зависим от Google Fonts CDN (важно для РБ/GDPR).
 - **Аналитика** — Яндекс Метрика (счётчик `NUXT_PUBLIC_METRIKA_ID`, дефолт `109399587`).
   Включены Вебвизор и clickmap. ID можно переопределить через ENV без перебилда.
-- **Тесты** — пока минимальные (Playwright smoke). Расширять по мере роста.
+- **Тесты** — CI запускает lint + typecheck + generate + validate output. Playwright в devDependencies используется только для `pnpm og` (рендер OG-картинки). E2e-тесты не написаны — если потребуются, добавить `playwright.config.ts`.
 
 ## Контакты
 

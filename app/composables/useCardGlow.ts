@@ -6,9 +6,7 @@
  * При уходе курсора с карточки переменные сбрасываются, иначе glow
  * прыгает к последней позиции при следующем наведении.
  */
-export function useCardGlow() {
-  if (import.meta.server) return
-
+export function useCardGlow(): void {
   const handleMove = (e: MouseEvent) => {
     const target = (e.target as Element | null)?.closest('[data-glow-card]') as HTMLElement | null
     if (!target) return

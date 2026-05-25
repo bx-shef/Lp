@@ -9,7 +9,7 @@
   <a
     href="https://www.bitrix24.by/partners/"
     target="_blank"
-    rel="noopener"
+    rel="noopener noreferrer"
     class="inline-flex items-center gap-2 px-3 py-1.5 rounded-md border transition"
     :class="[
       'border-[rgb(var(--color-accent-partner-ch)/0.6)]',
