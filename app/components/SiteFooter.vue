@@ -17,7 +17,6 @@ const legal = {
       <span>© {{ new Date().getFullYear() }} {{ legal.short }}</span>
       <span class="font-mono">{{ legal.unp }}</span>
       <span>{{ legal.city }}</span>
-      <VisitCounter />
     </div>
     <div class="flex flex-wrap items-center gap-x-4 gap-y-1">
       <a

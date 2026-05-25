@@ -32,8 +32,7 @@ GitHub Actions Variables (для деплой-окружения).
 | `NUXT_PUBLIC_B24_FORM_ID` | ID веб-формы Битрикс24 |
 | `NUXT_PUBLIC_B24_FORM_SECRET` | Публичный embed-идентификатор формы (не секрет) |
 | `NUXT_PUBLIC_B24_FORM_SCRIPT_URL` | URL loader-скрипта формы (cdn-ru.bitrix24.by/...) |
-| `NUXT_PUBLIC_COUNTER_NAMESPACE` | counterapi.dev namespace |
-| `NUXT_PUBLIC_COUNTER_KEY` | counterapi.dev key |
+| `NUXT_PUBLIC_METRIKA_ID` | ID счётчика Яндекс Метрики (по умолч. `109399587`) |
 | `NUXT_ALLOWED_HOSTS` | Только для dev-сервера через туннели (ngrok). В production не нужна |
 
 ## Деплой
@@ -54,7 +53,7 @@ app/
   app.config.ts        # b24ui тема (dark по умолчанию)
   error.vue            # NotFound/Error
   assets/css/main.css  # Tailwind + b24ui + brand-токены + self-hosted шрифты
-  components/          # AppLogo, PartnerBadge, BriefForm, SiteFooter, VisitCounter
+  components/          # AppLogo, PartnerBadge, BriefForm, SiteFooter
   composables/         # useCardGlow (mouse-follow glow на карточках)
   pages/               # index, privacy, legal
 public/
@@ -82,8 +81,8 @@ legacy/                # архив пред. итераций (статичес
   Подменить форму — через ENV `NUXT_PUBLIC_B24_FORM_*`, без перебилда.
 - **Шрифты** — self-hosted через `@fontsource/rubik` и `@fontsource/roboto-mono`.
   Не зависим от Google Fonts CDN (важно для РБ/GDPR).
-- **Счётчик посещений** — `counterapi.dev` (free, без cookies). Если упадёт —
-  компонент молча скроется (`v-if="!isErr"`).
+- **Аналитика** — Яндекс Метрика (счётчик `NUXT_PUBLIC_METRIKA_ID`, дефолт `109399587`).
+  Включены Вебвизор и clickmap. ID можно переопределить через ENV без перебилда.
 - **Тесты** — пока минимальные (Playwright smoke). Расширять по мере роста.
 
 ## Контакты
