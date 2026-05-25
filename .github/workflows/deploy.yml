@@ -63,10 +63,15 @@ jobs:
       - name: Validate output
         run: |
           test -f .output/public/index.html || (echo "ERR: index.html missing" && exit 1)
-          test -f .output/public/og-image.png || (echo "ERR: og-image.png missing" && exit 1)
+          test -s .output/public/og-image.png || (echo "ERR: og-image.png missing or empty" && exit 1)
           test -f .output/public/CNAME || (echo "ERR: CNAME missing" && exit 1)
           grep -q '<title>[^<]' .output/public/index.html || (echo "ERR: <title> пустой или отсутствует" && exit 1)
+          grep -q '<title>[^<]' .output/public/privacy/index.html || (echo "ERR: privacy <title> пустой" && exit 1)
+          grep -q '<title>[^<]' .output/public/legal/index.html || (echo "ERR: legal <title> пустой" && exit 1)
           grep -q 'og:image' .output/public/index.html || (echo "ERR: og:image meta missing" && exit 1)
+          grep -q 'canonical' .output/public/index.html || (echo "ERR: canonical link missing" && exit 1)
+          grep -q 'canonical' .output/public/privacy/index.html || (echo "ERR: privacy canonical missing" && exit 1)
+          grep -q 'canonical' .output/public/legal/index.html || (echo "ERR: legal canonical missing" && exit 1)
           grep -q 'mc.yandex.ru/metrika/tag.js' .output/public/index.html || (echo "ERR: Yandex Metrika script missing" && exit 1)
           echo "OK: артефакт валиден"
 
@@ -100,14 +105,15 @@ jobs:
         run: |
           install -m 600 -D /dev/null ~/.ssh/id_ed25519
           printf '%s\n' "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/id_ed25519
-          # DEPLOY_HOST_KEY — строка вида "hostname ssh-ed25519 AAAA..." из ssh-keyscan на доверенной машине.
-          # Если не задан — fallback к keyscan (менее безопасно, MITM-риск).
+          # DEPLOY_HOST_KEY обязателен — строка вида "hostname ssh-ed25519 AAAA..."
           # Получить: ssh-keyscan -p PORT HOST | grep ed25519
-          if [ -n "$DEPLOY_HOST_KEY" ]; then
-            printf '%s\n' "$DEPLOY_HOST_KEY" >> ~/.ssh/known_hosts
-          else
-            ssh-keyscan -p "${{ secrets.DEPLOY_PORT }}" -H "${{ secrets.DEPLOY_HOST }}" >> ~/.ssh/known_hosts
+          # Добавить в: Repository → Settings → Secrets → DEPLOY_HOST_KEY
+          if [ -z "$DEPLOY_HOST_KEY" ]; then
+            echo "ERR: DEPLOY_HOST_KEY secret не задан. Автоматический keyscan отключён (MITM-риск)."
+            echo "Запустите: ssh-keyscan -p PORT HOST | grep ed25519 — и добавьте результат в секрет DEPLOY_HOST_KEY."
+            exit 1
           fi
+          printf '%s\n' "$DEPLOY_HOST_KEY" >> ~/.ssh/known_hosts
 
       - name: Backup current version on server
         run: |

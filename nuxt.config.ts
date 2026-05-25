@@ -3,6 +3,9 @@ const extraAllowedHosts = (process?.env.NUXT_ALLOWED_HOSTS?.split(',').map((s: s
 const siteUrl = process.env.NUXT_PUBLIC_SITE_URL || 'https://bx-shef.by'
 // Только цифры — защита от случайной опечатки или компрометации ENV в CI
 const metrikaId = (process.env.NUXT_PUBLIC_METRIKA_ID || '109399587').replace(/\D/g, '')
+if (!metrikaId) {
+  console.warn('[nuxt.config] NUXT_PUBLIC_METRIKA_ID после фильтрации пустой — скрипт Яндекс Метрики не будет вставлен')
+}
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -47,15 +50,17 @@ export default defineNuxtConfig({
       link: [
         { rel: 'icon', href: '/favicon.ico?v=3' }
       ],
-      script: [
-        {
-          type: 'text/javascript',
-          innerHTML: `(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};m[i].l=1*new Date();for(var j=0;j<document.scripts.length;j++){if(document.scripts[j].src===r){return;}}k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})(window,document,'script','https://mc.yandex.ru/metrika/tag.js?id=${metrikaId}','ym');ym(${metrikaId},'init',{ssr:true,webvisor:true,clickmap:true,accurateTrackBounce:true,trackLinks:true});`
-        }
-      ],
-      noscript: [
-        { innerHTML: `<div><img src="https://mc.yandex.ru/watch/${metrikaId}" style="position:absolute;left:-9999px;" alt="" /></div>` }
-      ]
+      script: metrikaId
+        ? [
+            {
+              type: 'text/javascript',
+              innerHTML: `(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};m[i].l=1*new Date();for(var j=0;j<document.scripts.length;j++){if(document.scripts[j].src===r){return;}}k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})(window,document,'script','https://mc.yandex.ru/metrika/tag.js?id=${metrikaId}','ym');ym(${metrikaId},'init',{ssr:true,webvisor:true,clickmap:true,accurateTrackBounce:true,trackLinks:true});`
+            }
+          ]
+        : [],
+      noscript: metrikaId
+        ? [{ innerHTML: `<div><img src="https://mc.yandex.ru/watch/${metrikaId}" style="position:absolute;left:-9999px;" alt="" /></div>` }]
+        : []
     }
   },
 

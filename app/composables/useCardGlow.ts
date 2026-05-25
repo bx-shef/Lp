@@ -18,6 +18,8 @@ export function useCardGlow(): void {
   const handleLeave = (e: MouseEvent) => {
     const target = e.target as HTMLElement | null
     if (!target?.matches?.('[data-glow-card]')) return
+    // Не сбрасываем если курсор ушёл на дочерний элемент карточки
+    if (target.contains(e.relatedTarget as Node | null)) return
     target.style.removeProperty('--glow-x')
     target.style.removeProperty('--glow-y')
   }
