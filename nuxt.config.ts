@@ -76,6 +76,7 @@ export default defineNuxtConfig({
         '@bitrix24/b24icons-vue/common-service/CodeIcon',
         '@bitrix24/b24icons-vue/main/OpenBookIcon',
         '@bitrix24/b24icons-vue/outline/CheckLIcon',
+        '@bitrix24/b24icons-vue/outline/MoneyIcon',
         '@bitrix24/b24icons-vue/outline/ContactDetailsIcon',
         '@bitrix24/b24icons-vue/outline/CrossLIcon',
         '@bitrix24/b24icons-vue/outline/PhoneAddIcon',
