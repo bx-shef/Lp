@@ -1,0 +1,87 @@
+name: Build & Validate
+
+on:
+  workflow_call:
+    inputs:
+      site-url:
+        description: 'Canonical site URL (NUXT_PUBLIC_SITE_URL)'
+        type: string
+        default: 'https://bx-shef.by'
+      b24-form-id:
+        type: string
+        default: ''
+      b24-form-secret:
+        type: string
+        default: ''
+      b24-form-script-url:
+        type: string
+        default: ''
+      metrika-id:
+        type: string
+        default: ''
+      upload-artifact:
+        description: 'Upload .output/public as artifact "site"'
+        type: boolean
+        default: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      NUXT_APP_BASE_URL: '/'
+      NUXT_PUBLIC_SITE_URL: ${{ inputs.site-url }}
+      # Публичные идентификаторы B24-формы — хранятся в Variables, не в Secrets.
+      # Пустая строка → fallback к дефолтам в nuxt.config.ts.
+      NUXT_PUBLIC_B24_FORM_ID: ${{ inputs.b24-form-id }}
+      NUXT_PUBLIC_B24_FORM_SECRET: ${{ inputs.b24-form-secret }}
+      NUXT_PUBLIC_B24_FORM_SCRIPT_URL: ${{ inputs.b24-form-script-url }}
+      NUXT_PUBLIC_METRIKA_ID: ${{ inputs.metrika-id }}
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Lint
+        run: pnpm run lint
+
+      - name: Typecheck
+        run: pnpm run typecheck
+
+      # generate (статика) вместо build (SSR) — CI и deploy идут одной тропой.
+      - name: Generate (static)
+        run: pnpm run generate
+
+      - name: Validate output
+        run: |
+          test -f .output/public/index.html         || (echo "ERR: index.html missing" && exit 1)
+          test -f .output/public/privacy/index.html || (echo "ERR: privacy missing" && exit 1)
+          test -f .output/public/legal/index.html   || (echo "ERR: legal missing" && exit 1)
+          test -s .output/public/og-image.png       || (echo "ERR: og-image.png missing or empty" && exit 1)
+          test -f .output/public/CNAME              || (echo "ERR: CNAME missing" && exit 1)
+          grep -q '<title>[^<]' .output/public/index.html         || (echo "ERR: index <title> пустой" && exit 1)
+          grep -q '<title>[^<]' .output/public/privacy/index.html || (echo "ERR: privacy <title> пустой" && exit 1)
+          grep -q '<title>[^<]' .output/public/legal/index.html   || (echo "ERR: legal <title> пустой" && exit 1)
+          grep -q 'og:image'  .output/public/index.html           || (echo "ERR: og:image meta missing" && exit 1)
+          grep -q 'canonical' .output/public/index.html           || (echo "ERR: index canonical missing" && exit 1)
+          grep -q 'canonical' .output/public/privacy/index.html   || (echo "ERR: privacy canonical missing" && exit 1)
+          grep -q 'canonical' .output/public/legal/index.html     || (echo "ERR: legal canonical missing" && exit 1)
+          grep -q '/metrika.js' .output/public/index.html         || (echo "ERR: /metrika.js script tag missing" && exit 1)
+          echo "OK: все обязательные артефакты на месте"
+
+      - name: Upload artifact
+        if: inputs.upload-artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: site
+          path: .output/public
+          retention-days: 7

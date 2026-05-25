@@ -30,7 +30,7 @@ const legal = {
       <a
         :href="`https://t.me/${legal.telegram.replace('@', '')}`"
         target="_blank"
-        rel="noopener"
+        rel="noopener noreferrer"
         class="hover:text-white hover:underline"
       >{{ legal.telegram }}</a>
       <NuxtLink

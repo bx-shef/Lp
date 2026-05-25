@@ -3,6 +3,9 @@ const extraAllowedHosts = (process?.env.NUXT_ALLOWED_HOSTS?.split(',').map((s: s
 const siteUrl = process.env.NUXT_PUBLIC_SITE_URL || 'https://bx-shef.by'
 // Только цифры — защита от случайной опечатки или компрометации ENV в CI
 const metrikaId = (process.env.NUXT_PUBLIC_METRIKA_ID || '109399587').replace(/\D/g, '')
+if (!metrikaId) {
+  console.warn('[nuxt.config] NUXT_PUBLIC_METRIKA_ID после фильтрации пустой — скрипт Яндекс Метрики не будет вставлен')
+}
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -23,14 +26,16 @@ export default defineNuxtConfig({
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
         { name: 'theme-color', content: '#030022' },
         { name: 'referrer', content: 'strict-origin-when-cross-origin' },
-        // Базовый CSP. Разрешён https для скриптов/стилей/коннектов — нужно
-        // для Битрикс24-формы (cdn-домены могут меняться), Яндекс Метрики и Google.
+        // CSP. script-src без unsafe-inline — скрипт Метрики вынесен в /metrika.js.
+        // style-src сохраняет unsafe-inline: Vue :style-биндинги генерируют inline
+        // style-атрибуты в DOM, убрать без переписывания шаблонов нельзя.
+        // https: в script-src нужен для B24-формы (cdn-домены могут меняться).
         // form-action ограничен своим origin + Б24 для веб-формы.
         {
           'http-equiv': 'Content-Security-Policy',
           'content': [
             'default-src \'self\'',
-            'script-src \'self\' \'unsafe-inline\' https:',
+            'script-src \'self\' https:',
             // https: required for Bitrix24 form CDN stylesheets (e.g. bel.bitrix24.by)
             'style-src \'self\' \'unsafe-inline\' https:',
             'img-src \'self\' data: blob: https:',
@@ -42,20 +47,16 @@ export default defineNuxtConfig({
             'form-action \'self\' https://*.bitrix24.com https://*.bitrix24.by https://*.bitrix24.ru',
             'object-src \'none\''
           ].join('; ')
-        }
+        },
+        ...(metrikaId ? [{ name: 'ym-id', content: metrikaId }] : [])
       ],
       link: [
         { rel: 'icon', href: '/favicon.ico?v=3' }
       ],
-      script: [
-        {
-          type: 'text/javascript',
-          innerHTML: `(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};m[i].l=1*new Date();for(var j=0;j<document.scripts.length;j++){if(document.scripts[j].src===r){return;}}k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})(window,document,'script','https://mc.yandex.ru/metrika/tag.js?id=${metrikaId}','ym');ym(${metrikaId},'init',{ssr:true,webvisor:true,clickmap:true,accurateTrackBounce:true,trackLinks:true});`
-        }
-      ],
-      noscript: [
-        { innerHTML: `<div><img src="https://mc.yandex.ru/watch/${metrikaId}" style="position:absolute;left:-9999px;" alt="" /></div>` }
-      ]
+      script: metrikaId ? [{ src: '/metrika.js', async: true }] : [],
+      noscript: metrikaId
+        ? [{ innerHTML: `<div><img src="https://mc.yandex.ru/watch/${metrikaId}" style="position:absolute;left:-9999px;" alt="" /></div>` }]
+        : []
     }
   },
 

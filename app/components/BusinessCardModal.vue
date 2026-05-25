@@ -14,7 +14,7 @@ const qrDataUrl = ref('')
 const contactAdded = ref(false)
 let feedbackTimer: ReturnType<typeof setTimeout> | null = null
 
-const SITE_URL = 'https://bx-shef.by'
+const siteUrl = useRuntimeConfig().public.siteUrl as string
 
 // Публичные реквизиты ИП — намеренно хардкодены, это публичная визитка.
 const card = {
@@ -33,7 +33,7 @@ const card = {
 // Генерируем QR один раз при маунте компонента.
 onMounted(async () => {
   try {
-    qrDataUrl.value = await QRCode.toDataURL(SITE_URL, {
+    qrDataUrl.value = await QRCode.toDataURL(siteUrl, {
       width: 180,
       margin: 1,
       color: { dark: '#ffffff', light: '#00000000' },
@@ -79,8 +79,8 @@ function downloadVCard() {
     `TITLE:${card.role}`,
     `TEL;TYPE=CELL:${card.phoneTel}`,
     `EMAIL:${card.email}`,
-    `URL:${SITE_URL}`,
-    `ADR;TYPE=WORK:;;пр. Дзержинского д. 131 кв. 234;Минск;;220025;BY`,
+    `URL:${siteUrl}`,
+    `ADR;TYPE=WORK:;;;Минск;;220025;BY`,
     `NOTE:AI\\, интеграции\\, MCP под Битрикс24. ${card.unp}.`,
     'END:VCARD'
   ].join('\r\n')
@@ -104,15 +104,14 @@ ${'─'.repeat(44)}
 Ф.И.О.:               Шевчик Игорь Сергеевич
 УНП:                  192049017
 Свидетельство:        192049017 от 12.09.2013
-Юр. адрес:            пр. Дзержинского, д. 131, кв. 234
-                      г. Минск, Беларусь, 220025
+Юр. адрес:            г. Минск, Беларусь, 220025
 
 КОНТАКТЫ
 ${'─'.repeat(44)}
 Телефон:              ${card.phone}
 Email:                ${card.email}
 Telegram:             ${card.telegram}
-Сайт:                 ${SITE_URL}
+Сайт:                 ${siteUrl}
 
 БАНКОВСКИЕ РЕКВИЗИТЫ
 ${'─'.repeat(44)}
@@ -124,20 +123,21 @@ ${'─'.repeat(44)}
 Валюта:               BYN
 
 ${'═'.repeat(44)}
-${SITE_URL}
+${siteUrl}
 `
   triggerDownload(new Blob([txt], { type: 'text/plain;charset=utf-8' }), 'ip-shevchik-requisites.txt')
 }
 
 // Вставляем <a> в DOM перед кликом — без этого Firefox не скачивает text/vcard.
 // revokeObjectURL через setTimeout — Safari читает blob асинхронно.
+// 1000 мс вместо 100: на медленных устройствах браузер успевает начать скачивание до отзыва URL.
 function triggerDownload(blob: Blob, filename: string) {
   const url = URL.createObjectURL(blob)
   const a = Object.assign(document.createElement('a'), { href: url, download: filename })
   document.body.appendChild(a)
   a.click()
   a.remove()
-  setTimeout(() => URL.revokeObjectURL(url), 100)
+  setTimeout(() => URL.revokeObjectURL(url), 1000)
 }
 </script>
 
