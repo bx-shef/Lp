@@ -30,7 +30,7 @@ interface ProcessStep {
   step: string
   title: string
   text: string
-  /** Опциональный список деталей (используется в Discovery) */
+  /** Опциональный список деталей (используется в Изучении) */
   list?: readonly string[]
 }
 
@@ -74,19 +74,19 @@ const differentiators: DifferentiatorItem[] = [
 const takeIf = [
   'У вас уже работает Битрикс24, и не хватает одной конкретной вещи',
   'Маркетплейс пробовали — не подошло или не покрывает',
-  'Готовы вкладываться в discovery: задача нестандартная, нужны изыскания'
+  'Готовы вкладываться в изучение: задача нестандартная, нужны изыскания'
 ]
 
 const skipIf = [
-  'Сейчас перегружен и нет свободного слота — честно скажу на discovery',
+  'Сейчас перегружен и нет свободного слота — честно скажу на изучении',
   'Задача за пределами моего стека и компетенции — лучше передам коллеге',
-  'Нет готовности вкладываться в исследование: нужен готовый коробочный продукт'
+  'Заказчик хочет коробочный продукт без погружения в задачу — кастомная разработка без discovery не работает'
 ]
 
 const process: ProcessStep[] = [
   {
     step: '01',
-    title: 'Discovery',
+    title: 'Изучение',
     text: '30 минут, бесплатно. Заранее пришлю 5 вопросов:',
     list: [
       'Что должно работать после внедрения?',
@@ -104,7 +104,7 @@ const process: ProcessStep[] = [
   {
     step: '03',
     title: 'Разработка',
-    text: 'Демо каждые 1–2 недели. Закрытый этап оплачивается полностью, текущий — по часам из публичного трекера. Остановите проект — платите только за сделанное.'
+    text: 'Демо каждые 1–2 недели. Закрытый этап оплачивается полностью, текущий — по часам из трекера задач в вашем Битрикс24. Остановите проект — платите только за сделанное.'
   },
   {
     step: '04',
@@ -118,42 +118,63 @@ const process: ProcessStep[] = [
   <div>
     <!-- HERO -->
     <section class="hero-fade-in px-[22px] lg:px-8 pt-[80px] sm:pt-[120px] pb-[64px] sm:pb-[96px]">
-      <div class="max-w-[1080px] mx-auto flex flex-col items-start sm:items-center gap-6">
-        <PartnerBadge />
+      <div class="max-w-[1080px] mx-auto">
+        <div class="flex flex-col lg:flex-row lg:items-center gap-10 lg:gap-20">
+          <!-- Фото — первое на мобильном, правая колонка на desktop -->
+          <div class="shrink-0 flex justify-start lg:justify-end order-first lg:order-last">
+            <img
+              src="/igor.jpg"
+              alt="Игорь Шевчик"
+              width="240"
+              height="240"
+              class="size-44 sm:size-52 lg:size-60 rounded-full object-cover border-2 border-[rgb(var(--color-accent-primary-ch)/0.45)] shadow-[0_0_64px_rgba(0,212,255,0.20)]"
+              loading="eager"
+            >
+          </div>
 
-        <h1 class="sm:text-center text-5xl sm:text-7xl font-bold leading-[1.05] tracking-tight text-white">
-          Кастомная разработка<br>под <span class="text-[rgb(var(--color-accent-primary-ch))]">Битрикс24</span>
-        </h1>
+          <!-- Текст -->
+          <div class="flex flex-col items-start gap-5 flex-1">
+            <PartnerBadge />
 
-        <p class="sm:text-center text-lg sm:text-2xl max-w-[820px] text-white/70 leading-relaxed">
-          AI, интеграции, MCP. <span class="text-white">То, чего нет в маркетплейсе — собираю под вас.</span>
-        </p>
+            <h1 class="text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.05] tracking-tight text-white">
+              Кастомная разработка<br>под <span class="text-[rgb(var(--color-accent-primary-ch))]">Битрикс24</span>
+            </h1>
 
-        <div class="mt-4 flex flex-wrap items-center gap-3">
-          <B24Button
-            label="Описать задачу за 5 минут"
-            to="#brief"
-            color="air-primary"
-            size="xl"
-          >
-            <template #trailing>
-              <ArrowRightLIcon class="size-5" />
-            </template>
-          </B24Button>
-          <B24Button
-            label="Посмотреть, что делаю"
-            to="#services"
-            color="air-secondary-no-accent"
-            size="xl"
-          />
+            <p class="text-lg sm:text-xl max-w-[560px] text-white/70 leading-relaxed">
+              AI, интеграции, MCP. <span class="text-white">То, чего нет в маркетплейсе — собираю под вас.</span>
+            </p>
+
+            <p class="text-xl font-bold text-white tracking-tight">
+              Игорь Шевчик<span class="text-[rgb(var(--color-accent-primary-ch))]">.</span>
+            </p>
+
+            <div class="flex flex-wrap items-center gap-3">
+              <B24Button
+                label="Описать задачу за 5 минут"
+                to="#brief"
+                color="air-primary"
+                size="xl"
+              >
+                <template #trailing>
+                  <ArrowRightLIcon class="size-5" />
+                </template>
+              </B24Button>
+              <B24Button
+                label="Посмотреть, что делаю"
+                to="#services"
+                color="air-secondary-no-accent"
+                size="xl"
+              />
+            </div>
+          </div>
         </div>
 
         <!-- Tech-стек -->
-        <div class="mt-12 sm:mt-16 flex flex-col items-start sm:items-center gap-3">
+        <div class="mt-12 sm:mt-16 flex flex-col items-start gap-3">
           <div class="text-xs uppercase tracking-[0.18em] text-white/40 font-mono">
             Работает с моделями
           </div>
-          <div class="flex flex-wrap items-center justify-start sm:justify-center gap-x-6 sm:gap-x-10 gap-y-2 text-white/60">
+          <div class="flex flex-wrap items-center justify-start gap-x-6 sm:gap-x-10 gap-y-2 text-white/60">
             <span class="font-mono text-sm tracking-tight">Claude</span>
             <span class="size-1 rounded-full bg-white/20" />
             <span class="font-mono text-sm tracking-tight">OpenAI</span>

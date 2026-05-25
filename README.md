@@ -3,7 +3,7 @@
 Лендинг ИП Шевчик: «Кастомная разработка под Битрикс24. AI, интеграции, MCP».
 
 **Стек:** Nuxt 4 + `@bitrix24/b24ui-nuxt` + Tailwind v4 + TypeScript, статическая
-генерация (`pnpm generate`), деплой на GitHub Pages с кастомным доменом `bx-shef.by`.
+генерация (`pnpm generate`), деплой на собственный хостинг с доменом `bx-shef.by`.
 
 ## Старт
 
@@ -32,24 +32,20 @@ GitHub Actions Variables (для деплой-окружения).
 | `NUXT_PUBLIC_B24_FORM_ID` | ID веб-формы Битрикс24 |
 | `NUXT_PUBLIC_B24_FORM_SECRET` | Публичный embed-идентификатор формы (не секрет) |
 | `NUXT_PUBLIC_B24_FORM_SCRIPT_URL` | URL loader-скрипта формы (cdn-ru.bitrix24.by/...) |
-| `NUXT_PUBLIC_COUNTER_NAMESPACE` | counterapi.dev namespace |
-| `NUXT_PUBLIC_COUNTER_KEY` | counterapi.dev key |
+| `NUXT_PUBLIC_METRIKA_ID` | ID счётчика Яндекс Метрики (по умолч. `109399587`) |
 | `NUXT_ALLOWED_HOSTS` | Только для dev-сервера через туннели (ngrok). В production не нужна |
 
 ## Деплой
 
-### GitHub Pages
-
 Через `.github/workflows/deploy.yml`:
 
 1. `push` в `main` (или ручной запуск) → CI чекает lint, typecheck, generate
-2. Артефакт `.output/public` уезжает в GitHub Pages
-3. Кастомный домен берётся из `public/CNAME`
+2. Артефакт `.output/public` упаковывается и готов к выгрузке на хостинг
+3. Залить содержимое `.output/public/` в корень веб-хоста (FTP, rsync или панель хостинга)
 
-DNS у регистратора домена: `CNAME bx-shef.by → <username>.github.io`.
-SSL автоматически выдаётся GitHub Pages при включённой опции «Enforce HTTPS».
+SSL настраивается на стороне хостинга (Let's Encrypt или сертификат провайдера).
 
-### VPS (параллельный деплой)
+### VPS (автоматический деплой через rsync)
 
 Тот же артефакт синхронизируется на сервер через rsync/SSH. Job пропускается
 автоматически если `DEPLOY_HOST` не задан — безопасно для форков и PRs.
@@ -62,7 +58,7 @@ SSL автоматически выдаётся GitHub Pages при включё
 | `DEPLOY_HOST` | IP или hostname сервера | `192.168.1.1` |
 | `DEPLOY_PORT` | SSH-порт | `2202` |
 | `DEPLOY_USER` | SSH-пользователь | `bitrix` |
-| `DEPLOY_PATH` | Путь к веб-рутe на сервере | `/home/bitrix/www` |
+| `DEPLOY_PATH` | Путь к веб-руту на сервере | `/home/bitrix/www` |
 | `DEPLOY_HOST_KEY` | *(опционально)* Строка fingerprint сервера — защита от MITM. Получить: `ssh-keyscan -p PORT HOST \| grep ed25519` | `hostname ssh-ed25519 AAAA...` |
 
 **Настройка ключа на сервере (один раз):**
@@ -89,20 +85,19 @@ app/
   app.config.ts        # b24ui тема (dark по умолчанию)
   error.vue            # NotFound/Error
   assets/css/main.css  # Tailwind + b24ui + brand-токены + self-hosted шрифты
-  components/          # AppLogo, PartnerBadge, BriefForm, SiteFooter, VisitCounter
+  components/          # AppLogo, PartnerBadge, BriefForm, SiteFooter
   composables/         # useCardGlow (mouse-follow glow на карточках)
   pages/               # index, privacy, legal
 public/
   igor.jpg             # фото в карточке «не bus factor»
   og-image.png         # OG (генерируется через pnpm og)
-  CNAME                # bx-shef.by для GH Pages
+  CNAME                # домен bx-shef.by
   favicon.ico
 scripts/
   generate-og.mjs      # Playwright-рендер OG из HTML-шаблона
 docs/
   copy-v6-proposal.md  # актуальная редакторская версия текстов
   copy-v5.md           # устаревшая (для истории)
-  kp-pipeline-*.md     # внутренние методички (не отображается на сайте)
 legacy/                # архив пред. итераций (статический HTML v1/v2)
 ```
 
@@ -117,8 +112,8 @@ legacy/                # архив пред. итераций (статичес
   Подменить форму — через ENV `NUXT_PUBLIC_B24_FORM_*`, без перебилда.
 - **Шрифты** — self-hosted через `@fontsource/rubik` и `@fontsource/roboto-mono`.
   Не зависим от Google Fonts CDN (важно для РБ/GDPR).
-- **Счётчик посещений** — `counterapi.dev` (free, без cookies). Если упадёт —
-  компонент молча скроется (`v-if="!isErr"`).
+- **Аналитика** — Яндекс Метрика (счётчик `NUXT_PUBLIC_METRIKA_ID`, дефолт `109399587`).
+  Включены Вебвизор и clickmap. ID можно переопределить через ENV без перебилда.
 - **Тесты** — CI запускает lint + typecheck + generate + validate output. Playwright в devDependencies используется только для `pnpm og` (рендер OG-картинки). E2e-тесты не написаны — если потребуются, добавить `playwright.config.ts`.
 
 ## Контакты
