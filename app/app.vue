@@ -6,7 +6,7 @@ import TelegramIcon from '@bitrix24/b24icons-vue/outline/TelegramIcon'
 const config = useRuntimeConfig()
 
 const title = 'Кастомная разработка под Битрикс24: AI, интеграции, MCP-серверы | bx-shef.by'
-const description = 'Разрабатываю AI-помощников, интеграции и MCP-серверы для Битрикс24. Беру задачи, которые маркетплейс не закрывает. Изучение — 30 минут, бесплатно.'
+const description = 'Разрабатываю AI-помощников, интеграции и MCP-серверы для Битрикс24. Беру задачи, которые маркетплейс не закрывает. Разбор задачи — 30 минут, бесплатно.'
 const ogImage = `${config.public.siteUrl}/og-image.png`
 
 useSeoMeta({
