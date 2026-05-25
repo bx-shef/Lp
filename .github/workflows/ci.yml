@@ -46,7 +46,7 @@ jobs:
           test -f .output/public/privacy/index.html || (echo "ERR: privacy missing" && exit 1)
           test -f .output/public/legal/index.html || (echo "ERR: legal missing" && exit 1)
           test -f .output/public/og-image.png || (echo "ERR: og-image.png missing" && exit 1)
-          grep -q '<title>' .output/public/index.html || (echo "ERR: <title> missing" && exit 1)
+          grep -q '<title>[^<]' .output/public/index.html || (echo "ERR: <title> пустой или отсутствует" && exit 1)
           grep -q 'og:image' .output/public/index.html || (echo "ERR: og:image meta missing" && exit 1)
           grep -q 'canonical' .output/public/index.html || (echo "ERR: canonical link missing" && exit 1)
           echo "OK: все обязательные артефакты на месте"

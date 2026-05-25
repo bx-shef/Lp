@@ -17,6 +17,8 @@
 const config = useRuntimeConfig()
 const hasForm = computed(() => !!config.public.b24FormScriptUrl)
 
+const ID_RE = /^[a-zA-Z0-9_-]+$/
+
 const B24_HOST_ALLOWLIST = [
   '.bitrix24.com',
   '.bitrix24.by',
@@ -43,6 +45,10 @@ onMounted(() => {
   if (host.querySelector('script[data-b24-form]')) return
   if (!isAllowedB24Host(config.public.b24FormScriptUrl)) {
     console.warn('[BriefForm] script URL не из allowlist Битрикс24, форма не загружена')
+    return
+  }
+  if (!ID_RE.test(config.public.b24FormId) || !ID_RE.test(config.public.b24FormSecret)) {
+    console.warn('[BriefForm] невалидный b24FormId или b24FormSecret, форма не загружена')
     return
   }
 
