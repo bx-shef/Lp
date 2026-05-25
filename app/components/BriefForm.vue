@@ -1,15 +1,4 @@
 <script setup lang="ts">
-/**
- * Встройка Битрикс24 веб-формы через iframe (srcdoc).
- *
- * Ключевое отличие от script-inject подхода:
- *  - Форма изолирована в iframe → не конфликтует с глобальным JS/CSS страницы
- *  - Нет inline-скриптов на основной странице → CSP не нарушается
- *  - srcdoc содержит только marker-тег (no content) + external loader script
- *
- * За основу взят паттерн из feedback.html.client.vue (B24 SDK app).
- * Адаптировано для standalone-лендинга без B24-app контекста.
- */
 const config = useRuntimeConfig()
 
 const ID_RE = /^[a-zA-Z0-9_-]+$/
@@ -52,15 +41,17 @@ onMounted(() => {
   const loaderSrc = `${b24FormScriptUrl}?${Math.floor(Date.now() / 180000)}`
   const formAttr = `inline/${b24FormId}/${b24FormSecret}`
 
-  // Закрывающий тег </script> внутри строки шаблона нужно разбивать,
-  // чтобы HTML-парсер Vue SFC не закрыл <script setup> раньше времени.
+  // Тег закрытия script разбит на '<' + '/script>', чтобы HTML-парсер не
+  // выходил из блока раньше времени (актуально для srcdoc-строки).
+  const closeScript = '<' + '/script>'
+
   srcdoc.value = `<!doctype html>`
     + `<meta charset="utf-8">`
     + `<meta name="viewport" content="width=device-width,initial-scale=1">`
     + `<style>*{box-sizing:border-box}body{margin:0;padding:0;background:transparent}</style>`
     + `<body>`
-    + `<script data-b24-form="${formAttr}" data-skip-moving="true"><` + `/script>`
-    + `<script src="${loaderSrc}" async><` + `/script>`
+    + `<script data-b24-form="${formAttr}" data-skip-moving="true">${closeScript}`
+    + `<script src="${loaderSrc}" async>${closeScript}`
     + `</body>`
 })
 </script>
