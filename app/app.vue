@@ -3,6 +3,12 @@ import GitHubIcon from '@bitrix24/b24icons-vue/social/GitHubIcon'
 import Bitrix24Icon from '@bitrix24/b24icons-vue/common-service/Bitrix24Icon'
 import TelegramIcon from '@bitrix24/b24icons-vue/outline/TelegramIcon'
 import ContactDetailsIcon from '@bitrix24/b24icons-vue/outline/ContactDetailsIcon'
+import ReceiptIcon from '@bitrix24/b24icons-vue/outline/ReceiptIcon'
+import OpenBookIcon from '@bitrix24/b24icons-vue/main/OpenBookIcon'
+import ThemeIcon from '@bitrix24/b24icons-vue/outline/ThemeIcon'
+import CodeIcon from '@bitrix24/b24icons-vue/common-service/CodeIcon'
+import AppsIcon from '@bitrix24/b24icons-vue/solid/AppsIcon'
+import DeveloperResourcesIcon from '@bitrix24/b24icons-vue/solid/DeveloperResourcesIcon'
 
 const cardOpen = ref(false)
 
@@ -12,16 +18,18 @@ const navItems = [
   [
     {
       label: 'Реквизиты',
+      icon: ReceiptIcon,
       to: '/legal'
     },
     {
       label: 'Документация',
+      icon: OpenBookIcon,
       children: [
         [
-          { label: 'b24ui', to: 'https://bitrix24.github.io/b24ui/', target: '_blank' },
-          { label: 'b24jssdk', to: 'https://bitrix24.github.io/b24jssdk/', target: '_blank' },
-          { label: 'b24icons', to: 'https://bitrix24.github.io/b24icons/', target: '_blank' },
-          { label: 'REST API', to: 'https://apidocs.bitrix24.ru/', target: '_blank' }
+          { label: 'b24ui', icon: ThemeIcon, to: 'https://bitrix24.github.io/b24ui/', target: '_blank' },
+          { label: 'b24jssdk', icon: CodeIcon, to: 'https://bitrix24.github.io/b24jssdk/', target: '_blank' },
+          { label: 'b24icons', icon: AppsIcon, to: 'https://bitrix24.github.io/b24icons/', target: '_blank' },
+          { label: 'REST API', icon: DeveloperResourcesIcon, to: 'https://apidocs.bitrix24.ru/', target: '_blank' }
         ]
       ]
     }
