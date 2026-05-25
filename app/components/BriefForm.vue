@@ -38,20 +38,23 @@ onMounted(() => {
     return
   }
 
-  const loaderSrc = `${b24FormScriptUrl}?${Math.floor(Date.now() / 180000)}`
   const formAttr = `inline/${b24FormId}/${b24FormSecret}`
 
-  // Тег закрытия script разбит на '<' + '/script>', чтобы HTML-парсер не
-  // выходил из блока раньше времени (актуально для srcdoc-строки).
+  // Тег закрытия script разбит на '<' + '/script>', чтобы Vue SFC-парсер не
+  // закрывал блок <script setup> раньше времени.
   const closeScript = '<' + '/script>'
 
+  // Точная копия официального Bitrix24 embed: маркер с IIFE внутри, который
+  // создаёт тег загрузчика и вставляет его перед маркером. Загрузчик при запуске
+  // находит следующий за собой элемент с [data-b24-form] и рендерит форму там.
   srcdoc.value = `<!doctype html>`
     + `<meta charset="utf-8">`
     + `<meta name="viewport" content="width=device-width,initial-scale=1">`
     + `<style>*{box-sizing:border-box}body{margin:0;padding:0;background-color:#272c2f;}</style>`
     + `<body>`
-    + `<script data-b24-form="${formAttr}" data-skip-moving="true">${closeScript}`
-    + `<script src="${loaderSrc}" async>${closeScript}`
+    + `<script data-b24-form="${formAttr}" data-skip-moving="true">`
+    + `(function(w,d,u){var s=d.createElement('script');s.async=true;s.src=u+'?'+(Date.now()/180000|0);var h=d.getElementsByTagName('script')[0];h.parentNode.insertBefore(s,h);})(window,document,'${b24FormScriptUrl}');`
+    + `${closeScript}`
     + `</body>`
 })
 </script>
