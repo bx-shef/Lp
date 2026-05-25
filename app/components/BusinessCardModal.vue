@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref, watch, onMounted, onUnmounted } from 'vue'
 import QRCode from 'qrcode'
 import DownloadIcon from '@bitrix24/b24icons-vue/actions/DownloadIcon'
 import PhoneAddIcon from '@bitrix24/b24icons-vue/outline/PhoneAddIcon'
@@ -46,6 +45,7 @@ onMounted(async () => {
 
 // Scroll-lock и keyboard-trap привязаны к состоянию open, а не к маунту.
 watch(() => props.open, (isOpen) => {
+  if (!import.meta.client) return
   if (isOpen) {
     document.addEventListener('keydown', handleKey)
     document.body.style.overflow = 'hidden'

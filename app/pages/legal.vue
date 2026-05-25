@@ -42,8 +42,8 @@ const bank = [
       </h2>
       <div class="rounded-2xl border border-white/10 bg-white/[0.03] divide-y divide-white/5">
         <div
-          v-for="([k, v], i) in rows"
-          :key="i"
+          v-for="([k, v]) in rows"
+          :key="k"
           class="grid grid-cols-1 sm:grid-cols-[260px_1fr] gap-2 sm:gap-6 px-5 py-3.5"
         >
           <div class="text-sm text-white/55">
@@ -62,8 +62,8 @@ const bank = [
       </h2>
       <div class="rounded-2xl border border-white/10 bg-white/[0.03] divide-y divide-white/5">
         <div
-          v-for="([k, v, href], i) in contacts"
-          :key="i"
+          v-for="([k, v, href]) in contacts"
+          :key="k"
           class="grid grid-cols-1 sm:grid-cols-[260px_1fr] gap-2 sm:gap-6 px-5 py-3.5"
         >
           <div class="text-sm text-white/55">
@@ -87,8 +87,8 @@ const bank = [
       </h2>
       <div class="rounded-2xl border border-white/10 bg-white/[0.03] divide-y divide-white/5">
         <div
-          v-for="([k, v], i) in bank"
-          :key="i"
+          v-for="([k, v]) in bank"
+          :key="k"
           class="grid grid-cols-1 sm:grid-cols-[260px_1fr] gap-2 sm:gap-6 px-5 py-3.5"
         >
           <div class="text-sm text-white/55">
