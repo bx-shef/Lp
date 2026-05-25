@@ -88,3 +88,33 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  deploy-vps:
+    needs: build
+    runs-on: ubuntu-latest
+    name: Deploy to VPS
+    # Пропускаем если секрет не задан — безопасно для форков/PRs
+    if: ${{ secrets.DEPLOY_HOST != '' }}
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: github-pages
+          path: dist-tar
+
+      - name: Extract artifact
+        run: |
+          mkdir -p dist
+          tar -xf dist-tar/artifact.tar -C dist
+
+      - name: Setup SSH
+        run: |
+          install -m 600 -D /dev/null ~/.ssh/id_ed25519
+          echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/id_ed25519
+          ssh-keyscan -H "${{ secrets.DEPLOY_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Sync to server
+        run: |
+          rsync -az --delete --checksum \
+            dist/ \
+            ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/var/www/bx-shef/
