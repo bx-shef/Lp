@@ -96,7 +96,7 @@ useHead({
 
     <ClientOnly>
       <BusinessCardModal
-        v-if="cardOpen"
+        :open="cardOpen"
         @close="cardOpen = false"
       />
     </ClientOnly>

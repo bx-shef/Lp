@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, watch, onMounted, onUnmounted } from 'vue'
 import QRCode from 'qrcode'
 import DownloadIcon from '@bitrix24/b24icons-vue/actions/DownloadIcon'
 import PhoneAddIcon from '@bitrix24/b24icons-vue/outline/PhoneAddIcon'
@@ -7,13 +7,16 @@ import TelegramIcon from '@bitrix24/b24icons-vue/outline/TelegramIcon'
 import CrossLIcon from '@bitrix24/b24icons-vue/outline/CrossLIcon'
 import CheckLIcon from '@bitrix24/b24icons-vue/outline/CheckLIcon'
 
+const props = defineProps<{ open: boolean }>()
 const emit = defineEmits<{ close: [] }>()
 
 const qrDataUrl = ref('')
 const contactAdded = ref(false)
+let feedbackTimer: ReturnType<typeof setTimeout> | null = null
 
 const SITE_URL = 'https://bx-shef.by'
 
+// Публичные реквизиты ИП — намеренно хардкодены, это публичная визитка.
 const card = {
   name: 'Игорь Шевчик',
   role: 'Кастомная разработка под Битрикс24',
@@ -25,22 +28,39 @@ const card = {
   telegram: '@bxshefby',
   city: 'Минск, Беларусь',
   site: 'bx-shef.by'
-}
+} as const
 
+// Генерируем QR один раз при маунте компонента.
 onMounted(async () => {
-  qrDataUrl.value = await QRCode.toDataURL(SITE_URL, {
-    width: 180,
-    margin: 1,
-    color: { dark: '#ffffff', light: '#00000000' },
-    errorCorrectionLevel: 'M'
-  })
-  document.addEventListener('keydown', handleKey)
-  document.body.style.overflow = 'hidden'
+  try {
+    qrDataUrl.value = await QRCode.toDataURL(SITE_URL, {
+      width: 180,
+      margin: 1,
+      color: { dark: '#ffffff', light: '#00000000' },
+      errorCorrectionLevel: 'M'
+    })
+  }
+  catch {
+    // qrDataUrl остаётся '', пользователь видит skeleton — не критично.
+  }
+})
+
+// Scroll-lock и keyboard-trap привязаны к состоянию open, а не к маунту.
+watch(() => props.open, (isOpen) => {
+  if (isOpen) {
+    document.addEventListener('keydown', handleKey)
+    document.body.style.overflow = 'hidden'
+  }
+  else {
+    document.removeEventListener('keydown', handleKey)
+    document.body.style.overflow = ''
+  }
 })
 
 onUnmounted(() => {
   document.removeEventListener('keydown', handleKey)
   document.body.style.overflow = ''
+  if (feedbackTimer) clearTimeout(feedbackTimer)
 })
 
 function handleKey(e: KeyboardEvent) {
@@ -70,7 +90,9 @@ function downloadVCard() {
   triggerDownload(new Blob([vcf], { type: 'text/vcard;charset=utf-8' }), 'igor-shevchik.vcf')
 
   contactAdded.value = true
-  setTimeout(() => (contactAdded.value = false), 2200)
+  if (feedbackTimer) clearTimeout(feedbackTimer)
+  // 2.2 с — достаточно чтобы прочесть «Контакт сохранён» и не затягивать.
+  feedbackTimer = setTimeout(() => (contactAdded.value = false), 2200)
 }
 
 function downloadRequisites() {
@@ -109,16 +131,20 @@ ${SITE_URL}
   triggerDownload(new Blob([txt], { type: 'text/plain;charset=utf-8' }), 'ip-shevchik-requisites.txt')
 }
 
+// Вставляем <a> в DOM перед кликом — без этого Firefox не скачивает text/vcard.
+// revokeObjectURL через setTimeout — Safari читает blob асинхронно.
 function triggerDownload(blob: Blob, filename: string) {
   const url = URL.createObjectURL(blob)
   const a = Object.assign(document.createElement('a'), { href: url, download: filename })
+  document.body.appendChild(a)
   a.click()
-  URL.revokeObjectURL(url)
+  a.remove()
+  setTimeout(() => URL.revokeObjectURL(url), 100)
 }
 </script>
 
 <template>
-  <!-- Backdrop -->
+  <!-- v-if живёт здесь, а не в родителе — чтобы leave-анимация отрабатывала. -->
   <Teleport to="body">
     <Transition
       enter-active-class="transition duration-200 ease-out"
@@ -129,6 +155,7 @@ function triggerDownload(blob: Blob, filename: string) {
       leave-to-class="opacity-0"
     >
       <div
+        v-if="open"
         data-backdrop="1"
         class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/70 backdrop-blur-sm"
         @click="onBackdropClick"
@@ -136,7 +163,7 @@ function triggerDownload(blob: Blob, filename: string) {
         <!-- Card -->
         <Transition
           appear
-          enter-active-class="transition duration-250 ease-out"
+          enter-active-class="transition duration-[250ms] ease-out"
           enter-from-class="opacity-0 scale-95 translate-y-2"
           enter-to-class="opacity-100 scale-100 translate-y-0"
         >
@@ -152,6 +179,7 @@ function triggerDownload(blob: Blob, filename: string) {
 
             <!-- Close -->
             <button
+              type="button"
               class="absolute top-4 right-4 z-10 flex items-center justify-center size-8 rounded-xl text-white/40 hover:text-white hover:bg-white/10 transition-colors"
               aria-label="Закрыть"
               @click="emit('close')"
@@ -221,6 +249,7 @@ function triggerDownload(blob: Blob, filename: string) {
                 </div>
 
                 <!-- Contacts -->
+                <!-- PhoneIcon и MailIcon отсутствуют в b24icons — используем inline SVG. -->
                 <ul class="flex flex-col gap-2.5">
                   <li>
                     <a
@@ -259,7 +288,7 @@ function triggerDownload(blob: Blob, filename: string) {
                     <a
                       :href="`https://t.me/${card.telegram.replace('@', '')}`"
                       target="_blank"
-                      rel="noopener"
+                      rel="noopener noreferrer"
                       class="group flex items-center gap-3 text-sm text-white/70 hover:text-white transition-colors"
                     >
                       <span
@@ -277,6 +306,7 @@ function triggerDownload(blob: Blob, filename: string) {
                 <div class="flex flex-col gap-2.5">
                   <!-- Add to contacts -->
                   <button
+                    type="button"
                     class="group relative flex items-center justify-center gap-2.5 w-full h-11 rounded-xl text-sm font-semibold overflow-hidden transition-all duration-200"
                     :class="contactAdded
                       ? 'text-white'
@@ -310,6 +340,7 @@ function triggerDownload(blob: Blob, filename: string) {
 
                   <!-- Download requisites -->
                   <button
+                    type="button"
                     class="flex items-center justify-center gap-2.5 w-full h-11 rounded-xl text-sm font-semibold text-white/60 hover:text-white/90 transition-colors"
                     style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);"
                     @click="downloadRequisites"
