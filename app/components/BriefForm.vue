@@ -48,7 +48,7 @@ onMounted(() => {
   srcdoc.value = `<!doctype html>`
     + `<meta charset="utf-8">`
     + `<meta name="viewport" content="width=device-width,initial-scale=1">`
-    + `<style>*{box-sizing:border-box}body{margin:0;padding:0;background:transparent}</style>`
+    + `<style>*{box-sizing:border-box}body{margin:0;padding:0;background-color:#272c2f;}</style>`
     + `<body>`
     + `<script data-b24-form="${formAttr}" data-skip-moving="true">${closeScript}`
     + `<script src="${loaderSrc}" async>${closeScript}`
@@ -57,7 +57,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="rounded-2xl border border-white/10 bg-black/30 backdrop-blur-sm">
+  <div class="rounded-2xl border border-[#272c2f]/10 bg-black/30 backdrop-blur-sm">
     <iframe
       v-if="srcdoc"
       :srcdoc="srcdoc"
@@ -79,13 +79,6 @@ onMounted(() => {
           А пока — прямые контакты:
         </p>
         <ul class="space-y-1 list-disc list-inside text-white/70">
-          <li>
-            Telegram:
-            <a
-              href="https://t.me/bxshefby"
-              class="text-[rgb(var(--color-accent-primary-ch))] hover:underline"
-            >@bxshefby</a>
-          </li>
           <li>
             Email:
             <a
