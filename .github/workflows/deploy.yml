@@ -111,11 +111,11 @@ jobs:
         run: |
           install -m 600 -D /dev/null ~/.ssh/id_ed25519
           echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/id_ed25519
-          ssh-keyscan -p 2202 -H "${{ secrets.DEPLOY_HOST }}" >> ~/.ssh/known_hosts
+          ssh-keyscan -p "${{ secrets.DEPLOY_PORT }}" -H "${{ secrets.DEPLOY_HOST }}" >> ~/.ssh/known_hosts
 
       - name: Sync to server
         run: |
           rsync -az --delete --checksum \
-            -e "ssh -p 2202" \
+            -e "ssh -p ${{ secrets.DEPLOY_PORT }}" \
             dist/ \
             ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/home/bitrix/www/
