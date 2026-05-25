@@ -40,7 +40,7 @@ export default defineNuxtConfig({
             'style-src \'self\' \'unsafe-inline\' https:',
             'img-src \'self\' data: blob: https:',
             'font-src \'self\' data: https:',
-            'connect-src \'self\' https:',
+            'connect-src \'self\' https: wss:',
             'frame-src https:',
             'worker-src blob:',
             'base-uri \'self\'',
