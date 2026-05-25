@@ -42,7 +42,8 @@ jobs:
           path: dist
 
       - name: Verify dist not empty
-        run: test "$(ls -A dist)" || (echo "ERR: dist/ пуст — rsync с --delete отменён" && exit 1)
+        run: |
+          test "$(ls -A dist)" || (echo "ERR: dist/ пуст — rsync с --delete отменён" && exit 1)
 
       - name: Setup SSH
         env:
