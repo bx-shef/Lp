@@ -118,4 +118,4 @@ jobs:
           rsync -az --delete --checksum \
             -e "ssh -p 2202" \
             dist/ \
-            bitrix@${{ secrets.DEPLOY_HOST }}:/home/bitrix/www/
+            ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/home/bitrix/www/
