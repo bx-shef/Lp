@@ -62,4 +62,5 @@ legacy/               # архив: старые версии HTML и текст
 | NUXT_PUBLIC_B24_FORM_SECRET | 3c735r |
 | NUXT_PUBLIC_B24_FORM_SCRIPT_URL | cdn-ru.bitrix24.by/... |
 | NUXT_PUBLIC_METRIKA_ID | 109399587 |
+| NUXT_PUBLIC_BUILD_ID | (пусто → 'dev'; в CI = github.sha, первые 7 символов) |
 | NUXT_ALLOWED_HOSTS | (только для dev-туннелей) |

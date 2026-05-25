@@ -40,7 +40,8 @@ export default defineNuxtConfig({
             'style-src \'self\' \'unsafe-inline\' https:',
             'img-src \'self\' data: blob: https:',
             'font-src \'self\' data: https:',
-            'connect-src \'self\' https:',
+            // wss://mc.yandex.ru — Метрика использует WebSocket для real-time аналитики
+            'connect-src \'self\' https: wss://mc.yandex.ru',
             'frame-src https:',
             'worker-src blob:',
             'base-uri \'self\'',
@@ -65,6 +66,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       siteUrl,
+      buildId: process.env.NUXT_PUBLIC_BUILD_ID || 'dev',
       // Битрикс24 веб-форма (embed). Эти параметры — публичные
       // идентификаторы, не секреты. По умолчанию вшита форма Игоря Шевчика
       // (форма #1 на портале b37817748); смена формы — через ENV без перебилда.
