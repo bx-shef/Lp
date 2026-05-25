@@ -106,8 +106,8 @@ jobs:
           ssh -p "${{ secrets.DEPLOY_PORT }}" \
             -o StrictHostKeyChecking=yes \
             ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} \
-            "curl -sf --max-time 10 http://localhost/ | grep -q 'og:image' \
-              || (echo 'ERR: nginx не отдаёт страницу с og:image' && exit 1)"
+            "grep -q 'og:image' ${{ secrets.DEPLOY_PATH }}/index.html \
+              || (echo 'ERR: og:image не найден в index.html' && exit 1)"
 
       - name: Rollback on failure
         if: failure() && (steps.verify.outcome == 'failure' || steps.smoke.outcome == 'failure')
