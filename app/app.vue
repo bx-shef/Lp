@@ -8,6 +8,26 @@ const cardOpen = ref(false)
 
 const config = useRuntimeConfig()
 
+const navItems = [
+  [
+    {
+      label: 'Реквизиты',
+      to: '/legal'
+    },
+    {
+      label: 'Документация',
+      children: [
+        [
+          { label: 'b24ui', to: 'https://bitrix24.github.io/b24ui/', target: '_blank' },
+          { label: 'b24jssdk', to: 'https://bitrix24.github.io/b24jssdk/', target: '_blank' },
+          { label: 'b24icons', to: 'https://bitrix24.github.io/b24icons/', target: '_blank' },
+          { label: 'REST API', to: 'https://apidocs.bitrix24.ru/', target: '_blank' }
+        ]
+      ]
+    }
+  ]
+]
+
 const title = 'Кастомная разработка под Битрикс24: AI, интеграции, MCP-серверы | bx-shef.by'
 const description = 'Разрабатываю AI-помощников, интеграции и MCP-серверы для Битрикс24. Беру задачи, которые маркетплейс не закрывает. Разбор задачи — 30 минут, бесплатно.'
 const ogImage = `${config.public.siteUrl}/og-image.png`
@@ -100,6 +120,8 @@ useHead({
         </NuxtLink>
       </template>
 
+      <B24NavigationMenu :items="navItems" />
+
       <template #right>
         <ClientOnly>
           <B24Button
@@ -132,6 +154,9 @@ useHead({
           size="sm"
           @click="cardOpen = true"
         />
+      </template>
+      <template #body>
+        <B24NavigationMenu :items="navItems" orientation="vertical" />
       </template>
     </B24Header>
 
