@@ -31,8 +31,6 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     name: Deploy to VPS
-    # Пропускаем если секрет не задан — безопасно для форков/PRs
-    if: ${{ secrets.DEPLOY_HOST != '' }}
     steps:
       - name: Download artifact
         # upload-artifact@v4 раскладывает файлы напрямую в path (без tar-обёртки)
