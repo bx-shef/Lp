@@ -120,7 +120,6 @@ const process: ProcessStep[] = [
     <section class="hero-fade-in px-[22px] lg:px-8 pt-[80px] sm:pt-[120px] pb-[64px] sm:pb-[96px]">
       <div class="max-w-[1080px] mx-auto">
         <div class="flex flex-col lg:flex-row lg:items-center gap-10 lg:gap-20">
-
           <!-- Фото — первое на мобильном, правая колонка на desktop -->
           <div class="shrink-0 flex justify-start lg:justify-end order-first lg:order-last">
             <img
