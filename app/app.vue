@@ -2,6 +2,9 @@
 import GitHubIcon from '@bitrix24/b24icons-vue/social/GitHubIcon'
 import Bitrix24Icon from '@bitrix24/b24icons-vue/common-service/Bitrix24Icon'
 import TelegramIcon from '@bitrix24/b24icons-vue/outline/TelegramIcon'
+import ContactDetailsIcon from '@bitrix24/b24icons-vue/outline/ContactDetailsIcon'
+
+const cardOpen = ref(false)
 
 const config = useRuntimeConfig()
 
@@ -69,6 +72,13 @@ useHead({
           :icon="GitHubIcon"
           size="sm"
         />
+        <B24Button
+          aria-label="Визитка"
+          color="air-tertiary-no-accent"
+          :icon="ContactDetailsIcon"
+          size="sm"
+          @click="cardOpen = true"
+        />
       </template>
     </B24Header>
 
@@ -83,5 +93,12 @@ useHead({
         <SiteFooter />
       </template>
     </B24Footer>
+
+    <ClientOnly>
+      <BusinessCardModal
+        v-if="cardOpen"
+        @close="cardOpen = false"
+      />
+    </ClientOnly>
   </B24App>
 </template>
