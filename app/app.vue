@@ -35,49 +35,49 @@ useHead({
   script: [
     {
       type: 'application/ld+json',
-      children: JSON.stringify({
+      innerHTML: JSON.stringify({
         '@context': 'https://schema.org',
         '@graph': [
           {
             '@type': 'ProfessionalService',
             '@id': `${config.public.siteUrl}/#organization`,
-            name: 'ИП Шевчик И. С.',
-            alternateName: 'bx-shef.by',
-            url: config.public.siteUrl,
-            telephone: '+375297360126',
-            email: 'shevchik.mail@gmail.com',
-            address: {
+            'name': 'ИП Шевчик И. С.',
+            'alternateName': 'bx-shef.by',
+            'url': config.public.siteUrl,
+            'telephone': '+375297360126',
+            'email': 'shevchik.mail@gmail.com',
+            'address': {
               '@type': 'PostalAddress',
-              addressLocality: 'Минск',
-              addressCountry: 'BY'
+              'addressLocality': 'Минск',
+              'addressCountry': 'BY'
             },
-            description: 'Кастомная разработка под Битрикс24: AI-помощники, интеграции, MCP-серверы. Discovery — 30 минут, бесплатно.',
-            founder: {
+            'description': 'Кастомная разработка под Битрикс24: AI-помощники, интеграции, MCP-серверы. Discovery — 30 минут, бесплатно.',
+            'founder': {
               '@type': 'Person',
               '@id': `${config.public.siteUrl}/#igor`,
-              name: 'Игорь Шевчик',
-              jobTitle: 'Разработчик Битрикс24',
-              image: {
+              'name': 'Игорь Шевчик',
+              'jobTitle': 'Разработчик Битрикс24',
+              'image': {
                 '@type': 'ImageObject',
-                url: `${config.public.siteUrl}/igor.jpg`
+                'url': `${config.public.siteUrl}/igor.jpg`
               },
-              sameAs: [
+              'sameAs': [
                 'https://github.com/IgorShevchik',
                 'https://t.me/bxshefby'
               ]
             },
-            areaServed: 'BY',
-            sameAs: [
+            'areaServed': 'BY',
+            'sameAs': [
               'https://github.com/IgorShevchik'
             ]
           },
           {
             '@type': 'WebSite',
             '@id': `${config.public.siteUrl}/#website`,
-            url: config.public.siteUrl,
-            name: 'bx-shef.by',
-            inLanguage: 'ru-RU',
-            publisher: {
+            'url': config.public.siteUrl,
+            'name': 'bx-shef.by',
+            'inLanguage': 'ru-RU',
+            'publisher': {
               '@id': `${config.public.siteUrl}/#organization`
             }
           }
