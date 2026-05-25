@@ -1,7 +1,8 @@
 name: Build & Deploy
+
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -13,74 +14,18 @@ concurrency:
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [ ubuntu-latest ]
-        node: [ 22 ]
-
-    env:
-      # Кастомный домен bx-shef.by — base URL корневой, а не /repo/
-      NUXT_APP_BASE_URL: '/'
-      NUXT_PUBLIC_SITE_URL: 'https://bx-shef.by'
-      # B24 form embed-параметры — это публичные идентификаторы (видны в HTML),
-      # поэтому хранятся в Variables (vars), а не Secrets. Если переменные
-      # не заданы в Repository → Settings → Variables — используется fallback
-      # из nuxt.config.ts (форма Игоря Шевчика).
-      NUXT_PUBLIC_B24_FORM_ID: ${{ vars.NUXT_PUBLIC_B24_FORM_ID }}
-      NUXT_PUBLIC_B24_FORM_SECRET: ${{ vars.NUXT_PUBLIC_B24_FORM_SECRET }}
-      NUXT_PUBLIC_B24_FORM_SCRIPT_URL: ${{ vars.NUXT_PUBLIC_B24_FORM_SCRIPT_URL }}
-      # Яндекс Метрика. Если переменная не задана — используется дефолт из nuxt.config.ts
-      NUXT_PUBLIC_METRIKA_ID: ${{ vars.NUXT_PUBLIC_METRIKA_ID }}
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v6
-
-      - name: Install node
-        uses: actions/setup-node@v6
-        with:
-          node-version: ${{ matrix.node }}
-          cache: pnpm
-
-      - name: Install dependencies
-        run: pnpm install
-
-      - name: Lint
-        run: pnpm run lint
-
-      - name: Typecheck
-        run: pnpm run typecheck
-
-      - name: Generate
-        run: pnpm run generate
-
-      # Защита от деплоя пустой страницы / без OG
-      - name: Validate output
-        run: |
-          test -f .output/public/index.html || (echo "ERR: index.html missing" && exit 1)
-          test -s .output/public/og-image.png || (echo "ERR: og-image.png missing or empty" && exit 1)
-          test -f .output/public/CNAME || (echo "ERR: CNAME missing" && exit 1)
-          grep -q '<title>[^<]' .output/public/index.html || (echo "ERR: <title> пустой или отсутствует" && exit 1)
-          grep -q '<title>[^<]' .output/public/privacy/index.html || (echo "ERR: privacy <title> пустой" && exit 1)
-          grep -q '<title>[^<]' .output/public/legal/index.html || (echo "ERR: legal <title> пустой" && exit 1)
-          grep -q 'og:image' .output/public/index.html || (echo "ERR: og:image meta missing" && exit 1)
-          grep -q 'canonical' .output/public/index.html || (echo "ERR: canonical link missing" && exit 1)
-          grep -q 'canonical' .output/public/privacy/index.html || (echo "ERR: privacy canonical missing" && exit 1)
-          grep -q 'canonical' .output/public/legal/index.html || (echo "ERR: legal canonical missing" && exit 1)
-          grep -q '/metrika.js' .output/public/index.html || (echo "ERR: /metrika.js script tag missing" && exit 1)
-          echo "OK: артефакт валиден"
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: site
-          path: .output/public
-          retention-days: 7
+    uses: ./.github/workflows/build.yml
+    with:
+      site-url: 'https://bx-shef.by'
+      # B24 form embed-параметры — публичные идентификаторы (видны в HTML),
+      # хранятся в Variables (vars), а не Secrets. Если не заданы —
+      # используется fallback из nuxt.config.ts (форма Игоря Шевчика).
+      b24-form-id: ${{ vars.NUXT_PUBLIC_B24_FORM_ID }}
+      b24-form-secret: ${{ vars.NUXT_PUBLIC_B24_FORM_SECRET }}
+      b24-form-script-url: ${{ vars.NUXT_PUBLIC_B24_FORM_SCRIPT_URL }}
+      # Если не задан — используется дефолт из nuxt.config.ts
+      metrika-id: ${{ vars.NUXT_PUBLIC_METRIKA_ID }}
+      upload-artifact: true
 
   deploy-vps:
     needs: build
