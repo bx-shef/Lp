@@ -35,7 +35,7 @@ useHead({
   script: [
     {
       type: 'application/ld+json',
-      innerHTML: JSON.stringify({
+      children: JSON.stringify({
         '@context': 'https://schema.org',
         '@graph': [
           {
@@ -57,19 +57,18 @@ useHead({
               '@id': `${config.public.siteUrl}/#igor`,
               name: 'Игорь Шевчик',
               jobTitle: 'Разработчик Битрикс24',
-              image: `${config.public.siteUrl}/igor.jpg`,
+              image: {
+                '@type': 'ImageObject',
+                url: `${config.public.siteUrl}/igor.jpg`
+              },
               sameAs: [
                 'https://github.com/IgorShevchik',
                 'https://t.me/bxshefby'
               ]
             },
-            areaServed: {
-              '@type': 'Place',
-              name: 'Беларусь'
-            },
+            areaServed: 'BY',
             sameAs: [
-              'https://github.com/IgorShevchik',
-              'https://t.me/bxshefby'
+              'https://github.com/IgorShevchik'
             ]
           },
           {
