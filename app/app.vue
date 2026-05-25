@@ -51,7 +51,7 @@ useHead({
               'addressLocality': 'Минск',
               'addressCountry': 'BY'
             },
-            'description': 'Кастомная разработка под Битрикс24: AI-помощники, интеграции, MCP-серверы. Discovery — 30 минут, бесплатно.',
+            'description': 'Кастомная разработка под Битрикс24: AI-помощники, интеграции, MCP-серверы. Разбор задачи — 30 минут, бесплатно.',
             'founder': {
               '@type': 'Person',
               '@id': `${config.public.siteUrl}/#igor`,
