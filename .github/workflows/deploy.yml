@@ -65,7 +65,16 @@ jobs:
           ssh -p "${{ secrets.DEPLOY_PORT }}" \
             -o StrictHostKeyChecking=yes \
             ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} \
-            "cp -al ${{ secrets.DEPLOY_PATH }} ${{ secrets.DEPLOY_PATH }}.bak 2>/dev/null || true"
+            "rsync -a --delete --link-dest=${{ secrets.DEPLOY_PATH }} \
+              --exclude='bitrix'      \
+              --exclude='local'       \
+              --exclude='personal'    \
+              --exclude='support'     \
+              --exclude='upload'      \
+              --exclude='.access.php' \
+              --exclude='.htaccess'   \
+              --exclude='.htsecure'   \
+              ${{ secrets.DEPLOY_PATH }}/ ${{ secrets.DEPLOY_PATH }}.bak/ 2>/dev/null || true"
 
       - name: Sync to server
         run: |
