@@ -50,7 +50,7 @@ onMounted(() => {
   srcdoc.value = `<!doctype html>`
     + `<meta charset="utf-8">`
     + `<meta name="viewport" content="width=device-width,initial-scale=1">`
-    + `<style>*{box-sizing:border-box}body{margin:0;padding:0;background-color:#272c2f;}</style>`
+    + `<style>*{box-sizing:border-box}body{margin:0;padding:0;background-color:#1e2226;}</style>`
     + `<body>`
     + `<script data-b24-form="${formAttr}" data-skip-moving="true">`
     + `(function(w,d,u){var s=d.createElement('script');s.async=true;s.src=u+'?'+(Date.now()/180000|0);var h=d.getElementsByTagName('script')[0];h.parentNode.insertBefore(s,h);})(window,document,'${b24FormScriptUrl}');`
@@ -71,7 +71,11 @@ onMounted(() => {
 
     <div
       v-else
-      class="min-h-[400px]"
-    />
+      class="min-h-[400px] flex items-center justify-center"
+    >
+      <p class="text-white/50 text-sm">
+        Форма не настроена — задайте переменные <code class="font-mono">NUXT_PUBLIC_B24_FORM_*</code>
+      </p>
+    </div>
   </div>
 </template>
