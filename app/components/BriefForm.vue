@@ -1,21 +1,16 @@
 <script setup lang="ts">
 /**
- * Слот для встройки Битрикс24 веб-формы.
+ * Встройка Битрикс24 веб-формы через iframe (srcdoc).
  *
- * Точное воспроизведение оригинальной B24-встройки. Оригинал состоит из inline
- * script-тега с атрибутом data-b24-form и тела-IIFE, который создаёт второй
- * script с loader_1.js?(timestamp). Loader при загрузке ищет на странице тег
- * с атрибутом data-b24-form и рендерит форму на его месте.
+ * Ключевое отличие от script-inject подхода:
+ *  - Форма изолирована в iframe → не конфликтует с глобальным JS/CSS страницы
+ *  - Нет inline-скриптов на основной странице → CSP не нарушается
+ *  - srcdoc содержит только marker-тег (no content) + external loader script
  *
- * Воссоздаём оба тега программно:
- *  1) marker-script с data-b24-form (БЕЗ src) — отмечает позицию формы
- *  2) loader-script с src и cache-busting timestamp (без data-b24-form)
- *
- * Безопасность: src loader проверяется против allowlist доменов Битрикс24,
- * при HMR в dev-режиме не делаем повторную вставку.
+ * За основу взят паттерн из feedback.html.client.vue (B24 SDK app).
+ * Адаптировано для standalone-лендинга без B24-app контекста.
  */
 const config = useRuntimeConfig()
-const hasForm = computed(() => !!config.public.b24FormScriptUrl)
 
 const ID_RE = /^[a-zA-Z0-9_-]+$/
 
@@ -37,42 +32,52 @@ function isAllowedB24Host(rawUrl: string): boolean {
   }
 }
 
+const srcdoc = ref('')
+
 onMounted(() => {
-  if (!hasForm.value) return
-  const host = document.getElementById('b24-form-host')
-  if (!host) return
-  // HMR-guard
-  if (host.querySelector('script[data-b24-form]')) return
-  if (!isAllowedB24Host(config.public.b24FormScriptUrl)) {
+  const { b24FormScriptUrl, b24FormId, b24FormSecret } = config.public
+
+  if (!b24FormScriptUrl || !b24FormId || !b24FormSecret) return
+
+  if (!isAllowedB24Host(b24FormScriptUrl)) {
     console.warn('[BriefForm] script URL не из allowlist Битрикс24, форма не загружена')
     return
   }
-  if (!ID_RE.test(config.public.b24FormId) || !ID_RE.test(config.public.b24FormSecret)) {
+
+  if (!ID_RE.test(b24FormId) || !ID_RE.test(b24FormSecret)) {
     console.warn('[BriefForm] невалидный b24FormId или b24FormSecret, форма не загружена')
     return
   }
 
-  // 1. Marker — отмечает позицию, куда B24-loader вставит форму
-  const marker = document.createElement('script')
-  marker.setAttribute('data-b24-form', `inline/${config.public.b24FormId || ''}/${config.public.b24FormSecret || ''}`)
-  marker.setAttribute('data-skip-moving', 'true')
-  host.appendChild(marker)
+  const loaderSrc = `${b24FormScriptUrl}?${Math.floor(Date.now() / 180000)}`
+  const formAttr = `inline/${b24FormId}/${b24FormSecret}`
 
-  // 2. Loader с cache-busting (как в оригинальном IIFE: Date.now()/180000|0 = новое значение каждые 3 минуты)
-  const loader = document.createElement('script')
-  loader.async = true
-  loader.src = `${config.public.b24FormScriptUrl}?${Math.floor(Date.now() / 180000)}`
-  host.appendChild(loader)
+  // Закрывающий тег </script> внутри строки шаблона нужно разбивать,
+  // чтобы HTML-парсер Vue SFC не закрыл <script setup> раньше времени.
+  srcdoc.value = `<!doctype html>`
+    + `<meta charset="utf-8">`
+    + `<meta name="viewport" content="width=device-width,initial-scale=1">`
+    + `<style>*{box-sizing:border-box}body{margin:0;padding:0;background:transparent}</style>`
+    + `<body>`
+    + `<script data-b24-form="${formAttr}" data-skip-moving="true"><` + `/script>`
+    + `<script src="${loaderSrc}" async><` + `/script>`
+    + `</body>`
 })
 </script>
 
 <template>
-  <div class="rounded-2xl border border-white/10 bg-black/30 backdrop-blur-sm p-6 sm:p-8">
-    <div id="b24-form-host" />
+  <div class="rounded-2xl border border-white/10 bg-black/30 backdrop-blur-sm">
+    <iframe
+      v-if="srcdoc"
+      :srcdoc="srcdoc"
+      class="w-full min-h-[600px] border-0 rounded-2xl"
+      title="Форма обратной связи"
+      loading="lazy"
+    />
 
     <div
-      v-if="!hasForm"
-      class="space-y-4"
+      v-else
+      class="p-6 sm:p-8 space-y-4"
     >
       <div class="text-white/55 text-sm">
         Здесь будет форма Битрикс24. Подключите её через переменные окружения
