@@ -12,12 +12,14 @@ import RocketIcon from '@bitrix24/b24icons-vue/main/RocketIcon'
 useCardGlow()
 
 interface ServiceItem {
+  id: string
   icon: Component
   title: string
   text: string
 }
 
 interface DifferentiatorItem {
+  id: string
   /** Иконка ИЛИ фото — одно из двух обязательно */
   icon?: Component
   photo?: string
@@ -27,6 +29,7 @@ interface DifferentiatorItem {
 }
 
 interface ProcessStep {
+  id: string
   step: string
   title: string
   text: string
@@ -36,16 +39,19 @@ interface ProcessStep {
 
 const services: ServiceItem[] = [
   {
+    id: 'ai',
     icon: CopilotAi1Icon,
     title: 'AI-помощник в Битрикс24',
     text: 'Чат к базе знаний, подсказки в задачах и сделках, помощь продажникам со скриптами и возражениями. На ваших данных из Б24 — не наружу.'
   },
   {
+    id: 'content',
     icon: MagicImageIcon,
     title: 'Генерация и сборка контента',
     text: 'Каталог Б24 + AI-генератор изображений → готовые комплекты и hero-картинки для публикации. Подходит, если у вас 500+ SKU.'
   },
   {
+    id: 'integrations',
     icon: CloudTransferDataIcon,
     title: 'Интеграции и обмен данными',
     text: 'Клиент-банк, поставщики, маркетплейсы, любой SaaS через REST/MCP ↔ Б24. Один раз настроили — забыли про экспорт-импорт.'
@@ -54,16 +60,19 @@ const services: ServiceItem[] = [
 
 const differentiators: DifferentiatorItem[] = [
   {
+    id: 'sdk',
     icon: CodeIcon,
     title: 'Контрибьютор в SDK Битрикс24',
     text: 'Мой код используется в официальных библиотеках b24jssdk и b24ui. Баги Б24, на которые другие тратят дни, нахожу за часы — потому что писал эту часть сам.'
   },
   {
+    id: 'ai-focus',
     icon: RocketIcon,
     title: 'Специализация на AI и интеграциях',
     text: 'Не комплексное внедрение Б24 «с нуля». Захожу туда, где базовый интегратор уже сказал «это не делается».'
   },
   {
+    id: 'solo',
     photo: '/igor.jpg',
     title: 'Один разработчик — но не bus factor',
     text: 'Код остаётся в вашем Битрикс24 и в вашем git. Захотите передать другому — это займёт час, а не месяц аудита.',
@@ -85,6 +94,7 @@ const skipIf = [
 
 const process: ProcessStep[] = [
   {
+    id: 'discovery',
     step: '01',
     title: 'Изучение',
     text: '30 минут, бесплатно. Заранее пришлю 5 вопросов:',
@@ -97,16 +107,19 @@ const process: ProcessStep[] = [
     ]
   },
   {
+    id: 'estimate',
     step: '02',
     title: 'Оценка',
     text: 'Фиксированная цена за этап или почасовая ставка. По итогам discovery — конкретные цифры и план этапов.'
   },
   {
+    id: 'dev',
     step: '03',
     title: 'Разработка',
     text: 'Демо каждые 1–2 недели. Закрытый этап оплачивается полностью, текущий — по часам из трекера задач в вашем Битрикс24. Остановите проект — платите только за сделанное.'
   },
   {
+    id: 'support',
     step: '04',
     title: 'Поддержка',
     text: 'После релиза обсуждаем отдельно: почасовая или подписка с SLA. Без обязательств подписать сразу — берём только если нужно.'
@@ -205,8 +218,8 @@ const process: ProcessStep[] = [
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
           <div
-            v-for="(s, i) in services"
-            :key="i"
+            v-for="s in services"
+            :key="s.id"
             data-glow-card
             class="rounded-2xl border border-white/10 bg-white/[0.03] p-7 flex flex-col gap-4 hover:border-white/25 transition-colors"
           >
@@ -241,8 +254,8 @@ const process: ProcessStep[] = [
 
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
           <div
-            v-for="(d, i) in differentiators"
-            :key="i"
+            v-for="d in differentiators"
+            :key="d.id"
             data-glow-card
             class="rounded-2xl border border-white/10 bg-white/[0.03] p-6 flex flex-col"
           >
@@ -343,8 +356,8 @@ const process: ProcessStep[] = [
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div
-            v-for="(p, i) in process"
-            :key="i"
+            v-for="p in process"
+            :key="p.id"
             class="rounded-2xl border border-white/10 bg-white/[0.03] p-6"
           >
             <div class="text-3xl font-bold font-mono text-[rgb(var(--color-accent-primary-ch))] mb-3 leading-none">

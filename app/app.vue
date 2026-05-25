@@ -129,22 +129,14 @@ useHead({
       <B24NavigationMenu :items="navItems" />
 
       <template #right>
-        <ClientOnly>
-          <B24Button
-            to="https://t.me/bxshefby"
-            target="_blank"
-            aria-label="Telegram"
-            color="air-tertiary-no-accent"
-            :icon="TelegramIcon"
-            size="sm"
-          />
-          <template #fallback>
-            <B24Skeleton
-              accent="less"
-              class="size-7 rounded-[8px]"
-            />
-          </template>
-        </ClientOnly>
+        <B24Button
+          to="https://t.me/bxshefby"
+          target="_blank"
+          aria-label="Telegram"
+          color="air-tertiary-no-accent"
+          :icon="TelegramIcon"
+          size="sm"
+        />
         <B24Button
           to="https://github.com/IgorShevchik"
           target="_blank"
@@ -162,7 +154,10 @@ useHead({
         />
       </template>
       <template #body>
-        <B24NavigationMenu :items="navItems" orientation="vertical" />
+        <B24NavigationMenu
+          :items="navItems"
+          orientation="vertical"
+        />
       </template>
     </B24Header>
 

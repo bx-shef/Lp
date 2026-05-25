@@ -46,6 +46,7 @@ onMounted(async () => {
 
 // Scroll-lock и keyboard-trap привязаны к состоянию open, а не к маунту.
 watch(() => props.open, (isOpen) => {
+  if (!import.meta.client) return
   if (isOpen) {
     document.addEventListener('keydown', handleKey)
     document.body.style.overflow = 'hidden'

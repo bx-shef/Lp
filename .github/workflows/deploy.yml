@@ -76,6 +76,7 @@ jobs:
             ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:${{ secrets.DEPLOY_PATH }}/
 
       - name: Verify deployment
+        id: verify
         run: |
           ssh -p "${{ secrets.DEPLOY_PORT }}" \
             -o StrictHostKeyChecking=yes \
@@ -84,9 +85,22 @@ jobs:
               || (echo 'ERR: index.html не найден на сервере' && exit 1)"
 
       - name: Smoke test
+        id: smoke
         run: |
           ssh -p "${{ secrets.DEPLOY_PORT }}" \
             -o StrictHostKeyChecking=yes \
             ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} \
             "curl -sf --max-time 10 http://localhost/ | grep -q 'og:image' \
               || (echo 'ERR: nginx не отдаёт страницу с og:image' && exit 1)"
+
+      - name: Rollback on failure
+        if: failure() && (steps.verify.outcome == 'failure' || steps.smoke.outcome == 'failure')
+        run: |
+          ssh -p "${{ secrets.DEPLOY_PORT }}" \
+            -o StrictHostKeyChecking=yes \
+            ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} \
+            "if test -d ${{ secrets.DEPLOY_PATH }}.bak; then \
+                rsync -a --delete ${{ secrets.DEPLOY_PATH }}.bak/ ${{ secrets.DEPLOY_PATH }}/ \
+                && echo 'OK: rollback выполнен из .bak' \
+                || (echo 'ERR: rsync rollback не удался' && exit 1); \
+              else echo 'WARN: .bak не найден, rollback пропущен'; fi"
