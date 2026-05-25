@@ -18,6 +18,7 @@ logs
 .fleet
 .idea
 /@tmp
+.claude/
 
 # Local env files
 .env
