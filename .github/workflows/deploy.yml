@@ -25,6 +25,7 @@ jobs:
       b24-form-script-url: ${{ vars.NUXT_PUBLIC_B24_FORM_SCRIPT_URL }}
       # Если не задан — используется дефолт из nuxt.config.ts
       metrika-id: ${{ vars.NUXT_PUBLIC_METRIKA_ID }}
+      build-id: ${{ github.sha }}
       upload-artifact: true
 
   deploy-vps:

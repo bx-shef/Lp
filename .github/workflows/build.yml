@@ -19,6 +19,10 @@ on:
       metrika-id:
         type: string
         default: ''
+      build-id:
+        description: 'Git commit SHA for footer display (NUXT_PUBLIC_BUILD_ID)'
+        type: string
+        default: ''
       upload-artifact:
         description: 'Upload .output/public as artifact "site"'
         type: boolean
@@ -37,6 +41,7 @@ jobs:
       NUXT_PUBLIC_B24_FORM_SECRET: ${{ inputs.b24-form-secret }}
       NUXT_PUBLIC_B24_FORM_SCRIPT_URL: ${{ inputs.b24-form-script-url }}
       NUXT_PUBLIC_METRIKA_ID: ${{ inputs.metrika-id }}
+      NUXT_PUBLIC_BUILD_ID: ${{ inputs.build-id }}
 
     steps:
       - uses: actions/checkout@v6
