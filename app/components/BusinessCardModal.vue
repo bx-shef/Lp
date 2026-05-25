@@ -202,7 +202,7 @@ function triggerDownload(blob: Blob, filename: string) {
 
                 <!-- QR Code -->
                 <div
-                  class="relative p-3 rounded-2xl"
+                  class="hidden sm:block relative p-3 rounded-2xl"
                   style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 0 32px rgb(var(--color-accent-primary-ch)/0.12);"
                 >
                   <img
@@ -217,7 +217,7 @@ function triggerDownload(blob: Blob, filename: string) {
                   />
                 </div>
 
-                <div class="text-center">
+                <div class="hidden sm:block text-center">
                   <div class="text-[10px] uppercase tracking-[0.18em] text-white/30 font-mono">
                     Сканируй
                   </div>
