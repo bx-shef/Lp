@@ -68,26 +68,7 @@ onMounted(() => {
 
     <div
       v-else
-      class="p-6 sm:p-8 space-y-4"
-    >
-      <div class="text-white/55 text-sm">
-        Здесь будет форма Битрикс24. Подключите её через переменные окружения
-        <code class="px-1.5 py-0.5 bg-white/10 rounded text-xs font-mono text-[rgb(var(--color-accent-primary-ch))]">NUXT_PUBLIC_B24_FORM_*</code>
-      </div>
-      <div class="text-sm space-y-2">
-        <p class="font-semibold text-white">
-          А пока — прямые контакты:
-        </p>
-        <ul class="space-y-1 list-disc list-inside text-white/70">
-          <li>
-            Email:
-            <a
-              href="mailto:shevchik.mail@gmail.com"
-              class="text-[rgb(var(--color-accent-primary-ch))] hover:underline"
-            >shevchik.mail@gmail.com</a>
-          </li>
-        </ul>
-      </div>
-    </div>
+      class="min-h-[400px]"
+    />
   </div>
 </template>
