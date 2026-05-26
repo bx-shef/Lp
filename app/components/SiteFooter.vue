@@ -6,10 +6,7 @@ const { public: { buildId } } = useRuntimeConfig()
 const legal = {
   short: 'ИП Шевчик И. С.',
   unp: 'УНП 192049017',
-  phone: '+375 29 736-01-26',
-  phoneTel: '+375297360126',
   email: 'shevchik.mail@gmail.com',
-  telegram: '@bxshefby',
   city: 'Минск, Беларусь'
 }
 </script>
@@ -26,16 +23,6 @@ const legal = {
         :href="`mailto:${legal.email}`"
         class="hover:text-white hover:underline"
       >{{ legal.email }}</a>
-      <a
-        :href="`tel:${legal.phoneTel}`"
-        class="hover:text-white hover:underline"
-      >{{ legal.phone }}</a>
-      <a
-        :href="`https://t.me/${legal.telegram.replace('@', '')}`"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="hover:text-white hover:underline"
-      >{{ legal.telegram }}</a>
       <NuxtLink
         to="/legal"
         class="hover:text-white hover:underline"
