@@ -246,7 +246,7 @@ const process: ProcessStep[] = [
         <!-- Примеры модулей -->
         <div class="mt-12 sm:mt-16 flex flex-col items-start gap-3">
           <div class="text-xs uppercase tracking-[0.18em] text-white/40 font-mono">
-            Собрал в сарае
+            Полезные мелочи
           </div>
           <div class="flex flex-wrap items-center justify-start gap-x-6 sm:gap-x-10 gap-y-2">
             <a
