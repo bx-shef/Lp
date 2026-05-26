@@ -26,13 +26,13 @@ const card = {
   email: 'shevchik.mail@gmail.com',
   telegram: '@bxshefby',
   city: 'Минск, Беларусь',
-  site: 'bx-shef.by'
+  site: 'offer.bx-shef.by'
 } as const
 
 // Генерируем QR один раз при маунте компонента.
 onMounted(async () => {
   try {
-    qrDataUrl.value = await QRCode.toDataURL(siteUrl, {
+    qrDataUrl.value = await QRCode.toDataURL('https://' + card.site, {
       width: 180,
       margin: 1,
       color: { dark: '#ffffff', light: '#00000000' },
@@ -79,7 +79,7 @@ function downloadVCard() {
     `TITLE:${card.role}`,
     `TEL;TYPE=CELL:${card.phoneTel}`,
     `EMAIL:${card.email}`,
-    `URL:${siteUrl}`,
+    `URL:https://${card.site}`,
     `ADR;TYPE=WORK:;;;Минск;;220025;BY`,
     `NOTE:AI\\, интеграции\\, MCP под Битрикс24. ${card.unp}.`,
     'END:VCARD'
