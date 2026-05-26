@@ -3,6 +3,7 @@ import { onMounted, onUnmounted, ref } from 'vue'
 
 const canvas = ref<HTMLCanvasElement | null>(null)
 let animId = 0
+let resizeRaf = 0
 let ctx: CanvasRenderingContext2D
 let w = 0
 let h = 0
@@ -19,6 +20,23 @@ interface Node {
   r: number
   primary: boolean
 }
+
+// Force simulation tuning knobs — change here, not inline
+const GRAVITY_K = 0.0014 // attraction strength toward gravity center
+const REPULSION = 4800 // node-to-node repulsion constant
+const SPRING_K = 0.018 // edge spring stiffness
+const SPRING_LEN = 145 // edge rest length in px
+const DAMPING = 0.855 // velocity decay per tick (0 = instant stop)
+const NOISE = 0.045 // random walk noise added each tick
+const BOUNDARY_PAD = 55 // how far nodes stay from canvas edges
+const PHOTO_REPEL_R = 165 // repulsion radius around photo zone in px
+// Horizontal offset of photo center inside max-w-[1080px] container:
+// px-8(32) + text max-w-[620px](620) + lg:gap-12(48) + half-photo(120) = 820
+const PHOTO_CONTAINER_OFFSET_X = 820
+const PHOTO_RELATIVE_Y = 0.40 // photo vertical center as fraction of canvas height
+const PERTURB_IMPULSE = 4 // velocity kick magnitude during periodic shake
+const PERTURB_MIN_MS = 3500 // min ms between shakes
+const PERTURB_JITTER_MS = 2500 // random extra ms added on top
 
 const NODES_SRC = [
   { id: 'b24', label: 'Битрикс24', primary: true },
@@ -66,8 +84,13 @@ function init() {
 
 function resize() {
   if (!canvas.value) return
-  w = canvas.value.width = canvas.value.offsetWidth
-  h = canvas.value.height = canvas.value.offsetHeight
+  // RAF debounce: coalesces burst resize events into a single update
+  cancelAnimationFrame(resizeRaf)
+  resizeRaf = requestAnimationFrame(() => {
+    if (!canvas.value) return
+    w = canvas.value.width = canvas.value.offsetWidth
+    h = canvas.value.height = canvas.value.offsetHeight
+  })
 }
 
 function tick() {
@@ -75,34 +98,33 @@ function tick() {
 
   if (now > nextPerturb) {
     for (const n of nodes) {
-      n.vx += (Math.random() - 0.5) * 4
-      n.vy += (Math.random() - 0.5) * 4
+      n.vx += (Math.random() - 0.5) * PERTURB_IMPULSE
+      n.vy += (Math.random() - 0.5) * PERTURB_IMPULSE
     }
-    nextPerturb = now + 3500 + Math.random() * 2500
+    nextPerturb = now + PERTURB_MIN_MS + Math.random() * PERTURB_JITTER_MS
   }
 
-  // Gravity center — right of center, slightly below axis
+  // Gravity center — right of center on desktop, top-right on mobile
   const cx = w > 900 ? w * 0.70 : w * 0.75
   const cy = w > 900 ? h * 0.58 : h * 0.22
 
-  // Approximate photo center in canvas coords (desktop only)
-  const photoX = w > 900 ? Math.max(0, (w - 1080) / 2) + 820 : -9999
-  const photoY = h * 0.40
-  const PHOTO_R = 165
+  // Photo zone repulsion (desktop only — off-screen sentinel on mobile)
+  const photoX = w > 900 ? Math.max(0, (w - 1080) / 2) + PHOTO_CONTAINER_OFFSET_X : -9999
+  const photoY = h * PHOTO_RELATIVE_Y
 
   for (let i = 0; i < nodes.length; i++) {
     const a = nodes[i]!
-    a.vx += (cx - a.x) * 0.0014
-    a.vy += (cy - a.y) * 0.0014
-    a.vx += (Math.random() - 0.5) * 0.045
-    a.vy += (Math.random() - 0.5) * 0.045
+    a.vx += (cx - a.x) * GRAVITY_K
+    a.vy += (cy - a.y) * GRAVITY_K
+    a.vx += (Math.random() - 0.5) * NOISE
+    a.vy += (Math.random() - 0.5) * NOISE
 
     // Repel from photo zone
     const pdx = a.x - photoX
     const pdy = a.y - photoY
     const pdist = Math.sqrt(pdx * pdx + pdy * pdy) + 0.01
-    if (pdist < PHOTO_R) {
-      const pf = Math.pow((PHOTO_R - pdist) / PHOTO_R, 2) * 5
+    if (pdist < PHOTO_REPEL_R) {
+      const pf = Math.pow((PHOTO_REPEL_R - pdist) / PHOTO_REPEL_R, 2) * 5
       a.vx += (pdx / pdist) * pf
       a.vy += (pdy / pdist) * pf
     }
@@ -113,7 +135,7 @@ function tick() {
       const dy = b.y - a.y
       const d2 = dx * dx + dy * dy + 0.01
       const d = Math.sqrt(d2)
-      const f = 4800 / d2
+      const f = REPULSION / d2
       const fx = (dx / d) * f
       const fy = (dy / d) * f
       a.vx -= fx
@@ -123,8 +145,6 @@ function tick() {
     }
   }
 
-  const K = 0.018
-  const L = 145
   for (const [sId, tId] of EDGES) {
     const s = nodeMap.get(sId)
     const t = nodeMap.get(tId)
@@ -132,7 +152,7 @@ function tick() {
     const dx = t.x - s.x
     const dy = t.y - s.y
     const d = Math.sqrt(dx * dx + dy * dy) || 1
-    const f = (d - L) * K
+    const f = (d - SPRING_LEN) * SPRING_K
     const fx = (dx / d) * f
     const fy = (dy / d) * f
     s.vx += fx
@@ -141,16 +161,15 @@ function tick() {
     t.vy -= fy
   }
 
-  const PAD = 55
   for (const n of nodes) {
-    n.vx *= 0.855
-    n.vy *= 0.855
+    n.vx *= DAMPING
+    n.vy *= DAMPING
     n.x += n.vx
     n.y += n.vy
-    if (n.x < PAD) n.vx += (PAD - n.x) * 0.12
-    if (n.x > w - PAD) n.vx -= (n.x - (w - PAD)) * 0.12
-    if (n.y < PAD) n.vy += (PAD - n.y) * 0.12
-    if (n.y > h - PAD) n.vy -= (n.y - (h - PAD)) * 0.12
+    if (n.x < BOUNDARY_PAD) n.vx += (BOUNDARY_PAD - n.x) * 0.12
+    if (n.x > w - BOUNDARY_PAD) n.vx -= (n.x - (w - BOUNDARY_PAD)) * 0.12
+    if (n.y < BOUNDARY_PAD) n.vy += (BOUNDARY_PAD - n.y) * 0.12
+    if (n.y > h - BOUNDARY_PAD) n.vy -= (n.y - (h - BOUNDARY_PAD)) * 0.12
   }
 }
 
@@ -213,6 +232,7 @@ onMounted(() => {
 
 onUnmounted(() => {
   cancelAnimationFrame(animId)
+  cancelAnimationFrame(resizeRaf)
   ro?.disconnect()
 })
 </script>

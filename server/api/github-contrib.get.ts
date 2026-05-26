@@ -9,6 +9,8 @@ interface ContribResponse {
   total: number
 }
 
+const GITHUB_LOGIN = 'IgorShevchik'
+
 const LEVEL_MAP: Record<string, 0 | 1 | 2 | 3 | 4> = {
   NONE: 0,
   FIRST_QUARTILE: 1,
@@ -18,7 +20,7 @@ const LEVEL_MAP: Record<string, 0 | 1 | 2 | 3 | 4> = {
 }
 
 const GQL = `{
-  user(login:"IgorShevchik"){
+  user(login:"${GITHUB_LOGIN}"){
     contributionsCollection{
       contributionCalendar{
         totalContributions
@@ -54,7 +56,7 @@ export default defineEventHandler(async (): Promise<ContribResponse> => {
               }[]
             }
           }
-        }
+        } | null
       }
     }>('https://api.github.com/graphql', {
       method: 'POST',
@@ -66,6 +68,11 @@ export default defineEventHandler(async (): Promise<ContribResponse> => {
       timeout: 10000
     })
 
+    if (!res.data?.user) {
+      console.warn(`[github-contrib] GitHub API returned null user for login "${GITHUB_LOGIN}"`)
+      return { days: [], total: 0 }
+    }
+
     const cal = res.data.user.contributionsCollection.contributionCalendar
     const days: ContribDay[] = cal.weeks.flatMap(w =>
       w.contributionDays.map(d => ({
@@ -76,7 +83,8 @@ export default defineEventHandler(async (): Promise<ContribResponse> => {
     )
 
     return { days, total: cal.totalContributions }
-  } catch {
+  } catch (err) {
+    console.warn('[github-contrib] Failed to fetch GitHub contributions:', err)
     return { days: [], total: 0 }
   }
 })

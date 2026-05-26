@@ -30,9 +30,15 @@ app/
   app.vue             # SEO, Schema.org, B24App skeleton, header/footer
   app.config.ts       # b24ui тема
   pages/              # index, privacy, legal
-  components/         # AppLogo, PartnerBadge, BriefForm, SiteFooter, BusinessCardModal
+  components/
+    AppLogo, PartnerBadge, BriefForm, SiteFooter, BusinessCardModal
+    HeroGraph.vue     # canvas force-directed граф (анимация фона hero)
+    GithubContrib.vue # heatmap GitHub-контрибуций (данные из SSG prerender)
   composables/        # useCardGlow (mouse-follow glow)
   assets/css/main.css # Tailwind + b24ui + brand-токены
+server/
+  api/
+    github-contrib.get.ts  # GraphQL → GitHub API, вызывается при pnpm generate
 public/
   igor.jpg / og-image.png / CNAME / favicon.ico
 scripts/
@@ -64,3 +70,4 @@ legacy/               # архив: старые версии HTML и текст
 | NUXT_PUBLIC_METRIKA_ID | 109399587 |
 | NUXT_PUBLIC_BUILD_ID | (пусто → 'dev'; в CI = github.sha, первые 7 символов) |
 | NUXT_ALLOWED_HOSTS | (только для dev-туннелей) |
+| GITHUB_TOKEN | авто-выдаётся GitHub Actions; для local dev — Personal Access Token с scope `read:user` |
