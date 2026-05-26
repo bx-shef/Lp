@@ -82,8 +82,8 @@ function tick() {
   }
 
   // Gravity center — right of center, slightly below axis
-  const cx = w > 900 ? w * 0.70 : w * 0.5
-  const cy = h * 0.58
+  const cx = w > 900 ? w * 0.70 : w * 0.75
+  const cy = w > 900 ? h * 0.58 : h * 0.22
 
   // Approximate photo center in canvas coords (desktop only)
   const photoX = w > 900 ? Math.max(0, (w - 1080) / 2) + 820 : -9999
