@@ -255,6 +255,13 @@ const process: ProcessStep[] = [
               rel="noopener noreferrer"
               class="font-mono text-sm tracking-tight text-white/60 hover:text-[rgb(var(--color-accent-primary-ch))] transition-colors"
             >Конвертер валют</a>
+            <span class="size-1 rounded-full bg-white/20" />
+            <a
+              href="https://bx-shef.github.io/app-convert-bbocode-md/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="font-mono text-sm tracking-tight text-white/60 hover:text-[rgb(var(--color-accent-primary-ch))] transition-colors"
+            >BBCode ↔ Markdown</a>
           </div>
         </div>
       </div>
@@ -358,6 +365,16 @@ const process: ProcessStep[] = [
             </ul>
           </div>
         </div>
+      </div>
+    </section>
+
+    <!-- GITHUB АКТИВНОСТЬ -->
+    <section class="px-[22px] lg:px-8 py-[48px] sm:py-[72px]">
+      <div class="max-w-[1200px] mx-auto">
+        <div class="text-xs uppercase tracking-[0.18em] text-white/40 font-mono mb-6">
+          GitHub активность
+        </div>
+        <GithubContrib />
       </div>
     </section>
 
