@@ -23,6 +23,25 @@ function isAllowedB24Host(rawUrl: string): boolean {
 
 const srcdoc = ref('')
 
+type YmWindow = Window & { ym?: (id: number, action: string, goal: string) => void }
+
+// Дедуп: не шлём цель дважды за одну отправку формы (srcdoc может дать
+// и postMessage, и CustomEvent одновременно).
+let goalFiredAt = 0
+function reachGoal() {
+  const now = Date.now()
+  if (now - goalFiredAt < 3000) return
+  goalFiredAt = now
+  const meta = document.head.querySelector<HTMLMetaElement>('meta[name="ym-id"]')
+  const id = meta ? Number(meta.content) : 0
+  if (!id) return
+  ;(window as YmWindow).ym?.(id, 'reachGoal', 'brief_submit')
+}
+
+function onMessage(event: MessageEvent) {
+  if (event.data?.type === 'b24:form:submit') reachGoal()
+}
+
 onMounted(() => {
   const { b24FormScriptUrl, b24FormId, b24FormSecret } = config.public
 
@@ -56,6 +75,16 @@ onMounted(() => {
     + `(function(w,d,u){var s=d.createElement('script');s.async=true;s.src=u+'?'+(Date.now()/180000|0);var h=d.getElementsByTagName('script')[0];h.parentNode.insertBefore(s,h);})(window,document,'${b24FormScriptUrl}');`
     + `${closeScript}`
     + `</body>`
+
+  // postMessage от B24 внутри srcdoc-iframe
+  window.addEventListener('message', onMessage)
+  // CustomEvent на родительском document (srcdoc — same-origin)
+  document.addEventListener('b24:form:submit', reachGoal)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('message', onMessage)
+  document.removeEventListener('b24:form:submit', reachGoal)
 })
 </script>
 
