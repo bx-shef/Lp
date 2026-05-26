@@ -87,9 +87,9 @@ const takeIf = [
 ]
 
 const skipIf = [
-  'Сейчас перегружен и нет свободного слота — честно скажу на изучении',
+  'Сейчас перегружен и нет свободного слота — честно скажу сразу',
   'Задача за пределами моего стека и компетенции — лучше передам коллеге',
-  'Заказчик хочет коробочный продукт без погружения в задачу — кастомная разработка без discovery не работает'
+  'Заказчик хочет коробочный продукт без погружения в задачу — кастомная разработка без исследований не работает'
 ]
 
 const process: ProcessStep[] = [
@@ -110,7 +110,7 @@ const process: ProcessStep[] = [
     id: 'estimate',
     step: '02',
     title: 'Оценка',
-    text: 'Фиксированная цена за этап или почасовая ставка. По итогам discovery — конкретные цифры и план этапов.'
+    text: 'Фиксированная цена за этап или почасовая ставка. По итогам изучения — конкретные цифры и план этапов.'
   },
   {
     id: 'dev',
@@ -130,9 +130,10 @@ const process: ProcessStep[] = [
 <template>
   <div>
     <!-- HERO -->
-    <section class="hero-fade-in px-[22px] lg:px-8 pt-[80px] sm:pt-[120px] pb-[64px] sm:pb-[96px]">
-      <div class="max-w-[1080px] mx-auto">
-        <div class="flex flex-col lg:flex-row lg:items-center gap-10 lg:gap-20">
+    <section class="hero-fade-in relative overflow-hidden px-[22px] lg:px-8 pt-[80px] sm:pt-[120px] pb-[64px] sm:pb-[96px]">
+      <HeroGraph />
+      <div class="relative z-10 max-w-[1080px] mx-auto">
+        <div class="flex flex-col lg:flex-row lg:items-center gap-10 lg:gap-12">
           <!-- Фото — первое на мобильном, правая колонка на desktop -->
           <div class="shrink-0 flex justify-start lg:justify-end order-first lg:order-last">
             <img
@@ -146,7 +147,7 @@ const process: ProcessStep[] = [
           </div>
 
           <!-- Текст -->
-          <div class="flex flex-col items-start gap-5 flex-1">
+          <div class="flex flex-col items-start gap-5 flex-1 lg:max-w-[620px]">
             <PartnerBadge />
 
             <h1 class="text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.05] tracking-tight text-white">
@@ -319,8 +320,8 @@ const process: ProcessStep[] = [
             Возьмусь — не за всё
           </h2>
           <p class="text-lg text-white/65">
-            Чтобы не тратить ваше и моё время на discovery,
-            который точно закончится отказом — лучше сразу.
+            Чтобы не тратить ваше и моё время на изучение,
+            которое точно закончится отказом — лучше сразу.
           </p>
         </div>
 
@@ -417,7 +418,7 @@ const process: ProcessStep[] = [
             Опишите задачу — скажу честно, берусь или нет
           </h2>
           <p class="text-lg text-white/70 mb-8">
-            Прочитаю и отвечу в течение рабочего дня. На discovery за 30 минут
+            Прочитаю и отвечу в течение рабочего дня. На изучении за 30 минут
             разберёмся, можно ли это сделать вообще, и если да — за сколько и в какие сроки.
           </p>
           <BriefForm />
