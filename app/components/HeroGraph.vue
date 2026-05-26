@@ -81,9 +81,9 @@ function tick() {
     nextPerturb = now + 3500 + Math.random() * 2500
   }
 
-  // Gravity toward center (weak) — photo repulsion does the heavy lifting
-  const cx = w * 0.5
-  const cy = h * 0.5
+  // Gravity center — right of center, slightly below axis
+  const cx = w > 900 ? w * 0.65 : w * 0.5
+  const cy = h * 0.58
 
   // Approximate photo center in canvas coords (desktop only)
   const photoX = w > 900 ? Math.max(0, (w - 1080) / 2) + 820 : -9999
