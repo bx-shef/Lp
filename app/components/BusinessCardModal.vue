@@ -26,6 +26,7 @@ const card = {
   email: 'shevchik.mail@gmail.com',
   telegram: '@bxshefby',
   city: 'Минск, Беларусь',
+  legalAddress: 'пр. Дзержинского, д. 131, кв. 234, г. Минск, Беларусь, 220025',
   site: 'offer.bx-shef.by'
 } as const
 
@@ -80,7 +81,7 @@ function downloadVCard() {
     `TEL;TYPE=CELL:${card.phoneTel}`,
     `EMAIL:${card.email}`,
     `URL:https://${card.site}`,
-    `ADR;TYPE=WORK:;;;Минск;;220025;BY`,
+    `ADR;TYPE=WORK:;;пр. Дзержинского\\, д. 131\\, кв. 234;Минск;;220025;BY`,
     `NOTE:AI\\, интеграции\\, MCP под Битрикс24. ${card.unp}.`,
     'END:VCARD'
   ].join('\r\n')
@@ -104,7 +105,7 @@ ${'─'.repeat(44)}
 Ф.И.О.:               Шевчик Игорь Сергеевич
 УНП:                  192049017
 Свидетельство:        192049017 от 12.09.2013
-Юр. адрес:            г. Минск, Беларусь, 220025
+Юр. адрес:            ${card.legalAddress}
 
 КОНТАКТЫ
 ${'─'.repeat(44)}
