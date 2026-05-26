@@ -36,6 +36,9 @@ jobs:
       NUXT_APP_BASE_URL: '/'
       NUXT_PUBLIC_SITE_URL: ${{ inputs.site-url }}
       NUXT_PUBLIC_BUILD_ID: ${{ inputs.build-id }}
+      # GitHub GraphQL API — для contrib-heatmap на главной.
+      # Токен создаётся Actions автоматически, вручную добавлять ничего не нужно.
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       # Metrika: пустая строка безопасна — nuxt.config.ts фильтрует \D
       NUXT_PUBLIC_METRIKA_ID: ${{ inputs.metrika-id }}
       # B24-форма: НЕ задаём здесь, чтобы пустая строка не перебивала дефолты

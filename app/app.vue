@@ -43,6 +43,12 @@ const navItemsMobile = [
       icon: MoneyIcon,
       to: 'https://currency-converter.bx-shef.by/',
       target: '_blank'
+    },
+    {
+      label: 'BBCode ↔ Markdown',
+      icon: CodeIcon,
+      to: 'https://bx-shef.github.io/app-convert-bbocode-md/',
+      target: '_blank'
     }
   ]
 ]
