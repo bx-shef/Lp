@@ -9,33 +9,73 @@ interface ContribResponse {
   total: number
 }
 
-function parseContributions(html: string): ContribDay[] {
-  const rects = html.match(/<rect[^>]+data-date[^>]*>/g) ?? []
-  const days: ContribDay[] = []
-
-  for (const rect of rects) {
-    const date = rect.match(/data-date="([^"]+)"/)?.[1]
-    const count = parseInt(rect.match(/data-count="([^"]+)"/)?.[1] ?? '0', 10)
-    const raw = parseInt(rect.match(/data-level="([^"]+)"/)?.[1] ?? '0', 10)
-    const level = Math.min(raw, 4) as 0 | 1 | 2 | 3 | 4
-    if (date) days.push({ date, count, level })
-  }
-
-  return days.sort((a, b) => a.date.localeCompare(b.date))
+const LEVEL_MAP: Record<string, 0 | 1 | 2 | 3 | 4> = {
+  NONE: 0,
+  FIRST_QUARTILE: 1,
+  SECOND_QUARTILE: 2,
+  THIRD_QUARTILE: 3,
+  FOURTH_QUARTILE: 4
 }
 
+const GQL = `{
+  user(login:"IgorShevchik"){
+    contributionsCollection{
+      contributionCalendar{
+        totalContributions
+        weeks{
+          contributionDays{
+            date
+            contributionCount
+            contributionLevel
+          }
+        }
+      }
+    }
+  }
+}`
+
 export default defineEventHandler(async (): Promise<ContribResponse> => {
+  const token = process.env.GITHUB_TOKEN
+  if (!token) return { days: [], total: 0 }
+
   try {
-    const html = await $fetch<string>('https://github.com/users/IgorShevchik/contributions', {
-      responseType: 'text',
+    const res = await $fetch<{
+      data: {
+        user: {
+          contributionsCollection: {
+            contributionCalendar: {
+              totalContributions: number
+              weeks: {
+                contributionDays: {
+                  date: string
+                  contributionCount: number
+                  contributionLevel: string
+                }[]
+              }[]
+            }
+          }
+        }
+      }
+    }>('https://api.github.com/graphql', {
+      method: 'POST',
       headers: {
-        'Accept': 'text/html,application/xhtml+xml',
-        'User-Agent': 'Mozilla/5.0 (compatible; Nuxt SSG build)'
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
       },
-      timeout: 8000
+      body: JSON.stringify({ query: GQL }),
+      timeout: 10000
     })
-    const days = parseContributions(html)
-    return { days, total: days.reduce((s, d) => s + d.count, 0) }
+
+    const cal = res.data.user.contributionsCollection.contributionCalendar
+    const days: ContribDay[] = cal.weeks.flatMap(w =>
+      w.contributionDays.map(d => ({
+        date: d.date,
+        count: d.contributionCount,
+        level: LEVEL_MAP[d.contributionLevel] ?? 0
+      }))
+    )
+
+    return { days, total: cal.totalContributions }
   } catch {
     return { days: [], total: 0 }
   }

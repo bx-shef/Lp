@@ -54,8 +54,8 @@ function init() {
 
   nodes = NODES_SRC.map(n => ({
     ...n,
-    x: w * 0.45 + (Math.random() - 0.5) * w * 0.45,
-    y: h * 0.5 + (Math.random() - 0.5) * h * 0.55,
+    x: w * 0.5 + (Math.random() - 0.5) * w * 0.70,
+    y: h * 0.5 + (Math.random() - 0.5) * h * 0.65,
     vx: (Math.random() - 0.5) * 2,
     vy: (Math.random() - 0.5) * 2,
     r: n.primary ? 5 : 3.5
@@ -81,16 +81,31 @@ function tick() {
     nextPerturb = now + 3500 + Math.random() * 2500
   }
 
-  // Gravity toward a center point (biased right on desktop)
-  const cx = w > 900 ? w * 0.64 : w * 0.5
+  // Gravity toward center (weak) — photo repulsion does the heavy lifting
+  const cx = w * 0.5
   const cy = h * 0.5
+
+  // Approximate photo center in canvas coords (desktop only)
+  const photoX = w > 900 ? Math.max(0, (w - 1080) / 2) + 820 : -9999
+  const photoY = h * 0.40
+  const PHOTO_R = 165
 
   for (let i = 0; i < nodes.length; i++) {
     const a = nodes[i]!
-    a.vx += (cx - a.x) * 0.0028
-    a.vy += (cy - a.y) * 0.0028
+    a.vx += (cx - a.x) * 0.0014
+    a.vy += (cy - a.y) * 0.0014
     a.vx += (Math.random() - 0.5) * 0.045
     a.vy += (Math.random() - 0.5) * 0.045
+
+    // Repel from photo zone
+    const pdx = a.x - photoX
+    const pdy = a.y - photoY
+    const pdist = Math.sqrt(pdx * pdx + pdy * pdy) + 0.01
+    if (pdist < PHOTO_R) {
+      const pf = Math.pow((PHOTO_R - pdist) / PHOTO_R, 2) * 5
+      a.vx += (pdx / pdist) * pf
+      a.vy += (pdy / pdist) * pf
+    }
 
     for (let j = i + 1; j < nodes.length; j++) {
       const b = nodes[j]!
@@ -98,7 +113,7 @@ function tick() {
       const dy = b.y - a.y
       const d2 = dx * dx + dy * dy + 0.01
       const d = Math.sqrt(d2)
-      const f = 3200 / d2
+      const f = 4800 / d2
       const fx = (dx / d) * f
       const fy = (dy / d) * f
       a.vx -= fx
@@ -108,8 +123,8 @@ function tick() {
     }
   }
 
-  const K = 0.022
-  const L = 115
+  const K = 0.018
+  const L = 145
   for (const [sId, tId] of EDGES) {
     const s = nodeMap.get(sId)
     const t = nodeMap.get(tId)

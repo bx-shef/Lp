@@ -246,7 +246,7 @@ const process: ProcessStep[] = [
         <!-- Примеры модулей -->
         <div class="mt-12 sm:mt-16 flex flex-col items-start gap-3">
           <div class="text-xs uppercase tracking-[0.18em] text-white/40 font-mono">
-            Примеры готовых модулей
+            Собрал в сарае
           </div>
           <div class="flex flex-wrap items-center justify-start gap-x-6 sm:gap-x-10 gap-y-2">
             <a
@@ -368,15 +368,7 @@ const process: ProcessStep[] = [
       </div>
     </section>
 
-    <!-- GITHUB АКТИВНОСТЬ -->
-    <section class="px-[22px] lg:px-8 py-[48px] sm:py-[72px]">
-      <div class="max-w-[1200px] mx-auto">
-        <div class="text-xs uppercase tracking-[0.18em] text-white/40 font-mono mb-6">
-          GitHub активность
-        </div>
-        <GithubContrib />
-      </div>
-    </section>
+    <GithubContrib />
 
     <!-- ПРОЦЕСС ЗАКАЗА -->
     <section class="px-[22px] lg:px-8 py-[64px] sm:py-[108px]">

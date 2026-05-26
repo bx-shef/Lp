@@ -75,45 +75,50 @@ function formatTotal(n: number): string {
 </script>
 
 <template>
-  <div
+  <section
     v-if="days.length > 0"
-    class="flex flex-col gap-4"
+    class="px-[22px] lg:px-8 py-[48px] sm:py-[72px]"
   >
-    <div class="flex flex-wrap items-baseline justify-between gap-3">
-      <div>
-        <span class="text-2xl sm:text-3xl font-bold text-white tabular-nums">{{ formatTotal(total) }}</span>
-        <span class="ml-2 text-white/55 text-base">коммитов за год</span>
+    <div class="max-w-[1200px] mx-auto flex flex-col gap-4">
+      <div class="text-xs uppercase tracking-[0.18em] text-white/40 font-mono">
+        GitHub активность
       </div>
-      <a
-        href="https://github.com/IgorShevchik"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="font-mono text-sm text-white/40 hover:text-[rgb(var(--color-accent-primary-ch))] transition-colors"
-      >github.com/IgorShevchik →</a>
-    </div>
+      <div class="flex flex-wrap items-baseline justify-between gap-3">
+        <div>
+          <span class="text-2xl sm:text-3xl font-bold text-white tabular-nums">{{ formatTotal(total) }}</span>
+          <span class="ml-2 text-white/55 text-base">коммитов за год</span>
+        </div>
+        <a
+          href="https://github.com/IgorShevchik"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="font-mono text-sm text-white/40 hover:text-[rgb(var(--color-accent-primary-ch))] transition-colors"
+        >github.com/IgorShevchik →</a>
+      </div>
 
-    <div class="overflow-x-auto pb-1 -mx-1 px-1">
-      <div
-        class="flex gap-[3px]"
-        style="min-width: max-content"
-      >
+      <div class="overflow-x-auto pb-1 -mx-1 px-1">
         <div
-          v-for="(week, wIdx) in weeks"
-          :key="wIdx"
-          :class="['flex flex-col gap-[3px]', wIdx < weeks.length - 26 ? 'hidden sm:flex' : '']"
+          class="flex gap-[3px]"
+          style="min-width: max-content"
         >
-          <div class="h-[14px] text-[10px] font-mono leading-[14px] text-white/35 whitespace-nowrap">
-            {{ monthLabels[wIdx] ?? '' }}
-          </div>
           <div
-            v-for="(cell, dIdx) in week"
-            :key="dIdx"
-            class="size-[11px] rounded-[2px]"
-            :style="{ background: cell ? cellBg(cell.level) : 'transparent' }"
-            :title="cell ? `${cell.date}: ${cell.count}` : undefined"
-          />
+            v-for="(week, wIdx) in weeks"
+            :key="wIdx"
+            :class="['flex flex-col gap-[3px]', wIdx < weeks.length - 26 ? 'hidden sm:flex' : '']"
+          >
+            <div class="h-[14px] text-[10px] font-mono leading-[14px] text-white/35 whitespace-nowrap">
+              {{ monthLabels[wIdx] ?? '' }}
+            </div>
+            <div
+              v-for="(cell, dIdx) in week"
+              :key="dIdx"
+              class="size-[11px] rounded-[2px]"
+              :style="{ background: cell ? cellBg(cell.level) : 'transparent' }"
+              :title="cell ? `${cell.date}: ${cell.count}` : undefined"
+            />
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </section>
 </template>
