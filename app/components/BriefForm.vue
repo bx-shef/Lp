@@ -23,6 +23,16 @@ function isAllowedB24Host(rawUrl: string): boolean {
 
 const srcdoc = ref('')
 
+// b24:form:submit fires inside the srcdoc iframe; events don't cross frame
+// boundaries, so the iframe relays via postMessage and we listen here.
+function onFrameMessage(e: MessageEvent) {
+  if (e.data !== 'b24:form:submit') return
+  const id = Number(config.public.metrikaId)
+  if (!id) return
+  const w = window as Window & { ym?: (...args: unknown[]) => void }
+  w.ym?.(id, 'reachGoal', 'brief_submit')
+}
+
 onMounted(() => {
   const { b24FormScriptUrl, b24FormId, b24FormSecret } = config.public
 
@@ -55,7 +65,14 @@ onMounted(() => {
     + `<script data-b24-form="${formAttr}" data-skip-moving="true">`
     + `(function(w,d,u){var s=d.createElement('script');s.async=true;s.src=u+'?'+(Date.now()/180000|0);var h=d.getElementsByTagName('script')[0];h.parentNode.insertBefore(s,h);})(window,document,'${b24FormScriptUrl}');`
     + `${closeScript}`
+    + `<script>document.addEventListener('b24:form:submit',function(){window.parent.postMessage('b24:form:submit','*')})${closeScript}`
     + `</body>`
+
+  window.addEventListener('message', onFrameMessage)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('message', onFrameMessage)
 })
 </script>
 

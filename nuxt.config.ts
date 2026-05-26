@@ -44,6 +44,7 @@ export default defineNuxtConfig({
     public: {
       siteUrl,
       buildId: process.env.NUXT_PUBLIC_BUILD_ID || 'dev',
+      metrikaId,
       // Битрикс24 веб-форма (embed). Эти параметры — публичные
       // идентификаторы, не секреты. По умолчанию вшита форма Игоря Шевчика
       // (форма #1 на портале b37817748); смена формы — через ENV без перебилда.
