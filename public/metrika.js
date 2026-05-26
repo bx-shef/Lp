@@ -14,5 +14,5 @@
     k.src = r
     a.parentNode.insertBefore(k, a)
   })(window, document, 'script', 'https://mc.yandex.ru/metrika/tag.js?id=' + id, 'ym')
-  window.ym(id, 'init', { ssr: true, webvisor: true, clickmap: true, accurateTrackBounce: true, trackLinks: true })
+  window.ym(id, 'init', { webvisor: true, clickmap: true, accurateTrackBounce: true, trackLinks: true })
 })()

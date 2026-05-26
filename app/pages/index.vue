@@ -97,7 +97,7 @@ const process: ProcessStep[] = [
     id: 'discovery',
     step: '01',
     title: 'Изучение',
-    text: '30 минут, бесплатно. Заранее пришлю 5 вопросов:',
+    text: '30 минут, бесплатно. Пять вопросов, которые стоит обдумать до созвона:',
     list: [
       'Что должно работать после внедрения?',
       'Какие системы интегрируем — Б24, банк, сайт, маркетплейс?',
@@ -239,6 +239,21 @@ const process: ProcessStep[] = [
             <p class="text-sm sm:text-base text-white/65 leading-relaxed">
               {{ s.text }}
             </p>
+          </div>
+        </div>
+
+        <!-- Примеры модулей -->
+        <div class="mt-12 sm:mt-16 flex flex-col items-start gap-3">
+          <div class="text-xs uppercase tracking-[0.18em] text-white/40 font-mono">
+            Примеры готовых модулей
+          </div>
+          <div class="flex flex-wrap items-center justify-start gap-x-6 sm:gap-x-10 gap-y-2">
+            <a
+              href="https://currency-converter.bx-shef.by/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="font-mono text-sm tracking-tight text-white/60 hover:text-[rgb(var(--color-accent-primary-ch))] transition-colors"
+            >Конвертер валют</a>
           </div>
         </div>
       </div>

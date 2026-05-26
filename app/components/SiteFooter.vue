@@ -18,7 +18,6 @@ const legal = {
   <div class="flex flex-col gap-2 text-xs text-white/55">
     <div class="flex flex-wrap items-center gap-x-4 gap-y-1">
       <span>© {{ new Date().getFullYear() }} {{ legal.short }}</span>
-      <span class="font-mono text-white/30">build {{ buildId.slice(0, 7) }}</span>
       <span class="font-mono">{{ legal.unp }}</span>
       <span>{{ legal.city }}</span>
     </div>
@@ -49,12 +48,7 @@ const legal = {
       >
         Политика конфиденциальности
       </NuxtLink>
-      <a
-        href="https://currency-converter.bx-shef.by/"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="hover:text-white hover:underline"
-      >Конвертер валют</a>
+      <span class="font-mono text-white/30">build {{ buildId.slice(0, 7) }}</span>
     </div>
   </div>
 </template>
