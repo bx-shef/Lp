@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import GitHubIcon from '@bitrix24/b24icons-vue/social/GitHubIcon'
 import Bitrix24Icon from '@bitrix24/b24icons-vue/common-service/Bitrix24Icon'
-import TelegramIcon from '@bitrix24/b24icons-vue/outline/TelegramIcon'
 import ContactDetailsIcon from '@bitrix24/b24icons-vue/outline/ContactDetailsIcon'
 import ReceiptIcon from '@bitrix24/b24icons-vue/outline/ReceiptIcon'
 import OpenBookIcon from '@bitrix24/b24icons-vue/main/OpenBookIcon'
@@ -84,7 +83,6 @@ useHead({
             'name': 'ИП Шевчик И. С.',
             'alternateName': 'bx-shef.by',
             'url': config.public.siteUrl,
-            'telephone': '+375297360126',
             'email': 'shevchik.mail@gmail.com',
             'address': {
               '@type': 'PostalAddress',
@@ -102,8 +100,7 @@ useHead({
                 'url': `${config.public.siteUrl}/igor.jpg`
               },
               'sameAs': [
-                'https://github.com/IgorShevchik',
-                'https://t.me/bxshefby'
+                'https://github.com/IgorShevchik'
               ]
             },
             'areaServed': 'BY',
@@ -143,14 +140,6 @@ useHead({
       <B24NavigationMenu :items="navItems" />
 
       <template #right>
-        <B24Button
-          to="https://t.me/bxshefby"
-          target="_blank"
-          aria-label="Telegram"
-          color="air-tertiary-no-accent"
-          :icon="TelegramIcon"
-          size="sm"
-        />
         <B24Button
           to="https://github.com/IgorShevchik"
           target="_blank"

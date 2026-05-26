@@ -66,12 +66,6 @@ useSeoMeta({
           class="text-[rgb(var(--color-accent-primary-ch))] hover:underline"
         >shevchik.mail@gmail.com</a>
       </li>
-      <li>
-        Telegram: <a
-          href="https://t.me/bxshefby"
-          class="text-[rgb(var(--color-accent-primary-ch))] hover:underline"
-        >@bxshefby</a>
-      </li>
     </ul>
   </div>
 </template>
