@@ -115,14 +115,8 @@ const process: ProcessStep[] = [
   {
     id: 'dev',
     step: '03',
-    title: 'Разработка',
-    text: 'Демо каждые 1–2 недели. Закрытый этап оплачивается полностью, текущий — по часам из трекера задач в вашем Битрикс24. Остановите проект — платите только за сделанное.'
-  },
-  {
-    id: 'support',
-    step: '04',
-    title: 'Поддержка',
-    text: 'После релиза обсуждаем отдельно: почасовая или подписка с SLA. Без обязательств подписать сразу — берём только если нужно.'
+    title: 'Разработка и поддержка',
+    text: 'Демо каждые 1–2 недели, оплата по часам из трекера в вашем Б24 — остановите проект, платите только за сделанное. После релиза поддержка по желанию: почасовая или подписка с SLA.'
   }
 ]
 </script>
@@ -130,7 +124,10 @@ const process: ProcessStep[] = [
 <template>
   <div>
     <!-- HERO -->
-    <section class="hero-fade-in relative overflow-hidden px-[22px] lg:px-8 pt-[80px] sm:pt-[120px] pb-[64px] sm:pb-[96px]">
+    <section
+      id="hero"
+      class="hero-fade-in relative overflow-hidden px-[22px] lg:px-8 pt-[80px] sm:pt-[120px] pb-[64px] sm:pb-[96px]"
+    >
       <HeroGraph />
       <div class="relative z-10 max-w-[1080px] mx-auto">
         <div class="flex flex-col lg:flex-row lg:items-center gap-10 lg:gap-12">
@@ -176,10 +173,9 @@ const process: ProcessStep[] = [
                 </template>
               </B24Button>
               <B24Button
-                label="Посмотреть, что делаю"
-                href="#services"
-                :external="true"
-                :no-rel="true"
+                label="Назначить созвон"
+                :to="B24_BOOKING_URL"
+                target="_blank"
                 color="air-secondary-no-accent"
                 size="xl"
               />
@@ -208,7 +204,7 @@ const process: ProcessStep[] = [
     <!-- НАПРАВЛЕНИЯ УСЛУГ -->
     <section
       id="services"
-      class="px-[22px] lg:px-8 py-[64px] sm:py-[108px]"
+      class="px-[22px] lg:px-8 py-[64px] sm:py-[72px]"
     >
       <div class="max-w-[1200px] mx-auto">
         <div class="max-w-[720px] mb-12 sm:mb-16">
@@ -242,33 +238,11 @@ const process: ProcessStep[] = [
             </p>
           </div>
         </div>
-
-        <!-- Примеры модулей -->
-        <div class="mt-12 sm:mt-16 flex flex-col items-start gap-3">
-          <div class="text-xs uppercase tracking-[0.18em] text-white/40 font-mono">
-            Полезные мелочи
-          </div>
-          <div class="flex flex-wrap items-center justify-start gap-x-6 sm:gap-x-10 gap-y-2">
-            <a
-              href="https://currency-converter.bx-shef.by/"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="font-mono text-sm tracking-tight text-white/60 hover:text-[rgb(var(--color-accent-primary-ch))] transition-colors"
-            >Конвертер валют</a>
-            <span class="size-1 rounded-full bg-white/20" />
-            <a
-              href="https://bx-shef.github.io/app-convert-bbocode-md/"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="font-mono text-sm tracking-tight text-white/60 hover:text-[rgb(var(--color-accent-primary-ch))] transition-colors"
-            >BBCode ↔ Markdown</a>
-          </div>
-        </div>
       </div>
     </section>
 
     <!-- ЧЕМ ОТЛИЧАЮСЬ -->
-    <section class="px-[22px] lg:px-8 py-[64px] sm:py-[108px]">
+    <section class="px-[22px] lg:px-8 py-[64px] sm:py-[72px]">
       <div class="max-w-[1200px] mx-auto">
         <div class="max-w-[720px] mb-12 sm:mb-16">
           <h2 class="text-3xl sm:text-5xl font-bold tracking-tight text-white mb-4">
@@ -320,7 +294,7 @@ const process: ProcessStep[] = [
     </section>
 
     <!-- NEGATIVE QUALIFICATION -->
-    <section class="px-[22px] lg:px-8 py-[64px] sm:py-[108px]">
+    <section class="px-[22px] lg:px-8 py-[64px] sm:py-[72px]">
       <div class="max-w-[1200px] mx-auto">
         <div class="max-w-[720px] mb-12 sm:mb-16">
           <h2 class="text-3xl sm:text-5xl font-bold tracking-tight text-white mb-4">
@@ -371,19 +345,19 @@ const process: ProcessStep[] = [
     <GithubContrib />
 
     <!-- ПРОЦЕСС ЗАКАЗА -->
-    <section class="px-[22px] lg:px-8 py-[64px] sm:py-[108px]">
+    <section class="px-[22px] lg:px-8 py-[64px] sm:py-[72px]">
       <div class="max-w-[1200px] mx-auto">
         <div class="max-w-[720px] mb-12 sm:mb-16">
           <h2 class="text-3xl sm:text-5xl font-bold tracking-tight text-white mb-4">
             Процесс заказа разработки
           </h2>
           <p class="text-lg text-white/65">
-            Четыре этапа. Каждый закрывается актом — следующий не стартует,
+            Три этапа. Каждый закрывается актом — следующий не стартует,
             пока вы не приняли предыдущий.
           </p>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <div
             v-for="p in process"
             :key="p.id"
@@ -419,7 +393,7 @@ const process: ProcessStep[] = [
     <!-- ФОРМА -->
     <section
       id="brief"
-      class="px-[22px] lg:px-8 py-[64px] sm:py-[108px]"
+      class="px-[22px] lg:px-8 py-[64px] sm:py-[72px]"
     >
       <div class="max-w-[900px] mx-auto">
         <div class="rounded-3xl border border-white/10 bg-gradient-to-br from-[rgb(var(--color-accent-partner-ch)/0.15)] to-[rgb(var(--color-accent-special-ch)/0.08)] p-8 sm:p-12">
@@ -433,5 +407,7 @@ const process: ProcessStep[] = [
         </div>
       </div>
     </section>
+
+    <MobileBriefCta />
   </div>
 </template>

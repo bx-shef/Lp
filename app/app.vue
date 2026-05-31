@@ -9,8 +9,6 @@ import CodeIcon from '@bitrix24/b24icons-vue/common-service/CodeIcon'
 import AppsIcon from '@bitrix24/b24icons-vue/solid/AppsIcon'
 import DeveloperResourcesIcon from '@bitrix24/b24icons-vue/solid/DeveloperResourcesIcon'
 
-import MoneyIcon from '@bitrix24/b24icons-vue/outline/MoneyIcon'
-
 const cardOpen = ref(false)
 
 const config = useRuntimeConfig()
@@ -31,24 +29,6 @@ const navItems = [
         { label: 'b24icons', icon: AppsIcon, to: 'https://bitrix24.github.io/b24icons/', target: '_blank' },
         { label: 'REST API', icon: DeveloperResourcesIcon, to: 'https://apidocs.bitrix24.ru/', target: '_blank' }
       ]
-    }
-  ]
-]
-
-const navItemsMobile = [
-  ...navItems,
-  [
-    {
-      label: 'Конвертер валют',
-      icon: MoneyIcon,
-      to: 'https://currency-converter.bx-shef.by/',
-      target: '_blank'
-    },
-    {
-      label: 'BBCode ↔ Markdown',
-      icon: CodeIcon,
-      to: 'https://bx-shef.github.io/app-convert-bbocode-md/',
-      target: '_blank'
     }
   ]
 ]
@@ -164,7 +144,7 @@ useHead({
       </template>
       <template #body>
         <B24NavigationMenu
-          :items="navItemsMobile"
+          :items="navItems"
           orientation="vertical"
         />
       </template>

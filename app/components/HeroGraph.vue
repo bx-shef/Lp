@@ -9,6 +9,7 @@ let w = 0
 let h = 0
 let nextPerturb = 0
 let ro: ResizeObserver
+let prefersReduced = false
 
 interface Node {
   id: string
@@ -90,6 +91,8 @@ function resize() {
     if (!canvas.value) return
     w = canvas.value.width = canvas.value.offsetWidth
     h = canvas.value.height = canvas.value.offsetHeight
+    // Resize сбрасывает содержимое canvas — при reduced-motion перерисуем кадр.
+    if (prefersReduced && ctx) draw()
   })
 }
 
@@ -221,11 +224,27 @@ function loop() {
   animId = requestAnimationFrame(loop)
 }
 
+// Пауза анимации, когда вкладка не видна — экономит батарею/CPU на мобильных.
+function onVisibility() {
+  if (prefersReduced) return
+  if (document.hidden) {
+    cancelAnimationFrame(animId)
+  } else {
+    animId = requestAnimationFrame(loop)
+  }
+}
+
 onMounted(() => {
   if (!canvas.value) return
   ctx = canvas.value.getContext('2d')!
+  prefersReduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false
   init()
-  loop()
+  if (prefersReduced) {
+    draw() // один статичный кадр — без непрерывной анимации
+  } else {
+    loop()
+    document.addEventListener('visibilitychange', onVisibility)
+  }
   ro = new ResizeObserver(resize)
   ro.observe(canvas.value)
 })
@@ -234,6 +253,7 @@ onUnmounted(() => {
   cancelAnimationFrame(animId)
   cancelAnimationFrame(resizeRaf)
   ro?.disconnect()
+  document.removeEventListener('visibilitychange', onVisibility)
 })
 </script>
 
