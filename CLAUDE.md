@@ -21,6 +21,7 @@ pnpm og           # перегенерация og-image.png (только пос
 - **Шрифты self-hosted** — `@fontsource/rubik` и `@fontsource/roboto-mono` (нет зависимости от Google Fonts CDN)
 - **Форма Б24** — embed через два script-тега, загрузка только через allowlist доменов (см. `BriefForm.vue`)
 - **b24FormSecret** — публичный embed-идентификатор (не секрет, виден в HTML)
+- **callUrl визитки** — публичная ссылка онлайн-записи Б24 (`bel.bitrix24.by/~…`), хардкод в `BusinessCardModal.vue` (объект `card`); при смене портала менять там же, обновляется через пересборку
 - **Яндекс Метрика** — inline в nuxt.config.ts, metrika ID переопределяем через ENV
 
 ## Структура

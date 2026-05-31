@@ -331,6 +331,7 @@ function triggerDownload(blob: Blob, filename: string) {
                     :href="card.callUrl"
                     target="_blank"
                     rel="noopener noreferrer"
+                    aria-label="Назначить созвон — выбрать время (откроется в новой вкладке)"
                     class="flex items-center justify-center gap-2.5 w-full h-11 rounded-xl text-sm font-semibold transition-all duration-200 hover:brightness-110"
                     style="background: rgb(var(--color-accent-primary-ch)); color: #0a1220; box-shadow: 0 0 24px rgb(var(--color-accent-primary-ch)/0.25);"
                   >
