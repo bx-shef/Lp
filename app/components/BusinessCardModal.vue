@@ -27,7 +27,9 @@ const card = {
   telegram: '@bxshefby',
   city: 'Минск, Беларусь',
   legalAddress: 'пр. Дзержинского, д. 131, кв. 234, г. Минск, Беларусь, 220025',
-  site: 'offer.bx-shef.by'
+  site: 'offer.bx-shef.by',
+  // Публичная ссылка на онлайн-запись в календарь Б24 — согласовать время созвона.
+  callUrl: 'https://bel.bitrix24.by/~IEg2A'
 } as const
 
 // Генерируем QR один раз при маунте компонента.
@@ -324,6 +326,52 @@ function triggerDownload(blob: Blob, filename: string) {
 
                 <!-- Actions -->
                 <div class="flex flex-col gap-2.5">
+                  <!-- Schedule a call — главный CTA: онлайн-согласование времени созвона (календарь Б24) -->
+                  <a
+                    :href="card.callUrl"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="flex items-center justify-center gap-2.5 w-full h-11 rounded-xl text-sm font-semibold transition-all duration-200 hover:brightness-110"
+                    style="background: rgb(var(--color-accent-primary-ch)); color: #0a1220; box-shadow: 0 0 24px rgb(var(--color-accent-primary-ch)/0.25);"
+                  >
+                    <svg
+                      class="size-4 shrink-0"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <rect
+                        x="3"
+                        y="4"
+                        width="18"
+                        height="18"
+                        rx="2"
+                      />
+                      <line
+                        x1="16"
+                        y1="2"
+                        x2="16"
+                        y2="6"
+                      />
+                      <line
+                        x1="8"
+                        y1="2"
+                        x2="8"
+                        y2="6"
+                      />
+                      <line
+                        x1="3"
+                        y1="10"
+                        x2="21"
+                        y2="10"
+                      />
+                    </svg>
+                    <span>Назначить созвон</span>
+                  </a>
+
                   <!-- Add to contacts -->
                   <button
                     type="button"
