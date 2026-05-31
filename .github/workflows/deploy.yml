@@ -4,6 +4,11 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  # Ежедневный пересбор, чтобы обновлять GitHub-граф контрибуций
+  # (данные вмораживаются в статику при generate).
+  # GitHub Actions — UTC; 22:00 UTC = 01:00 по Минску (UTC+3, без DST).
+  schedule:
+    - cron: '0 22 * * *'
 
 permissions:
   contents: read
