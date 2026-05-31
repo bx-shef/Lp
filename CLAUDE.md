@@ -44,11 +44,12 @@ public/
 scripts/
   generate-og.mjs     # Playwright-рендер OG 1200×630
 docs/
-  copy-v6-proposal.md # актуальные тексты лендинга
   handoff-*.md        # handoff-документы (самый новый — актуален)
 legacy/               # архив: старые версии HTML и тексты
 .github/workflows/
-  deploy.yml          # build → validate → rsync → smoke-test
+  deploy.yml          # build → validate → rsync → smoke-test;
+                      # + cron 22:00 UTC (01:00 Минск) — ежедневный пересбор,
+                      #   чтобы GitHub-граф контрибуций не устаревал в статике
 ```
 
 ## Стиль кода
