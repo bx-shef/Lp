@@ -94,6 +94,11 @@ jobs:
           grep -q 'canonical' .output/public/legal/index.html     || (echo "ERR: legal canonical missing" && exit 1)
           grep -q '/metrika.js' .output/public/index.html         || (echo "ERR: /metrika.js script tag missing" && exit 1)
           grep -q 'build ' .output/public/index.html             || (echo "ERR: build-id missing in footer" && exit 1)
+          # GitHub-граф рендерится только при наличии данных (v-if). Не блокируем
+          # сборку (graceful degradation by design), но подсвечиваем annotation —
+          # важно для cron-прогона: молчаливое исчезновение графа было бы незаметно.
+          grep -q 'GitHub активность' .output/public/index.html \
+            || echo "::warning::GitHub-граф отсутствует в index.html (нет GITHUB_TOKEN либо GitHub API недоступен). Сайт собран, секция активности скрыта."
           echo "OK: все обязательные артефакты на месте"
 
       - name: Upload artifact

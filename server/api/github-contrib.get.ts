@@ -42,6 +42,7 @@ export default defineEventHandler(async (): Promise<ContribResponse> => {
 
   try {
     const res = await $fetch<{
+      errors?: { message: string }[]
       data: {
         user: {
           contributionsCollection: {
@@ -67,6 +68,13 @@ export default defineEventHandler(async (): Promise<ContribResponse> => {
       body: JSON.stringify({ query: GQL }),
       timeout: 10000
     })
+
+    // GitHub GraphQL отдаёт ошибки (rate limit, невалидный токен) как HTTP 200
+    // с телом { errors:[...], data:null } — без этого лога в ночном прогоне
+    // была бы видна лишь причина-следствие «null user» без первопричины.
+    if (res.errors?.length) {
+      console.warn('[github-contrib] GraphQL errors:', res.errors)
+    }
 
     if (!res.data?.user) {
       console.warn(`[github-contrib] GitHub API returned null user for login "${GITHUB_LOGIN}"`)
