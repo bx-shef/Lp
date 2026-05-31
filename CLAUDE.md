@@ -22,7 +22,9 @@ pnpm og           # перегенерация og-image.png (только пос
 - **Форма Б24** — embed через два script-тега, загрузка только через allowlist доменов (см. `BriefForm.vue`)
 - **b24FormSecret** — публичный embed-идентификатор (не секрет, виден в HTML)
 - **Ссылка онлайн-записи Б24** — `B24_BOOKING_URL` в `app/utils/booking.ts` (общий модуль для hero и визитки); при смене портала менять там, обновляется через пересборку
-- **Яндекс Метрика** — inline в nuxt.config.ts, metrika ID переопределяем через ENV
+- **Яндекс Метрика** — inline в nuxt.config.ts, metrika ID переопределяем через ENV; цели через `useMetrikaGoal().reachGoal()` (brief_submit, booking_click, sticky_cta_click)
+- **Воронка лендинга** — «два входа, одна точка»: первичный CTA «Описать задачу» (#brief), вторичный «Назначить созвон» (B24-запись). На мобиле первичный продублирован sticky-кнопкой (`MobileBriefCta.vue`). Инструменты-крючки вынесены в футер, вне зоны конверсии
+- **HeroGraph** — уважает `prefers-reduced-motion` (статичный кадр) и ставит анимацию на паузу при скрытой вкладке (батарея/CPU на мобиле)
 
 ## Структура
 
@@ -36,7 +38,7 @@ app/
     HeroGraph.vue     # canvas force-directed граф (анимация фона hero)
     GithubContrib.vue # heatmap GitHub-контрибуций (данные из SSG prerender)
     MobileBriefCta.vue # sticky-CTA «Описать задачу» на мобиле (IntersectionObserver)
-  composables/        # useCardGlow (mouse-follow glow)
+  composables/        # useCardGlow (mouse-follow glow), useMetrikaGoal (reachGoal)
   utils/              # booking.ts → B24_BOOKING_URL (общая ссылка записи Б24)
   assets/css/main.css # Tailwind + b24ui + brand-токены
 server/

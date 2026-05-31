@@ -10,6 +10,7 @@ import CodeIcon from '@bitrix24/b24icons-vue/common-service/CodeIcon'
 import RocketIcon from '@bitrix24/b24icons-vue/main/RocketIcon'
 
 useCardGlow()
+const { reachGoal } = useMetrikaGoal()
 
 interface ServiceItem {
   id: string
@@ -178,6 +179,7 @@ const process: ProcessStep[] = [
                 target="_blank"
                 color="air-secondary-no-accent"
                 size="xl"
+                @click="reachGoal('booking_click')"
               />
             </div>
           </div>

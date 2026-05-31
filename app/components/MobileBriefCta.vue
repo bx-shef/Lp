@@ -3,6 +3,7 @@
 // Появляется, когда hero ушёл из вида, и прячется, когда форма брифа на экране
 // (иначе кнопка перекрывала бы саму форму, к которой ведёт).
 const show = ref(false)
+const { reachGoal } = useMetrikaGoal()
 
 let pastHero = false
 let briefInView = false
@@ -59,6 +60,7 @@ onUnmounted(() => {
         href="#brief"
         class="flex items-center justify-center gap-2 w-full h-14 rounded-xl text-base font-semibold transition-all duration-200 active:brightness-95"
         style="background: rgb(var(--color-accent-primary-ch)); color: #0a1220; box-shadow: 0 0 28px rgb(var(--color-accent-primary-ch)/0.35);"
+        @click="reachGoal('sticky_cta_click')"
       >
         Описать задачу за 5 минут
       </a>
