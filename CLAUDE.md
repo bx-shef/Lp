@@ -1,5 +1,5 @@
 # bx-shef.by — контекст для Claude Code
-<!-- Last reviewed: 2026-05-26 -->
+<!-- Last reviewed: 2026-05-31 -->
 
 Лендинг ИП Шевчик: Nuxt 4 + @bitrix24/b24ui-nuxt + Tailwind v4 + TypeScript.
 Статическая генерация (SSG). Деплой: rsync на VPS через GitHub Actions.
