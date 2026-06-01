@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue'
-
 const canvas = ref<HTMLCanvasElement | null>(null)
 let animId = 0
 let resizeRaf = 0
@@ -9,6 +7,9 @@ let w = 0
 let h = 0
 let nextPerturb = 0
 let ro: ResizeObserver
+let prefersReduced = false
+let isRunning = false
+let motionMql: MediaQueryList | null = null
 
 interface Node {
   id: string
@@ -90,6 +91,8 @@ function resize() {
     if (!canvas.value) return
     w = canvas.value.width = canvas.value.offsetWidth
     h = canvas.value.height = canvas.value.offsetHeight
+    // Resize сбрасывает содержимое canvas — при reduced-motion перерисуем кадр.
+    if (prefersReduced && ctx) draw()
   })
 }
 
@@ -221,19 +224,61 @@ function loop() {
   animId = requestAnimationFrame(loop)
 }
 
+// Один владелец цикла: isRunning защищает от двойного RAF при быстрых
+// hidden→visible переходах (иначе два параллельных loop ускорили бы анимацию).
+function start() {
+  if (isRunning || prefersReduced) return
+  isRunning = true
+  animId = requestAnimationFrame(loop)
+}
+
+function stop() {
+  cancelAnimationFrame(animId)
+  isRunning = false
+}
+
+// Пауза анимации, когда вкладка не видна — экономит батарею/CPU на мобильных.
+function onVisibility() {
+  if (document.hidden) stop()
+  else start()
+}
+
+// Реакция на смену системной настройки «уменьшить движение» без перезагрузки.
+function onMotionChange(e: MediaQueryListEvent) {
+  prefersReduced = e.matches
+  if (prefersReduced) {
+    stop()
+    draw() // оставляем один статичный кадр
+  } else {
+    start()
+  }
+}
+
 onMounted(() => {
   if (!canvas.value) return
-  ctx = canvas.value.getContext('2d')!
+  const c = canvas.value.getContext('2d')
+  if (!c) return // 2D-контекст недоступен — тихо пропускаем фон
+  ctx = c
+  motionMql = window.matchMedia?.('(prefers-reduced-motion: reduce)') ?? null
+  prefersReduced = motionMql?.matches ?? false
   init()
-  loop()
+  if (prefersReduced) {
+    draw() // один статичный кадр — без непрерывной анимации
+  } else {
+    start()
+  }
+  document.addEventListener('visibilitychange', onVisibility)
+  motionMql?.addEventListener('change', onMotionChange)
   ro = new ResizeObserver(resize)
   ro.observe(canvas.value)
 })
 
 onUnmounted(() => {
-  cancelAnimationFrame(animId)
+  stop()
   cancelAnimationFrame(resizeRaf)
   ro?.disconnect()
+  document.removeEventListener('visibilitychange', onVisibility)
+  motionMql?.removeEventListener('change', onMotionChange)
 })
 </script>
 
