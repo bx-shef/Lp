@@ -26,6 +26,10 @@ export const CONTRIB_LEVEL_MAP: Record<string, 0 | 1 | 2 | 3 | 4> = {
   FOURTH_QUARTILE: 4
 }
 
+/**
+ * Переводит строковый `contributionLevel` из GraphQL в число 0–4.
+ * Неизвестное значение → 0: страховка на случай, если GitHub расширит enum.
+ */
 export function levelFromGraphql(contributionLevel: string): 0 | 1 | 2 | 3 | 4 {
   return CONTRIB_LEVEL_MAP[contributionLevel] ?? 0
 }
@@ -42,6 +46,11 @@ function dateAtNoonUTC(isoDate: string): Date {
  * Раскладывает плоский список дней в колонки-недели (воскресенье — первый день).
  * Ведущие/хвостовые дни, которых нет в данных, заполняются `null`, чтобы
  * сетка всегда была выровнена по столбцам из 7 ячеек.
+ *
+ * Ожидает дни в хронологическом порядке (как их отдаёт GitHub API): диапазон
+ * определяется по первому и последнему элементу. Неотсортированный вход даст
+ * неверные границы — сортировка не делается намеренно (лишняя работа на
+ * заведомо упорядоченных данных).
  */
 export function groupIntoWeeks(days: ContribDay[]): (ContribDay | null)[][] {
   if (days.length === 0) return []

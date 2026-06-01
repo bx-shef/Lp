@@ -12,9 +12,11 @@ function day(date: string, count = 0, level: ContribDay['level'] = 0): ContribDa
 }
 
 describe('levelFromGraphql', () => {
-  it('маппит известные квартили GitHub', () => {
+  it('маппит все пять известных квартилей GitHub', () => {
     expect(levelFromGraphql('NONE')).toBe(0)
     expect(levelFromGraphql('FIRST_QUARTILE')).toBe(1)
+    expect(levelFromGraphql('SECOND_QUARTILE')).toBe(2)
+    expect(levelFromGraphql('THIRD_QUARTILE')).toBe(3)
     expect(levelFromGraphql('FOURTH_QUARTILE')).toBe(4)
   })
 
@@ -24,7 +26,8 @@ describe('levelFromGraphql', () => {
   })
 
   it('CONTRIB_LEVEL_MAP покрывает все пять уровней', () => {
-    expect(Object.values(CONTRIB_LEVEL_MAP).sort()).toEqual([0, 1, 2, 3, 4])
+    // числовая сортировка: дефолтная у Array.sort лексикографическая
+    expect(Object.values(CONTRIB_LEVEL_MAP).sort((a, b) => a - b)).toEqual([0, 1, 2, 3, 4])
   })
 })
 
@@ -54,17 +57,42 @@ describe('groupIntoWeeks', () => {
     expect(first.slice(4).every(c => c === null)).toBe(true)
   })
 
-  it('первый день недели — воскресенье', () => {
+  it('старт ровно с воскресенья — без ведущих null', () => {
     const days = Array.from({ length: 7 }, (_, i) => {
       const d = new Date(Date.UTC(2024, 5, 2 + i)) // 2024-06-02 — воскресенье
       return day(d.toISOString().slice(0, 10))
     })
     const weeks = groupIntoWeeks(days)
     expect(weeks[0]![0]?.date).toBe('2024-06-02')
+    expect(weeks[0]!.every(c => c !== null)).toBe(true)
+  })
+
+  it('хвост последней недели добивается null, если данные кончаются не в субботу', () => {
+    // 2024-06-02 (Вс) .. 2024-06-05 (Ср) — 4 дня, хвост Чт/Пт/Сб → null
+    const days = Array.from({ length: 4 }, (_, i) => {
+      const d = new Date(Date.UTC(2024, 5, 2 + i))
+      return day(d.toISOString().slice(0, 10))
+    })
+    const weeks = groupIntoWeeks(days)
+    expect(weeks).toHaveLength(1)
+    expect(weeks[0]!.slice(0, 4).every(c => c !== null)).toBe(true)
+    expect(weeks[0]!.slice(4).every(c => c === null)).toBe(true)
+  })
+
+  it('полный год (~53 колонки), все недели по 7 ячеек', () => {
+    const days = Array.from({ length: 365 }, (_, i) => {
+      const d = new Date(Date.UTC(2024, 5, 2 + i)) // год от воскресенья
+      return day(d.toISOString().slice(0, 10), i)
+    })
+    const weeks = groupIntoWeeks(days)
+    expect(weeks.length).toBeGreaterThanOrEqual(52)
+    expect(weeks.length).toBeLessThanOrEqual(54)
+    expect(weeks.every(w => w.length === 7)).toBe(true)
   })
 
   it('корректно обрабатывает стык года', () => {
-    // 2023-12-31 (Вс) → 2024-01-06 (Сб): одна полная неделя через границу года
+    // 2023-12-31 (Вс) → 2024-01-06 (Сб): одна полная неделя через границу года.
+    // Date.UTC сам нормализует переполнение дня: 31 + 6 → 2024-01-06.
     const days = Array.from({ length: 7 }, (_, i) => {
       const d = new Date(Date.UTC(2023, 11, 31 + i))
       return day(d.toISOString().slice(0, 10), i)
@@ -109,5 +137,19 @@ describe('monthLabelsForWeeks', () => {
 
   it('пустой ввод → пустой список меток', () => {
     expect(monthLabelsForWeeks([])).toEqual([])
+  })
+
+  it('неделя целиком из null → метка null (ветка отсутствия реального дня)', () => {
+    const emptyWeek = Array<ContribDay | null>(7).fill(null)
+    expect(monthLabelsForWeeks([emptyWeek])).toEqual([null])
+  })
+
+  it('предыдущая неделя целиком из null → текущая метка подавляется (защитная ветка)', () => {
+    const emptyWeek = Array<ContribDay | null>(7).fill(null)
+    const realWeek: (ContribDay | null)[] = [day('2024-06-02', 1, 1), ...Array<ContribDay | null>(6).fill(null)]
+    // idx=0 пустой → null; idx=1 реальный, но prevReal не найден → тоже null.
+    // Документируем фактическое поведение: на реальных (непрерывных) данных GitHub
+    // полностью пустой недели в середине не бывает, поэтому квирк недостижим.
+    expect(monthLabelsForWeeks([emptyWeek, realWeek])).toEqual([null, null])
   })
 })
