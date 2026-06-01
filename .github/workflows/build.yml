@@ -74,6 +74,9 @@ jobs:
       - name: Typecheck
         run: pnpm run typecheck
 
+      - name: Test
+        run: pnpm run test
+
       # generate (статика) вместо build (SSR) — CI и deploy идут одной тропой.
       - name: Generate (static)
         run: pnpm run generate

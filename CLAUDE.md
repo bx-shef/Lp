@@ -11,6 +11,7 @@ pnpm dev          # dev-сервер (localhost:3000)
 pnpm generate     # статическая сборка → .output/public/
 pnpm lint         # ESLint
 pnpm typecheck    # vue-tsc
+pnpm test         # vitest (юниты чистой логики из shared/)
 pnpm og           # перегенерация og-image.png (только после смены текста/фото)
 ```
 
@@ -44,6 +45,10 @@ app/
 server/
   api/
     github-contrib.get.ts  # GraphQL → GitHub API, вызывается при pnpm generate
+shared/
+  github-contrib.ts   # типы + чистая логика графа (weeks/monthLabels/level), общая для server и компонента
+test/
+  *.test.ts           # vitest-юниты чистой логики из shared/
 public/
   igor.jpg / og-image.png / CNAME / favicon.ico
 scripts/
