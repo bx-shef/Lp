@@ -1,23 +1,6 @@
-interface ContribDay {
-  date: string
-  count: number
-  level: 0 | 1 | 2 | 3 | 4
-}
-
-interface ContribResponse {
-  days: ContribDay[]
-  total: number
-}
+import { levelFromGraphql, type ContribDay, type ContribResponse } from '#shared/github-contrib'
 
 const GITHUB_LOGIN = 'IgorShevchik'
-
-const LEVEL_MAP: Record<string, 0 | 1 | 2 | 3 | 4> = {
-  NONE: 0,
-  FIRST_QUARTILE: 1,
-  SECOND_QUARTILE: 2,
-  THIRD_QUARTILE: 3,
-  FOURTH_QUARTILE: 4
-}
 
 const GQL = `{
   user(login:"${GITHUB_LOGIN}"){
@@ -86,7 +69,7 @@ export default defineEventHandler(async (): Promise<ContribResponse> => {
       w.contributionDays.map(d => ({
         date: d.date,
         count: d.contributionCount,
-        level: LEVEL_MAP[d.contributionLevel] ?? 0
+        level: levelFromGraphql(d.contributionLevel)
       }))
     )
 

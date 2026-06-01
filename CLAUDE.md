@@ -1,5 +1,5 @@
 # bx-shef.by — контекст для Claude Code
-<!-- Last reviewed: 2026-05-31 -->
+<!-- Last reviewed: 2026-06-01 -->
 
 Лендинг ИП Шевчик: Nuxt 4 + @bitrix24/b24ui-nuxt + Tailwind v4 + TypeScript.
 Статическая генерация (SSG). Деплой: rsync на VPS через GitHub Actions.
@@ -11,6 +11,7 @@ pnpm dev          # dev-сервер (localhost:3000)
 pnpm generate     # статическая сборка → .output/public/
 pnpm lint         # ESLint
 pnpm typecheck    # vue-tsc
+pnpm test         # vitest (юниты чистой логики из shared/)
 pnpm og           # перегенерация og-image.png (только после смены текста/фото)
 ```
 
@@ -44,6 +45,10 @@ app/
 server/
   api/
     github-contrib.get.ts  # GraphQL → GitHub API, вызывается при pnpm generate
+shared/
+  github-contrib.ts   # типы + чистая логика графа (weeks/monthLabels/level), общая для server и компонента
+test/
+  *.test.ts           # vitest-юниты чистой логики из shared/
 public/
   igor.jpg / og-image.png / CNAME / favicon.ico
 scripts/
