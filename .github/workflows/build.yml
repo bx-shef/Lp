@@ -92,7 +92,7 @@ jobs:
           grep -q '<title>[^<]' .output/public/privacy/index.html || (echo "ERR: privacy <title> пустой" && exit 1)
           grep -q '<title>[^<]' .output/public/legal/index.html   || (echo "ERR: legal <title> пустой" && exit 1)
           grep -q 'og:image'  .output/public/index.html           || (echo "ERR: og:image meta missing" && exit 1)
-          grep -q 'canonical' .output/public/index.html           || (echo "ERR: index canonical missing" && exit 1)
+          grep -qF "rel=\"canonical\" href=\"$NUXT_PUBLIC_SITE_URL\"" .output/public/index.html || (echo "ERR: canonical в index.html не совпадает с NUXT_PUBLIC_SITE_URL=$NUXT_PUBLIC_SITE_URL" && exit 1)
           grep -q 'canonical' .output/public/privacy/index.html   || (echo "ERR: privacy canonical missing" && exit 1)
           grep -q 'canonical' .output/public/legal/index.html     || (echo "ERR: legal canonical missing" && exit 1)
           grep -q 'mc.yandex.ru/metrika/tag.js' .output/public/index.html || (echo "ERR: код Яндекс Метрики (inline-сниппет) отсутствует в index.html" && exit 1)
