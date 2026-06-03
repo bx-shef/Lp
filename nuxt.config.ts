@@ -7,6 +7,12 @@ if (!metrikaId) {
   console.warn('[nuxt.config] NUXT_PUBLIC_METRIKA_ID после фильтрации пустой — скрипт Яндекс Метрики не будет вставлен')
 }
 
+// Inline-сниппет Яндекс Метрики. Код счётчика обязан присутствовать прямо в
+// разметке: иначе валидатор установки Метрики его не находит, а на SSG не
+// срабатывает ssr-детект. ID подставляется на этапе сборки — конфигурируемость
+// через NUXT_PUBLIC_METRIKA_ID сохраняется. ssr:true — режим для статики.
+const metrikaSnippet = `(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};m[i].l=1*new Date();for(var j=0;j<e.scripts.length;j++){if(e.scripts[j].src===r){return;}}k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})(window,document,'script','https://mc.yandex.ru/metrika/tag.js?id=${metrikaId}','ym');ym(${metrikaId},'init',{ssr:true,webvisor:true,clickmap:true,accurateTrackBounce:true,trackLinks:true});`
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   modules: [
@@ -25,13 +31,12 @@ export default defineNuxtConfig({
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
         { name: 'theme-color', content: '#030022' },
-        { name: 'referrer', content: 'strict-origin-when-cross-origin' },
-        ...(metrikaId ? [{ name: 'ym-id', content: metrikaId }] : [])
+        { name: 'referrer', content: 'strict-origin-when-cross-origin' }
       ],
       link: [
         { rel: 'icon', href: '/favicon.ico?v=3' }
       ],
-      script: metrikaId ? [{ src: '/metrika.js', async: true }] : [],
+      script: metrikaId ? [{ innerHTML: metrikaSnippet }] : [],
       noscript: metrikaId
         ? [{ innerHTML: `<div><img src="https://mc.yandex.ru/watch/${metrikaId}" style="position:absolute;left:-9999px;" alt="" /></div>` }]
         : []
