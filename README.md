@@ -3,7 +3,8 @@
 Лендинг ИП Шевчик: «Кастомная разработка под Битрикс24. AI, интеграции, MCP».
 
 **Стек:** Nuxt 4 + `@bitrix24/b24ui-nuxt` + Tailwind v4 + TypeScript, статическая
-генерация (`pnpm generate`), деплой на собственный хостинг с доменом `bx-shef.by`.
+генерация (`pnpm generate`), деплой на собственный хостинг. Контент живёт на
+`offer.bx-shef.by` (apex `bx-shef.by` 301-редиректит сюда).
 
 ## Старт
 
@@ -28,7 +29,7 @@ GitHub Actions Variables (для деплой-окружения).
 
 | Переменная | Что |
 |---|---|
-| `NUXT_PUBLIC_SITE_URL` | Канонический URL для SEO/OG (по умолч. `https://bx-shef.by`) |
+| `NUXT_PUBLIC_SITE_URL` | Канонический URL для SEO/OG (по умолч. `https://offer.bx-shef.by`) |
 | `NUXT_PUBLIC_B24_FORM_ID` | ID веб-формы Битрикс24 |
 | `NUXT_PUBLIC_B24_FORM_SECRET` | Публичный embed-идентификатор формы (не секрет) |
 | `NUXT_PUBLIC_B24_FORM_SCRIPT_URL` | URL loader-скрипта формы (cdn-ru.bitrix24.by/...) |
@@ -91,7 +92,7 @@ app/
 public/
   igor.jpg             # фото в карточке «не bus factor»
   og-image.png         # OG (генерируется через pnpm og)
-  CNAME                # домен bx-shef.by
+  CNAME                # домен offer.bx-shef.by
   favicon.ico
 scripts/
   generate-og.mjs      # Playwright-рендер OG из HTML-шаблона

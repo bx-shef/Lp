@@ -211,7 +211,7 @@ function triggerDownload(blob: Blob, filename: string) {
                   <img
                     v-if="qrDataUrl"
                     :src="qrDataUrl"
-                    alt="QR-код bx-shef.by"
+                    alt="QR-код offer.bx-shef.by"
                     class="size-[120px] block"
                   >
                   <div

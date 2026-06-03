@@ -21,7 +21,7 @@ jobs:
   build:
     uses: ./.github/workflows/build.yml
     with:
-      site-url: 'https://bx-shef.by'
+      site-url: 'https://offer.bx-shef.by'
       # B24 form embed-параметры — публичные идентификаторы (видны в HTML),
       # хранятся в Variables (vars), а не Secrets. Если не заданы —
       # используется fallback из nuxt.config.ts (форма Игоря Шевчика).
