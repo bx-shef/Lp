@@ -6,7 +6,7 @@ on:
       site-url:
         description: 'Canonical site URL (NUXT_PUBLIC_SITE_URL)'
         type: string
-        default: 'https://bx-shef.by'
+        default: 'https://offer.bx-shef.by'
       b24-form-id:
         type: string
         default: ''

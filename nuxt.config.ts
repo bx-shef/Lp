@@ -1,6 +1,6 @@
 const extraAllowedHosts = (process?.env.NUXT_ALLOWED_HOSTS?.split(',').map((s: string) => s.trim()).filter(Boolean)) ?? []
 
-const siteUrl = process.env.NUXT_PUBLIC_SITE_URL || 'https://bx-shef.by'
+const siteUrl = process.env.NUXT_PUBLIC_SITE_URL || 'https://offer.bx-shef.by'
 // Только цифры — защита от случайной опечатки или компрометации ENV в CI
 const metrikaId = (process.env.NUXT_PUBLIC_METRIKA_ID || '109399587').replace(/\D/g, '')
 if (!metrikaId) {

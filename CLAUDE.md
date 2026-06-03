@@ -74,7 +74,7 @@ legacy/               # архив: старые версии HTML и текст
 
 | Переменная | Дефолт |
 |---|---|
-| NUXT_PUBLIC_SITE_URL | https://bx-shef.by |
+| NUXT_PUBLIC_SITE_URL | https://offer.bx-shef.by |
 | NUXT_PUBLIC_B24_FORM_ID | 1 |
 | NUXT_PUBLIC_B24_FORM_SECRET | 3c735r |
 | NUXT_PUBLIC_B24_FORM_SCRIPT_URL | cdn-ru.bitrix24.by/... |
