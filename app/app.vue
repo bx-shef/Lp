@@ -127,14 +127,6 @@ useHead({
 
       <template #right>
         <B24Button
-          to="https://github.com/IgorShevchik"
-          target="_blank"
-          aria-label="GitHub"
-          color="air-tertiary-no-accent"
-          :icon="GitHubIcon"
-          size="sm"
-        />
-        <B24Button
           aria-label="Визитка"
           color="air-tertiary-no-accent"
           :icon="ContactDetailsIcon"
@@ -159,6 +151,16 @@ useHead({
     <B24Footer>
       <template #left>
         <SiteFooter />
+      </template>
+      <template #right>
+        <B24Button
+          to="https://github.com/IgorShevchik"
+          target="_blank"
+          aria-label="GitHub"
+          color="air-tertiary-no-accent"
+          :icon="GitHubIcon"
+          size="sm"
+        />
       </template>
     </B24Footer>
 
