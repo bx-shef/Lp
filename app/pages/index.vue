@@ -398,11 +398,11 @@ const process: ProcessStep[] = [
       class="px-[22px] lg:px-8 py-[64px] sm:py-[72px]"
     >
       <div class="max-w-[900px] mx-auto">
-        <div class="rounded-3xl border border-white/10 bg-gradient-to-br from-[rgb(var(--color-accent-partner-ch)/0.15)] to-[rgb(var(--color-accent-special-ch)/0.08)] p-8 sm:p-12">
-          <h2 class="text-3xl sm:text-5xl font-bold tracking-tight text-white mb-4">
+        <div class="rounded-3xl border border-white/10 bg-gradient-to-br from-[rgb(var(--color-accent-partner-ch)/0.15)] to-[rgb(var(--color-accent-special-ch)/0.08)] py-8 sm:p-12">
+          <h2 class="text-3xl sm:text-5xl font-bold tracking-tight text-white mb-4 px-8 sm:px-0">
             Опишите задачу — скажу честно, берусь или нет
           </h2>
-          <p class="text-lg text-white/70 mb-8">
+          <p class="text-lg text-white/70 mb-8 px-8 sm:px-0">
             Прочитаю и отвечу в течение рабочего дня. На созвоне за 30 минут разберёмся, можно ли это сделать вообще, и если да — за сколько и в какие сроки.
           </p>
           <BriefForm />
