@@ -48,6 +48,19 @@ jobs:
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
 
+      # Страховка supply-chain: внешние экшены должны быть запинены к commit-SHA,
+      # а не к плавающему тегу @vN (тег можно молча перевесить на вредоносный код).
+      # Dependabot обновляет SHA через PR — этот guard ловит ручной откат к @vN.
+      - name: Lint workflow pins (внешние экшены только по SHA)
+        run: |
+          BAD=$(grep -rnE '^[[:space:]]*-?[[:space:]]*uses:[[:space:]]+[^.][^@]+@v[0-9]' .github/workflows/ || true)
+          if [ -n "$BAD" ]; then
+            echo "ERR: плавающие теги @vN у внешних экшенов (нужен commit-SHA):"
+            echo "$BAD"
+            exit 1
+          fi
+          echo "OK: внешние экшены запинены к SHA"
+
       - uses: pnpm/action-setup@0e279bb959325dab635dd2c09392533439d90093 # v6
 
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
