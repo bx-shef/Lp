@@ -28,6 +28,12 @@ updates:
       prefix: deps
     groups:
       npm-minor-patch:
+        # @bitrix24/b24ui-nuxt исключён из группы намеренно: тяжёлый,
+        # визуально-критичный пакет (CI не ловит CSS/визуальный регресс) —
+        # его обновления приходят отдельным PR под индивидуальный просмотр,
+        # а не тонут среди рутинных patch'ей.
+        exclude-patterns:
+          - "@bitrix24/b24ui-nuxt"
         update-types:
           - minor
           - patch
