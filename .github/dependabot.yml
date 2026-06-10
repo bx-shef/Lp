@@ -15,3 +15,19 @@ updates:
       github-actions:
         patterns:
           - "*"
+
+  # Зависимости проекта (pnpm — Dependabot обслуживает их под ecosystem: npm).
+  # minor+patch собираются в один PR (рутина под зелёный CI); major-обновления
+  # приходят отдельными PR — крупный скачок требует ручного просмотра changelog.
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: deps
+    groups:
+      npm-minor-patch:
+        update-types:
+          - minor
+          - patch
