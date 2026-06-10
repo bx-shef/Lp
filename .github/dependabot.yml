@@ -15,3 +15,25 @@ updates:
       github-actions:
         patterns:
           - "*"
+
+  # Зависимости проекта (pnpm — Dependabot обслуживает их под ecosystem: npm).
+  # minor+patch собираются в один PR (рутина под зелёный CI); major-обновления
+  # приходят отдельными PR — крупный скачок требует ручного просмотра changelog.
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: deps
+    groups:
+      npm-minor-patch:
+        # @bitrix24/b24ui-nuxt исключён из группы намеренно: тяжёлый,
+        # визуально-критичный пакет (CI не ловит CSS/визуальный регресс) —
+        # его обновления приходят отдельным PR под индивидуальный просмотр,
+        # а не тонут среди рутинных patch'ей.
+        exclude-patterns:
+          - "@bitrix24/b24ui-nuxt"
+        update-types:
+          - minor
+          - patch
