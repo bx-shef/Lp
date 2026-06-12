@@ -5,13 +5,22 @@ import PhoneAddIcon from '@bitrix24/b24icons-vue/outline/PhoneAddIcon'
 import TelegramIcon from '@bitrix24/b24icons-vue/outline/TelegramIcon'
 import CrossLIcon from '@bitrix24/b24icons-vue/outline/CrossLIcon'
 import CheckLIcon from '@bitrix24/b24icons-vue/outline/CheckLIcon'
+import FingerprintIcon from '@bitrix24/b24icons-vue/outline/FingerprintIcon'
+import CopyIcon from '@bitrix24/b24icons-vue/outline/CopyIcon'
 
 const props = defineProps<{ open: boolean }>()
 const emit = defineEmits<{ close: [] }>()
 
 const qrDataUrl = ref('')
+// Отдельный высококонтрастный QR (тёмный на белом) для мобильного hold-to-reveal —
+// его нужно реально сканировать, в отличие от декоративного белого-на-прозрачном.
+const qrScanUrl = ref('')
 const contactAdded = ref(false)
+const linkCopied = ref(false)
+// Удержание кнопки на мобиле показывает QR во весь попап (как «глазик» на пароле).
+const showQr = ref(false)
 let feedbackTimer: ReturnType<typeof setTimeout> | null = null
+let copyTimer: ReturnType<typeof setTimeout> | null = null
 
 const siteUrl = useRuntimeConfig().public.siteUrl as string
 
@@ -32,17 +41,26 @@ const card = {
   callUrl: B24_BOOKING_URL
 } as const
 
-// Генерируем QR один раз при маунте компонента.
+// Генерируем оба QR один раз при маунте компонента.
 onMounted(async () => {
+  const target = 'https://' + card.site
   try {
-    qrDataUrl.value = await QRCode.toDataURL('https://' + card.site, {
+    // Десктоп: декоративный белый-на-прозрачном, вписан в тёмную тему карточки.
+    qrDataUrl.value = await QRCode.toDataURL(target, {
       width: 180,
       margin: 1,
       color: { dark: '#ffffff', light: '#00000000' },
       errorCorrectionLevel: 'M'
     })
+    // Мобильный reveal: тёмный на белом, крупнее — под реальное сканирование.
+    qrScanUrl.value = await QRCode.toDataURL(target, {
+      width: 260,
+      margin: 2,
+      color: { dark: '#0a1220', light: '#ffffff' },
+      errorCorrectionLevel: 'M'
+    })
   } catch {
-    // qrDataUrl остаётся '', пользователь видит skeleton — не критично.
+    // QR остаётся '', пользователь видит skeleton — не критично.
   }
 })
 
@@ -62,10 +80,55 @@ onUnmounted(() => {
   document.removeEventListener('keydown', handleKey)
   document.body.style.overflow = ''
   if (feedbackTimer) clearTimeout(feedbackTimer)
+  if (copyTimer) clearTimeout(copyTimer)
 })
 
 function handleKey(e: KeyboardEvent) {
   if (e.key === 'Escape') emit('close')
+}
+
+// Hold-to-reveal QR: pointer capture удерживает событие на кнопке, даже если
+// палец сместился — отпускание гарантированно скрывает QR обратно.
+function startQr(e: PointerEvent) {
+  const el = e.currentTarget as HTMLElement
+  el.setPointerCapture?.(e.pointerId)
+  showQr.value = true
+}
+
+function stopQr() {
+  showQr.value = false
+}
+
+async function copyCallLink() {
+  const ok = await copyToClipboard(card.callUrl)
+  if (!ok) return
+  linkCopied.value = true
+  if (copyTimer) clearTimeout(copyTimer)
+  copyTimer = setTimeout(() => (linkCopied.value = false), 2200)
+}
+
+// Clipboard API требует HTTPS+жест (есть оба); fallback на execCommand —
+// для старых WebView, где navigator.clipboard недоступен.
+async function copyToClipboard(text: string): Promise<boolean> {
+  try {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(text)
+      return true
+    }
+  } catch {
+    // переходим к fallback
+  }
+  try {
+    const ta = Object.assign(document.createElement('textarea'), { value: text })
+    ta.style.cssText = 'position:fixed;opacity:0;pointer-events:none;'
+    document.body.appendChild(ta)
+    ta.select()
+    const ok = document.execCommand('copy')
+    ta.remove()
+    return ok
+  } catch {
+    return false
+  }
 }
 
 function onBackdropClick(e: MouseEvent) {
@@ -187,6 +250,33 @@ function triggerDownload(blob: Blob, filename: string) {
             >
               <CrossLIcon class="size-4" />
             </button>
+
+            <!-- Mobile QR overlay — виден только пока удерживается кнопка снизу.
+                 sm:hidden: на десктопе QR и так всегда показан в левой колонке. -->
+            <div
+              v-if="showQr"
+              class="sm:hidden absolute inset-0 z-30 flex flex-col items-center justify-center gap-5 px-6"
+              style="background: linear-gradient(135deg, rgba(15,22,36,0.99) 0%, rgba(10,18,30,0.99) 100%);"
+            >
+              <div class="text-[10px] uppercase tracking-[0.18em] text-white/40 font-mono">
+                Сканируйте
+              </div>
+              <div class="p-4 rounded-2xl bg-white shadow-2xl">
+                <img
+                  v-if="qrScanUrl"
+                  :src="qrScanUrl"
+                  alt="QR-код offer.bx-shef.by"
+                  class="size-[240px] block"
+                >
+                <div
+                  v-else
+                  class="size-[240px] rounded bg-black/5 animate-pulse"
+                />
+              </div>
+              <div class="text-xs text-white/50 font-mono">
+                {{ card.site }}
+              </div>
+            </div>
 
             <div class="flex flex-col sm:flex-row">
               <!-- LEFT: QR + avatar -->
@@ -373,6 +463,24 @@ function triggerDownload(blob: Blob, filename: string) {
                     <span>Назначить созвон</span>
                   </a>
 
+                  <!-- Copy call link — удобно поделиться ссылкой на запись -->
+                  <button
+                    type="button"
+                    class="flex items-center justify-center gap-2 w-full h-9 rounded-xl text-xs font-medium transition-colors"
+                    :class="linkCopied
+                      ? 'text-[rgb(var(--color-accent-success-ch))]'
+                      : 'text-white/50 hover:text-white/85'"
+                    style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07);"
+                    :aria-label="linkCopied ? 'Ссылка скопирована' : 'Скопировать ссылку на созвон'"
+                    @click="copyCallLink"
+                  >
+                    <component
+                      :is="linkCopied ? CheckLIcon : CopyIcon"
+                      class="size-3.5 shrink-0"
+                    />
+                    <span>{{ linkCopied ? 'Ссылка скопирована' : 'Скопировать ссылку на созвон' }}</span>
+                  </button>
+
                   <!-- Add to contacts -->
                   <button
                     type="button"
@@ -416,6 +524,23 @@ function triggerDownload(blob: Blob, filename: string) {
                   >
                     <DownloadIcon class="size-4 shrink-0" />
                     <span>Скачать реквизиты</span>
+                  </button>
+
+                  <!-- Mobile-only: удержание показывает QR во весь попап (см. overlay
+                       выше). Снизу — под большой палец, чтобы держать и давать сканировать.
+                       touch-none/select-none + contextmenu.prevent гасят long-press меню. -->
+                  <button
+                    type="button"
+                    class="sm:hidden flex items-center justify-center gap-2.5 w-full h-11 rounded-xl text-sm font-semibold text-white/60 hover:text-white/90 transition-colors select-none touch-none"
+                    style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); -webkit-touch-callout: none;"
+                    aria-label="Показать QR-код для сканирования — удерживайте"
+                    @pointerdown.prevent="startQr"
+                    @pointerup="stopQr"
+                    @pointercancel="stopQr"
+                    @contextmenu.prevent
+                  >
+                    <FingerprintIcon class="size-4 shrink-0" />
+                    <span>{{ showQr ? 'Отпустите' : 'Показать QR — удерживайте' }}</span>
                   </button>
                 </div>
               </div>
