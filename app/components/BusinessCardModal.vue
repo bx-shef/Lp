@@ -17,10 +17,12 @@ const qrDataUrl = ref('')
 const qrScanUrl = ref('')
 const contactAdded = ref(false)
 const linkCopied = ref(false)
+const requisitesSaved = ref(false)
 // Удержание кнопки на мобиле показывает QR во весь попап (как «глазик» на пароле).
 const showQr = ref(false)
 let feedbackTimer: ReturnType<typeof setTimeout> | null = null
 let copyTimer: ReturnType<typeof setTimeout> | null = null
+let reqTimer: ReturnType<typeof setTimeout> | null = null
 // Цель Метрики на показ QR — один раз за открытие, чтобы повторные удержания
 // не дублировали событие.
 let qrRevealed = false
@@ -90,6 +92,7 @@ onUnmounted(() => {
   document.body.style.overflow = ''
   if (feedbackTimer) clearTimeout(feedbackTimer)
   if (copyTimer) clearTimeout(copyTimer)
+  if (reqTimer) clearTimeout(reqTimer)
 })
 
 function handleKey(e: KeyboardEvent) {
@@ -209,6 +212,10 @@ ${'═'.repeat(44)}
 ${siteUrl}
 `
   triggerDownload(new Blob([txt], { type: 'text/plain;charset=utf-8' }), 'ip-shevchik-requisites.txt')
+
+  requisitesSaved.value = true
+  if (reqTimer) clearTimeout(reqTimer)
+  reqTimer = setTimeout(() => (requisitesSaved.value = false), 2200)
 }
 
 // Вставляем <a> в DOM перед кликом — без этого Firefox не скачивает text/vcard.
@@ -433,68 +440,79 @@ function triggerDownload(blob: Blob, filename: string) {
 
                 <!-- Actions -->
                 <div class="flex flex-col gap-2.5">
-                  <!-- Schedule a call — главный CTA: онлайн-согласование времени созвона (календарь Б24) -->
-                  <a
-                    :href="card.callUrl"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="Назначить созвон — выбрать время (откроется в новой вкладке)"
-                    class="flex items-center justify-center gap-2.5 w-full h-11 rounded-xl text-sm font-semibold transition-all duration-200 hover:brightness-110"
-                    style="background: rgb(var(--color-accent-primary-ch)); color: #0a1220; box-shadow: 0 0 24px rgb(var(--color-accent-primary-ch)/0.25);"
+                  <!-- Главный CTA + копирование ссылки — сегментированная пара:
+                       крупная «Назначить созвон» + узкая кнопка копии справа
+                       (общий cyan, разделены тёмной гранью, скруглён весь блок). -->
+                  <div
+                    class="flex items-stretch w-full rounded-xl overflow-hidden"
+                    style="box-shadow: 0 0 24px rgb(var(--color-accent-primary-ch)/0.25);"
                   >
-                    <svg
-                      class="size-4 shrink-0"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="1.8"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
+                    <a
+                      :href="card.callUrl"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Назначить созвон — выбрать время (откроется в новой вкладке)"
+                      class="flex flex-1 items-center justify-center gap-2.5 h-11 text-sm font-semibold transition-all duration-200 hover:brightness-110"
+                      style="background: rgb(var(--color-accent-primary-ch)); color: #0a1220;"
                     >
-                      <rect
-                        x="3"
-                        y="4"
-                        width="18"
-                        height="18"
-                        rx="2"
+                      <svg
+                        class="size-4 shrink-0"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <rect
+                          x="3"
+                          y="4"
+                          width="18"
+                          height="18"
+                          rx="2"
+                        />
+                        <line
+                          x1="16"
+                          y1="2"
+                          x2="16"
+                          y2="6"
+                        />
+                        <line
+                          x1="8"
+                          y1="2"
+                          x2="8"
+                          y2="6"
+                        />
+                        <line
+                          x1="3"
+                          y1="10"
+                          x2="21"
+                          y2="10"
+                        />
+                      </svg>
+                      <span>Назначить созвон</span>
+                    </a>
+                    <button
+                      type="button"
+                      :aria-label="linkCopied ? 'Ссылка скопирована' : 'Скопировать ссылку на созвон'"
+                      class="flex items-center justify-center w-12 shrink-0 h-11 transition-all duration-200 hover:brightness-110"
+                      style="background: rgb(var(--color-accent-primary-ch)); color: #0a1220; border-left: 1px solid rgba(10,18,30,0.25);"
+                      @click="copyCallLink"
+                    >
+                      <component
+                        :is="linkCopied ? CheckLIcon : CopyIcon"
+                        class="size-4"
                       />
-                      <line
-                        x1="16"
-                        y1="2"
-                        x2="16"
-                        y2="6"
-                      />
-                      <line
-                        x1="8"
-                        y1="2"
-                        x2="8"
-                        y2="6"
-                      />
-                      <line
-                        x1="3"
-                        y1="10"
-                        x2="21"
-                        y2="10"
-                      />
-                    </svg>
-                    <span>Назначить созвон</span>
-                  </a>
+                    </button>
+                  </div>
 
                   <!-- Вторичные действия одним сегментом (B24FieldGroup) — компактнее
-                       трёх отдельных строк. Фидбек (скопировано/сохранён) — сменой
-                       иконки на «галку» и короткого лейбла на «Готово». -->
+                       отдельных строк. Фидбек (сохранён) — сменой иконки на «галку»
+                       и короткого лейбла на «Готово». -->
                   <B24FieldGroup
                     size="sm"
                     class="w-full"
                   >
-                    <B24Button
-                      :icon="linkCopied ? CheckLIcon : CopyIcon"
-                      :label="linkCopied ? 'Готово' : 'Ссылка'"
-                      color="air-tertiary-no-accent"
-                      aria-label="Скопировать ссылку на созвон"
-                      class="flex-1 justify-center"
-                      @click="copyCallLink"
-                    />
                     <B24Button
                       :icon="contactAdded ? CheckLIcon : PhoneAddIcon"
                       :label="contactAdded ? 'Готово' : 'Контакт'"
@@ -504,8 +522,8 @@ function triggerDownload(blob: Blob, filename: string) {
                       @click="downloadVCard"
                     />
                     <B24Button
-                      :icon="DownloadIcon"
-                      label="Реквизиты"
+                      :icon="requisitesSaved ? CheckLIcon : DownloadIcon"
+                      :label="requisitesSaved ? 'Готово' : 'Реквизиты'"
                       color="air-tertiary-no-accent"
                       aria-label="Скачать реквизиты"
                       class="flex-1 justify-center"
@@ -515,8 +533,10 @@ function triggerDownload(blob: Blob, filename: string) {
 
                   <!-- QR hold-to-reveal — круглая кнопка-«отпечаток» (mobile only).
                        Логика удержания та же: setPointerCapture + overlay выше.
+                       relative z-40 — над overlay (z-30): при удержании кнопка
+                       остаётся видимой и подсвеченной (палец на ней).
                        touch-none/select-none + contextmenu.prevent гасят long-press. -->
-                  <div class="sm:hidden flex flex-col items-center gap-2 pt-1">
+                  <div class="sm:hidden relative z-40 flex flex-col items-center gap-2 pt-1">
                     <button
                       type="button"
                       class="flex items-center justify-center size-16 rounded-full transition-all duration-200 select-none touch-none active:scale-95"
