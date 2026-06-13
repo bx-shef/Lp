@@ -480,85 +480,64 @@ function triggerDownload(blob: Blob, filename: string) {
                     <span>Назначить созвон</span>
                   </a>
 
-                  <!-- Copy call link — удобно поделиться ссылкой на запись -->
-                  <button
-                    type="button"
-                    class="flex items-center justify-center gap-2 w-full h-9 rounded-xl text-xs font-medium transition-colors"
-                    :class="linkCopied
-                      ? 'text-[rgb(var(--color-accent-success-ch))]'
-                      : 'text-white/50 hover:text-white/85'"
-                    style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07);"
-                    :aria-label="linkCopied ? 'Ссылка скопирована' : 'Скопировать ссылку на созвон'"
-                    @click="copyCallLink"
+                  <!-- Вторичные действия одним сегментом (B24FieldGroup) — компактнее
+                       трёх отдельных строк. Фидбек (скопировано/сохранён) — сменой
+                       иконки на «галку» и короткого лейбла на «Готово». -->
+                  <B24FieldGroup
+                    size="sm"
+                    class="w-full"
                   >
-                    <component
-                      :is="linkCopied ? CheckLIcon : CopyIcon"
-                      class="size-3.5 shrink-0"
+                    <B24Button
+                      :icon="linkCopied ? CheckLIcon : CopyIcon"
+                      :label="linkCopied ? 'Готово' : 'Ссылка'"
+                      color="air-tertiary-no-accent"
+                      aria-label="Скопировать ссылку на созвон"
+                      class="flex-1 justify-center"
+                      @click="copyCallLink"
                     />
-                    <span>{{ linkCopied ? 'Ссылка скопирована' : 'Скопировать ссылку на созвон' }}</span>
-                  </button>
+                    <B24Button
+                      :icon="contactAdded ? CheckLIcon : PhoneAddIcon"
+                      :label="contactAdded ? 'Готово' : 'Контакт'"
+                      color="air-tertiary-no-accent"
+                      aria-label="Добавить в контакты (vCard)"
+                      class="flex-1 justify-center"
+                      @click="downloadVCard"
+                    />
+                    <B24Button
+                      :icon="DownloadIcon"
+                      label="Реквизиты"
+                      color="air-tertiary-no-accent"
+                      aria-label="Скачать реквизиты"
+                      class="flex-1 justify-center"
+                      @click="downloadRequisites"
+                    />
+                  </B24FieldGroup>
 
-                  <!-- Add to contacts -->
-                  <button
-                    type="button"
-                    class="group relative flex items-center justify-center gap-2.5 w-full h-11 rounded-xl text-sm font-semibold overflow-hidden transition-all duration-200"
-                    :class="contactAdded
-                      ? 'text-white'
-                      : 'text-[rgb(var(--color-accent-primary-ch))] hover:text-white'"
-                    :style="contactAdded
-                      ? 'background: rgba(var(--color-accent-success-ch)/0.25); border: 1px solid rgba(var(--color-accent-success-ch)/0.4);'
-                      : 'background: rgba(var(--color-accent-primary-ch)/0.12); border: 1px solid rgba(var(--color-accent-primary-ch)/0.25);'"
-                    @click="downloadVCard"
-                  >
-                    <Transition
-                      mode="out-in"
-                      enter-active-class="transition duration-200"
-                      enter-from-class="opacity-0 scale-75"
-                      enter-to-class="opacity-100 scale-100"
-                      leave-active-class="transition duration-150"
-                      leave-from-class="opacity-100 scale-100"
-                      leave-to-class="opacity-0 scale-75"
+                  <!-- QR hold-to-reveal — круглая кнопка-«отпечаток» (mobile only).
+                       Логика удержания та же: setPointerCapture + overlay выше.
+                       touch-none/select-none + contextmenu.prevent гасят long-press. -->
+                  <div class="sm:hidden flex flex-col items-center gap-2 pt-1">
+                    <button
+                      type="button"
+                      class="flex items-center justify-center size-16 rounded-full transition-all duration-200 select-none touch-none active:scale-95"
+                      :style="showQr
+                        ? 'background: rgba(var(--color-accent-primary-ch)/0.22); border: 1px solid rgba(var(--color-accent-primary-ch)/0.6); box-shadow: 0 0 28px rgb(var(--color-accent-primary-ch)/0.35); -webkit-touch-callout: none;'
+                        : 'background: rgba(var(--color-accent-primary-ch)/0.1); border: 1px solid rgba(var(--color-accent-primary-ch)/0.3); -webkit-touch-callout: none;'"
+                      aria-label="Показать QR-код для сканирования — удерживайте"
+                      @pointerdown.prevent="startQr"
+                      @pointerup="stopQr"
+                      @pointercancel="stopQr"
+                      @contextmenu.prevent
                     >
-                      <CheckLIcon
-                        v-if="contactAdded"
-                        class="size-4 shrink-0"
-                        style="color: rgb(var(--color-accent-success-ch));"
+                      <FingerprintIcon
+                        class="size-8"
+                        :style="{ color: 'rgb(var(--color-accent-primary-ch))' }"
                       />
-                      <PhoneAddIcon
-                        v-else
-                        class="size-4 shrink-0"
-                      />
-                    </Transition>
-                    <span>{{ contactAdded ? 'Контакт сохранён' : 'Добавить в контакты' }}</span>
-                  </button>
-
-                  <!-- Download requisites -->
-                  <button
-                    type="button"
-                    class="flex items-center justify-center gap-2.5 w-full h-11 rounded-xl text-sm font-semibold text-white/60 hover:text-white/90 transition-colors"
-                    style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);"
-                    @click="downloadRequisites"
-                  >
-                    <DownloadIcon class="size-4 shrink-0" />
-                    <span>Скачать реквизиты</span>
-                  </button>
-
-                  <!-- Mobile-only: удержание показывает QR во весь попап (см. overlay
-                       выше). Снизу — под большой палец, чтобы держать и давать сканировать.
-                       touch-none/select-none + contextmenu.prevent гасят long-press меню. -->
-                  <button
-                    type="button"
-                    class="sm:hidden flex items-center justify-center gap-2.5 w-full h-11 rounded-xl text-sm font-semibold text-white/60 hover:text-white/90 transition-colors select-none touch-none"
-                    style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); -webkit-touch-callout: none;"
-                    aria-label="Показать QR-код для сканирования — удерживайте"
-                    @pointerdown.prevent="startQr"
-                    @pointerup="stopQr"
-                    @pointercancel="stopQr"
-                    @contextmenu.prevent
-                  >
-                    <FingerprintIcon class="size-4 shrink-0" />
-                    <span>{{ showQr ? 'Отпустите' : 'Показать QR — удерживайте' }}</span>
-                  </button>
+                    </button>
+                    <span class="text-[11px] font-mono text-white/40">
+                      {{ showQr ? 'Отпустите' : 'Удерживайте — покажет QR' }}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
