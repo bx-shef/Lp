@@ -496,7 +496,7 @@ function triggerDownload(blob: Blob, filename: string) {
                       type="button"
                       :aria-label="linkCopied ? 'Ссылка скопирована' : 'Скопировать ссылку на созвон'"
                       class="flex items-center justify-center w-12 shrink-0 h-11 transition-all duration-200 hover:brightness-110"
-                      style="background: rgb(var(--color-accent-primary-ch)); color: #0a1220; border-left: 1px solid rgba(10,18,30,0.25);"
+                      style="background: rgb(var(--color-accent-primary-ch)); color: #0a1220; border-left: 1px solid rgba(10,18,30,0.4);"
                       @click="copyCallLink"
                     >
                       <component
