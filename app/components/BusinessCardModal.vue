@@ -21,6 +21,11 @@ const linkCopied = ref(false)
 const showQr = ref(false)
 let feedbackTimer: ReturnType<typeof setTimeout> | null = null
 let copyTimer: ReturnType<typeof setTimeout> | null = null
+// Цель Метрики на показ QR — один раз за открытие, чтобы повторные удержания
+// не дублировали событие.
+let qrRevealed = false
+
+const { reachGoal } = useMetrikaGoal()
 
 const siteUrl = useRuntimeConfig().public.siteUrl as string
 
@@ -73,6 +78,10 @@ watch(() => props.open, (isOpen) => {
   } else {
     document.removeEventListener('keydown', handleKey)
     document.body.style.overflow = ''
+    // Сброс при закрытии: иначе если закрыть, удерживая QR, при следующем
+    // открытии overlay покажется сразу (pointerup уже не придёт — DOM снят).
+    showQr.value = false
+    qrRevealed = false
   }
 })
 
@@ -93,6 +102,10 @@ function startQr(e: PointerEvent) {
   const el = e.currentTarget as HTMLElement
   el.setPointerCapture?.(e.pointerId)
   showQr.value = true
+  if (!qrRevealed) {
+    qrRevealed = true
+    reachGoal('card_qr_reveal')
+  }
 }
 
 function stopQr() {
@@ -103,6 +116,7 @@ async function copyCallLink() {
   const ok = await copyToClipboard(card.callUrl)
   if (!ok) return
   linkCopied.value = true
+  reachGoal('card_copy_link')
   if (copyTimer) clearTimeout(copyTimer)
   copyTimer = setTimeout(() => (linkCopied.value = false), 2200)
 }
@@ -122,10 +136,13 @@ async function copyToClipboard(text: string): Promise<boolean> {
     const ta = Object.assign(document.createElement('textarea'), { value: text })
     ta.style.cssText = 'position:fixed;opacity:0;pointer-events:none;'
     document.body.appendChild(ta)
-    ta.select()
-    const ok = document.execCommand('copy')
-    ta.remove()
-    return ok
+    // finally гарантирует удаление textarea, даже если execCommand бросит.
+    try {
+      ta.select()
+      return document.execCommand('copy')
+    } finally {
+      ta.remove()
+    }
   } catch {
     return false
   }
