@@ -120,6 +120,22 @@ jobs:
             || echo "::warning::GitHub-граф отсутствует в index.html (нет GITHUB_TOKEN либо GitHub API недоступен). Сайт собран, секция активности скрыта."
           echo "OK: все обязательные артефакты на месте"
 
+      # Визуальный smoke (issue #59): ловит CSS/визуальные регрессы, которые
+      # grep-валидация выше не видит. Гоняет chromium против .output (pnpm preview).
+      - name: Install Playwright (chromium)
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Visual smoke (Playwright)
+        run: pnpm run test:visual
+
+      - name: Upload visual diff on failure
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
+
       - name: Upload artifact
         if: inputs.upload-artifact
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4

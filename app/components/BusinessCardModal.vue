@@ -256,6 +256,7 @@ function triggerDownload(blob: Blob, filename: string) {
           enter-to-class="opacity-100 scale-100 translate-y-0"
         >
           <div
+            data-testid="business-card"
             class="relative w-full max-w-[680px] rounded-3xl overflow-hidden shadow-2xl"
             style="background: linear-gradient(135deg, rgba(15,22,36,0.98) 0%, rgba(10,18,30,0.98) 100%); border: 1px solid rgba(255,255,255,0.1);"
           >
