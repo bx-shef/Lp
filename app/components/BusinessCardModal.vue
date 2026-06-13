@@ -305,7 +305,7 @@ function triggerDownload(blob: Blob, filename: string) {
             <div class="flex flex-col sm:flex-row">
               <!-- LEFT: QR + avatar -->
               <div
-                class="flex flex-col items-center justify-center gap-5 px-8 py-10 sm:py-12 sm:w-[220px] shrink-0"
+                class="flex flex-col items-center justify-center gap-5 px-8 pt-10 pb-5 sm:py-12 sm:w-[220px] shrink-0"
                 style="background: linear-gradient(160deg, rgba(var(--color-accent-primary-ch)/0.08) 0%, rgba(0,0,0,0) 70%);"
               >
                 <!-- Photo -->
@@ -349,7 +349,9 @@ function triggerDownload(blob: Blob, filename: string) {
               <div class="sm:hidden h-px mx-8 bg-white/[0.07]" />
 
               <!-- RIGHT: Details -->
-              <div class="flex flex-col justify-center gap-6 px-8 py-10 sm:py-12 flex-1 min-w-0">
+              <!-- На мобиле верхний паддинг меньше (pt-5): фото и ФИО стоят
+                   столбиком, py-10 с обеих сторон давал ~80px пустоты. -->
+              <div class="flex flex-col justify-center gap-6 px-8 pt-5 pb-10 sm:py-12 flex-1 min-w-0">
                 <!-- Name & title -->
                 <div>
                   <h2 class="text-2xl font-bold text-white tracking-tight leading-tight">
