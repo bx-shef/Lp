@@ -14,8 +14,8 @@ let inView = true // канвас в зоне видимости (IntersectionOb
 let lastFrame = 0
 let motionMql: MediaQueryList | null = null
 
-// Троттлинг до ~30fps: для фоновой анимации хватает, вдвое меньше нагрузка,
-// чем дефолтные 60fps у requestAnimationFrame.
+// Троттлинг РЕНДЕРА до ~30fps: draw (canvas-градиенты/текст) — дорогая часть,
+// вдвое меньше нагрузки. Физика (tick) идёт каждый кадр — движение не вялое.
 const FRAME_MS = 1000 / 30
 
 type Tier = 1 | 2 | 3
@@ -235,10 +235,12 @@ function draw() {
 
 function loop(now: number) {
   animId = requestAnimationFrame(loop)
-  // 30fps-троттл: RAF идёт на 60, но tick/draw — не чаще ~33мс.
+  // Физика — каждый кадр (дёшево при n=13): сохраняет «живость» движения.
+  tick()
+  // Рендер троттлим до ~30fps: draw (градиенты/текст) — дорогая часть,
+  // вдвое меньше нагрузки и без визуальной вялости.
   if (now - lastFrame < FRAME_MS) return
   lastFrame = now
-  tick()
   draw()
 }
 
