@@ -116,39 +116,13 @@ function stopQr() {
 }
 
 async function copyCallLink() {
+  // copyToClipboard — общий util (app/utils/clipboard.ts), авто-импорт.
   const ok = await copyToClipboard(card.callUrl)
   if (!ok) return
   linkCopied.value = true
   reachGoal('card_copy_link')
   if (copyTimer) clearTimeout(copyTimer)
   copyTimer = setTimeout(() => (linkCopied.value = false), 2200)
-}
-
-// Clipboard API требует HTTPS+жест (есть оба); fallback на execCommand —
-// для старых WebView, где navigator.clipboard недоступен.
-async function copyToClipboard(text: string): Promise<boolean> {
-  try {
-    if (navigator.clipboard?.writeText) {
-      await navigator.clipboard.writeText(text)
-      return true
-    }
-  } catch {
-    // переходим к fallback
-  }
-  try {
-    const ta = Object.assign(document.createElement('textarea'), { value: text })
-    ta.style.cssText = 'position:fixed;opacity:0;pointer-events:none;'
-    document.body.appendChild(ta)
-    // finally гарантирует удаление textarea, даже если execCommand бросит.
-    try {
-      ta.select()
-      return document.execCommand('copy')
-    } finally {
-      ta.remove()
-    }
-  } catch {
-    return false
-  }
 }
 
 function onBackdropClick(e: MouseEvent) {
@@ -199,14 +173,22 @@ Email:                ${card.email}
 Telegram:             ${card.telegram}
 Сайт:                 ${siteUrl}
 
-БАНКОВСКИЕ РЕКВИЗИТЫ
+БАНКОВСКИЕ РЕКВИЗИТЫ — ДЛЯ ОПЛАТЫ В BYN
 ${'─'.repeat(44)}
-Банк:                 ЗАО «Альфа-Банк»
+Банк:                 ЗАО «Альфа-Банк», г. Минск
 Адрес банка:          Республика Беларусь, г. Минск,
                       ул. Сурганова, 43-47
 БИК / SWIFT:          ALFABY2X
 Расчётный счёт:       BY09ALFA30132120160130270000
 Валюта:               BYN
+
+БАНКОВСКИЕ РЕКВИЗИТЫ — ДЛЯ ОПЛАТЫ В RUB (из России)
+${'─'.repeat(44)}
+Банк:                 ЗАО «Альфа-Банк», г. Минск
+БИК / SWIFT:          ALFABY2X
+Расчётный счёт (RUB): BY92ALFA30132120160010270000
+Корр. счёт (в РФ):    30101810200000000593
+Валюта:               RUB
 
 ${'═'.repeat(44)}
 ${siteUrl}
