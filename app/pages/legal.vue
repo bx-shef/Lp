@@ -67,7 +67,10 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="max-w-[820px] mx-auto px-[22px] lg:px-8 py-16 text-white/80">
+  <div
+    data-testid="legal-content"
+    class="max-w-[820px] mx-auto px-[22px] lg:px-8 py-16 text-white/80"
+  >
     <h1 class="text-4xl font-bold text-white mb-8 tracking-tight">
       Реквизиты
     </h1>

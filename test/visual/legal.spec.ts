@@ -1,12 +1,14 @@
 import { test, expect } from '@playwright/test'
 
 /**
- * Визуальный smoke страницы реквизитов /legal — статична и детерминирована
- * (нет графа/токенов/анимаций), хороший кандидат на эталон. Ловит регресс
- * вёрстки таблиц реквизитов и кнопок копирования.
+ * Визуальный smoke страницы реквизитов /legal — ловит регресс вёрстки таблиц
+ * реквизитов и кнопок копирования. Снимаем именно контейнер реквизитов
+ * (`legal-content`), а не fullPage: глобальный футер содержит build-id и год,
+ * меняющиеся между сборками — в кадре их быть не должно (детерминизм).
  */
 test('реквизиты — страница /legal', async ({ page }) => {
   await page.goto('/legal')
-  await expect(page.getByRole('heading', { name: 'Реквизиты', level: 1 })).toBeVisible()
-  await expect(page).toHaveScreenshot('legal.png', { fullPage: true })
+  const content = page.getByTestId('legal-content')
+  await expect(content).toBeVisible()
+  await expect(content).toHaveScreenshot('legal.png')
 })
