@@ -7,9 +7,18 @@ let w = 0
 let h = 0
 let nextPerturb = 0
 let ro: ResizeObserver
+let io: IntersectionObserver | null = null
 let prefersReduced = false
 let isRunning = false
+let inView = true // канвас в зоне видимости (IntersectionObserver)
+let lastFrame = 0
 let motionMql: MediaQueryList | null = null
+
+// Троттлинг РЕНДЕРА до ~30fps: draw (canvas-градиенты/текст) — дорогая часть,
+// вдвое меньше нагрузки. Физика (tick) идёт каждый кадр — движение не вялое.
+const FRAME_MS = 1000 / 30
+
+type Tier = 1 | 2 | 3
 
 interface Node {
   id: string
@@ -19,7 +28,15 @@ interface Node {
   vx: number
   vy: number
   r: number
-  primary: boolean
+  tier: Tier
+}
+
+// Визуальная иерархия по уровням: 1 — главный (Битрикс24), 2 — вторичные
+// (AI/MCP/REST), 3 — остальные. Разные радиус, яркость, размер шрифта.
+const TIERS: Record<Tier, { r: number, glow: number, glowA: number, nodeA: number, labelA: number, font: string, dy: number }> = {
+  1: { r: 5, glow: 24, glowA: 0.20, nodeA: 0.90, labelA: 0.82, font: 'bold 11px "Roboto Mono", monospace', dy: 21 },
+  2: { r: 4, glow: 18, glowA: 0.14, nodeA: 0.66, labelA: 0.52, font: '10px "Roboto Mono", monospace', dy: 18 },
+  3: { r: 3, glow: 13, glowA: 0.10, nodeA: 0.44, labelA: 0.30, font: '9px "Roboto Mono", monospace', dy: 16 }
 }
 
 // Force simulation tuning knobs — change here, not inline
@@ -39,20 +56,20 @@ const PERTURB_IMPULSE = 4 // velocity kick magnitude during periodic shake
 const PERTURB_MIN_MS = 3500 // min ms between shakes
 const PERTURB_JITTER_MS = 2500 // random extra ms added on top
 
-const NODES_SRC = [
-  { id: 'b24', label: 'Битрикс24', primary: true },
-  { id: 'ai', label: 'AI', primary: false },
-  { id: 'mcp', label: 'MCP', primary: false },
-  { id: 'rest', label: 'REST API', primary: false },
-  { id: 'crm', label: 'CRM', primary: false },
-  { id: 'claude', label: 'Claude', primary: false },
-  { id: 'openai', label: 'OpenAI', primary: false },
-  { id: 'tasks', label: 'Задачи', primary: false },
-  { id: 'catalog', label: 'Каталог', primary: false },
-  { id: 'webhook', label: 'Webhooks', primary: false },
-  { id: 'sdk', label: 'b24jssdk', primary: false },
-  { id: 'b24ui', label: 'b24ui', primary: false },
-  { id: 'integration', label: 'Интеграции', primary: false }
+const NODES_SRC: { id: string, label: string, tier: Tier }[] = [
+  { id: 'b24', label: 'Битрикс24', tier: 1 },
+  { id: 'ai', label: 'AI', tier: 2 },
+  { id: 'mcp', label: 'MCP', tier: 2 },
+  { id: 'rest', label: 'REST API', tier: 2 },
+  { id: 'crm', label: 'CRM', tier: 3 },
+  { id: 'claude', label: 'Claude', tier: 3 },
+  { id: 'openai', label: 'OpenAI', tier: 3 },
+  { id: 'tasks', label: 'Задачи', tier: 3 },
+  { id: 'catalog', label: 'Каталог', tier: 3 },
+  { id: 'webhook', label: 'Webhooks', tier: 3 },
+  { id: 'sdk', label: 'b24jssdk', tier: 3 },
+  { id: 'b24ui', label: 'b24ui', tier: 3 },
+  { id: 'integration', label: 'Интеграции', tier: 3 }
 ]
 
 const EDGES: [string, string][] = [
@@ -77,7 +94,7 @@ function init() {
     y: h * 0.5 + (Math.random() - 0.5) * h * 0.65,
     vx: (Math.random() - 0.5) * 2,
     vy: (Math.random() - 0.5) * 2,
-    r: n.primary ? 5 : 3.5
+    r: TIERS[n.tier].r
   }))
   nodeMap = new Map(nodes.map(n => [n.id, n]))
   nextPerturb = Date.now() + 2500
@@ -193,42 +210,46 @@ function draw() {
     ctx.stroke()
   }
 
-  // Nodes
+  // Nodes — параметры по уровню иерархии (TIERS)
   for (const n of nodes) {
-    const glowR = n.primary ? 24 : 15
-    const grd = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, glowR)
-    grd.addColorStop(0, `rgba(${CH}, ${n.primary ? 0.20 : 0.11})`)
+    const t = TIERS[n.tier]
+    const grd = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, t.glow)
+    grd.addColorStop(0, `rgba(${CH}, ${t.glowA})`)
     grd.addColorStop(1, `rgba(${CH}, 0)`)
     ctx.beginPath()
-    ctx.arc(n.x, n.y, glowR, 0, Math.PI * 2)
+    ctx.arc(n.x, n.y, t.glow, 0, Math.PI * 2)
     ctx.fillStyle = grd
     ctx.fill()
 
     ctx.beginPath()
     ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2)
-    ctx.fillStyle = `rgba(${CH}, ${n.primary ? 0.88 : 0.50})`
+    ctx.fillStyle = `rgba(${CH}, ${t.nodeA})`
     ctx.fill()
 
-    ctx.font = `${n.primary ? 'bold ' : ''}10px "Roboto Mono", monospace`
-    ctx.fillStyle = n.primary
-      ? `rgba(${CH}, 0.80)`
-      : 'rgba(255,255,255,0.35)'
+    ctx.font = t.font
+    ctx.fillStyle = n.tier === 1 ? `rgba(${CH}, ${t.labelA})` : `rgba(255,255,255,${t.labelA})`
     ctx.textAlign = 'center'
-    ctx.fillText(n.label, n.x, n.y + (n.primary ? 21 : 17))
+    ctx.fillText(n.label, n.x, n.y + t.dy)
   }
 }
 
-function loop() {
-  tick()
-  draw()
+function loop(now: number) {
   animId = requestAnimationFrame(loop)
+  // Физика — каждый кадр (дёшево при n=13): сохраняет «живость» движения.
+  tick()
+  // Рендер троттлим до ~30fps: draw (градиенты/текст) — дорогая часть,
+  // вдвое меньше нагрузки и без визуальной вялости.
+  if (now - lastFrame < FRAME_MS) return
+  lastFrame = now
+  draw()
 }
 
 // Один владелец цикла: isRunning защищает от двойного RAF при быстрых
-// hidden→visible переходах (иначе два параллельных loop ускорили бы анимацию).
+// переходах (иначе два параллельных loop ускорили бы анимацию).
 function start() {
-  if (isRunning || prefersReduced) return
+  if (isRunning) return
   isRunning = true
+  lastFrame = 0
   animId = requestAnimationFrame(loop)
 }
 
@@ -237,21 +258,23 @@ function stop() {
   isRunning = false
 }
 
+// Анимация крутится только когда все условия за: движение не урезано,
+// вкладка видна и канвас в зоне видимости (экономия батареи/CPU).
+function sync() {
+  if (!prefersReduced && !document.hidden && inView) start()
+  else stop()
+}
+
 // Пауза анимации, когда вкладка не видна — экономит батарею/CPU на мобильных.
 function onVisibility() {
-  if (document.hidden) stop()
-  else start()
+  sync()
 }
 
 // Реакция на смену системной настройки «уменьшить движение» без перезагрузки.
 function onMotionChange(e: MediaQueryListEvent) {
   prefersReduced = e.matches
-  if (prefersReduced) {
-    stop()
-    draw() // оставляем один статичный кадр
-  } else {
-    start()
-  }
+  sync()
+  if (prefersReduced) draw() // оставляем один статичный кадр
 }
 
 onMounted(() => {
@@ -262,21 +285,28 @@ onMounted(() => {
   motionMql = window.matchMedia?.('(prefers-reduced-motion: reduce)') ?? null
   prefersReduced = motionMql?.matches ?? false
   init()
-  if (prefersReduced) {
-    draw() // один статичный кадр — без непрерывной анимации
-  } else {
-    start()
-  }
+  draw() // первый кадр сразу (и единственный — при reduced-motion)
+
   document.addEventListener('visibilitychange', onVisibility)
   motionMql?.addEventListener('change', onMotionChange)
   ro = new ResizeObserver(resize)
   ro.observe(canvas.value)
+
+  // IntersectionObserver — анимировать только пока канвас в зоне видимости.
+  io = new IntersectionObserver((entries) => {
+    inView = entries[0]?.isIntersecting ?? true
+    sync()
+  }, { threshold: 0.01 })
+  io.observe(canvas.value)
+
+  sync() // старт, если условия за (видно + не reduced)
 })
 
 onUnmounted(() => {
   stop()
   cancelAnimationFrame(resizeRaf)
   ro?.disconnect()
+  io?.disconnect()
   document.removeEventListener('visibilitychange', onVisibility)
   motionMql?.removeEventListener('change', onMotionChange)
 })
