@@ -30,7 +30,10 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    # Пин конкретной версии вместо ubuntu-latest: latest — плавающий алиас,
+    # GitHub может сменить образ (напр. на 26.04) и тихо поменять сборку.
+    # Поднимать вручную — Dependabot раннеры не обновляет.
+    runs-on: ubuntu-24.04
 
     env:
       NUXT_APP_BASE_URL: '/'
@@ -79,7 +82,9 @@ jobs:
           URL: ${{ inputs.b24-form-script-url }}
 
       - name: Install dependencies
-        run: pnpm install
+        # --frozen-lockfile: CI не должен молча менять lockfile; падает, если
+        # package.json и pnpm-lock.yaml разошлись (защита от дрейфа зависимостей).
+        run: pnpm install --frozen-lockfile
 
       - name: Lint
         run: pnpm run lint
