@@ -69,7 +69,7 @@ useHead({
             'name': 'ИП Шевчик И. С.',
             'alternateName': 'bx-shef.by',
             'url': config.public.siteUrl,
-            'email': 'shevchik.mail@gmail.com',
+            'email': 'offer@bx-shef.by',
             'address': {
               '@type': 'PostalAddress',
               'addressLocality': 'Минск',
