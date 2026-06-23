@@ -19,7 +19,7 @@ const rows: [string, string][] = [
 ]
 
 const contacts: [string, string, string][] = [
-  ['Email', 'shevchik.mail@gmail.com', 'mailto:shevchik.mail@gmail.com']
+  ['Email', 'offer@bx-shef.by', 'mailto:offer@bx-shef.by']
 ]
 
 // Два набора банковских реквизитов: BYN (Беларусь) и RUB (для оплаты из РФ —
@@ -184,9 +184,9 @@ onUnmounted(() => {
 
     <p class="text-xs text-white/45">
       Документы и счета по запросу — напишите на <a
-        href="mailto:shevchik.mail@gmail.com"
+        href="mailto:offer@bx-shef.by"
         class="text-[rgb(var(--color-accent-primary-ch))] hover:underline"
-      >shevchik.mail@gmail.com</a>.
+      >offer@bx-shef.by</a>.
     </p>
   </div>
 </template>

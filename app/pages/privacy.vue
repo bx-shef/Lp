@@ -50,9 +50,9 @@ useSeoMeta({
       <li>Третьим лицам данные не передаются, в рассылки не включаются.</li>
       <li>
         По запросу данные удаляются — напишите на <a
-          href="mailto:shevchik.mail@gmail.com"
+          href="mailto:offer@bx-shef.by"
           class="text-[rgb(var(--color-accent-primary-ch))] hover:underline"
-        >shevchik.mail@gmail.com</a>.
+        >offer@bx-shef.by</a>.
       </li>
     </ul>
 
@@ -62,9 +62,9 @@ useSeoMeta({
     <ul class="list-disc list-outside ml-5 space-y-1">
       <li>
         Email: <a
-          href="mailto:shevchik.mail@gmail.com"
+          href="mailto:offer@bx-shef.by"
           class="text-[rgb(var(--color-accent-primary-ch))] hover:underline"
-        >shevchik.mail@gmail.com</a>
+        >offer@bx-shef.by</a>
       </li>
     </ul>
   </div>

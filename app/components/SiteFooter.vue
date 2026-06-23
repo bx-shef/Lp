@@ -1,12 +1,11 @@
 <script setup lang="ts">
-// Реквизиты ИП. ВАЖНО: shevchik.mail@gmail.com используется как
-// контактный email до момента, пока не будет настроен hi@bx-shef.by на домене.
+// Реквизиты ИП.
 const { public: { buildId } } = useRuntimeConfig()
 
 const legal = {
   short: 'ИП Шевчик И. С.',
   unp: 'УНП 192049017',
-  email: 'shevchik.mail@gmail.com',
+  email: 'offer@bx-shef.by',
   city: 'Минск, Беларусь'
 }
 

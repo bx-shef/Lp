@@ -39,7 +39,7 @@ const card = {
   unp: 'УНП 192049017',
   phone: '+375 29 736-01-26',
   phoneTel: '+375297360126',
-  email: 'shevchik.mail@gmail.com',
+  email: 'offer@bx-shef.by',
   telegram: '@bxshefby',
   city: 'Минск, Беларусь',
   legalAddress: 'пр. Дзержинского, д. 131, кв. 234, г. Минск, Беларусь, 220025',
