@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@bitrix24/b24icons-vue": "^2.0.7",
-    "@bitrix24/b24ui-nuxt": "^2.8.0",
+    "@bitrix24/b24ui-nuxt": "^2.9.0",
     "@fontsource/roboto-mono": "^5.2.9",
     "@fontsource/rubik": "^5.2.8",
     "nuxt": "^4.4.8",
