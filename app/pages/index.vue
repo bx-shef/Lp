@@ -152,7 +152,7 @@ const process: ProcessStep[] = [
             <PartnerBadge />
 
             <h1 class="text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.05] tracking-tight text-white">
-              Кастомная разработка<br>под <span class="text-[rgb(var(--color-accent-primary-ch))]">Битрикс24</span>
+              {{ HERO_TITLE_TOP }}<br>{{ HERO_TITLE_PRE }}<span class="text-[rgb(var(--color-accent-primary-ch))]">{{ HERO_TITLE_ACCENT }}</span>
             </h1>
 
             <p class="text-lg sm:text-xl max-w-[560px] text-white/70 leading-relaxed">
