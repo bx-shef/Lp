@@ -17,6 +17,8 @@ interface ServiceItem {
   icon: Component
   title: string
   text: string
+  /** Опциональная ссылка «в дело» (напр. на готовое приложение) */
+  link?: { href: string, label: string }
 }
 
 interface DifferentiatorItem {
@@ -55,7 +57,8 @@ const services: ServiceItem[] = [
     id: 'integrations',
     icon: CloudTransferDataIcon,
     title: 'Интеграции и обмен данными',
-    text: 'Клиент-банк, поставщики, маркетплейсы, любой SaaS через REST/MCP ↔ Б24. Один раз настроили — забыли про экспорт-импорт.'
+    text: 'Клиент-банк, поставщики, маркетплейсы, любой SaaS через REST/MCP ↔ Б24. Один раз настроили — забыли про экспорт-импорт.',
+    link: { href: 'https://bank-import.bx-shef.by', label: 'Приложение: импорт выписки клиент-банка' }
   }
 ]
 
@@ -238,6 +241,17 @@ const process: ProcessStep[] = [
             <p class="text-sm sm:text-base text-white/65 leading-relaxed">
               {{ s.text }}
             </p>
+            <a
+              v-if="s.link"
+              :href="s.link.href"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="mt-auto inline-flex items-center gap-1.5 text-sm font-semibold text-[rgb(var(--color-accent-primary-ch))] hover:underline"
+              @click="reachGoal('bankimport_click')"
+            >
+              {{ s.link.label }}
+              <ArrowRightLIcon class="size-4" />
+            </a>
           </div>
         </div>
       </div>
