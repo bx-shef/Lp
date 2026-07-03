@@ -84,6 +84,35 @@ const EDGES: [string, string][] = [
 let nodes: Node[] = []
 let nodeMap = new Map<string, Node>()
 
+// Pre-baked node glow sprites (one per tier). The glow is a static radial
+// gradient — baking it once into an offscreen canvas and drawImage-ing it each
+// frame avoids ~N·createRadialGradient calls per frame (perf on weak mobiles).
+let glowSprites: Record<Tier, HTMLCanvasElement> | null = null
+
+function buildGlowSprites() {
+  const make = (glow: number, glowA: number): HTMLCanvasElement => {
+    const s = document.createElement('canvas')
+    const size = Math.ceil(glow * 2)
+    s.width = s.height = size
+    const g = s.getContext('2d')
+    if (g) {
+      const grd = g.createRadialGradient(glow, glow, 0, glow, glow, glow)
+      grd.addColorStop(0, `rgba(0, 212, 255, ${glowA})`)
+      grd.addColorStop(1, 'rgba(0, 212, 255, 0)')
+      g.fillStyle = grd
+      g.beginPath()
+      g.arc(glow, glow, glow, 0, Math.PI * 2)
+      g.fill()
+    }
+    return s
+  }
+  glowSprites = {
+    1: make(TIERS[1].glow, TIERS[1].glowA),
+    2: make(TIERS[2].glow, TIERS[2].glowA),
+    3: make(TIERS[3].glow, TIERS[3].glowA)
+  }
+}
+
 function init() {
   if (!canvas.value) return
   resize()
@@ -210,16 +239,11 @@ function draw() {
     ctx.stroke()
   }
 
-  // Nodes — параметры по уровню иерархии (TIERS)
+  // Nodes — параметры по уровню иерархии (TIERS). Glow — из pre-baked спрайтов.
   for (const n of nodes) {
     const t = TIERS[n.tier]
-    const grd = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, t.glow)
-    grd.addColorStop(0, `rgba(${CH}, ${t.glowA})`)
-    grd.addColorStop(1, `rgba(${CH}, 0)`)
-    ctx.beginPath()
-    ctx.arc(n.x, n.y, t.glow, 0, Math.PI * 2)
-    ctx.fillStyle = grd
-    ctx.fill()
+    const sprite = glowSprites?.[n.tier]
+    if (sprite) ctx.drawImage(sprite, n.x - t.glow, n.y - t.glow)
 
     ctx.beginPath()
     ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2)
@@ -284,6 +308,7 @@ onMounted(() => {
   ctx = c
   motionMql = window.matchMedia?.('(prefers-reduced-motion: reduce)') ?? null
   prefersReduced = motionMql?.matches ?? false
+  buildGlowSprites()
   init()
   draw() // первый кадр сразу (и единственный — при reduced-motion)
 

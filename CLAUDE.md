@@ -26,7 +26,9 @@ pnpm og           # перегенерация og-image.png (только пос
 - **Ссылка онлайн-записи Б24** — `B24_BOOKING_URL` в `app/utils/booking.ts` (общий модуль для hero и визитки); при смене портала менять там, обновляется через пересборку
 - **Яндекс Метрика** — inline в nuxt.config.ts, metrika ID переопределяем через ENV; цели через `useMetrikaGoal().reachGoal()` (brief_submit, booking_click, sticky_cta_click, bankimport_click)
 - **Воронка лендинга** — «два входа, одна точка»: первичный CTA «Описать задачу» (#brief), вторичный «Назначить созвон» (B24-запись). На мобиле первичный продублирован sticky-кнопкой (`MobileBriefCta.vue`). Инструменты-крючки вынесены в футер, вне зоны конверсии
-- **HeroGraph** — уважает `prefers-reduced-motion` (статичный кадр), ставит анимацию на паузу при скрытой вкладке и при уходе канваса за экран (IntersectionObserver); рендер троттлится до 30fps (физика — каждый кадр). Узлы по 3 уровням иерархии (TIERS). Батарея/CPU на мобиле
+- **HeroGraph** — уважает `prefers-reduced-motion` (статичный кадр), ставит анимацию на паузу при скрытой вкладке и при уходе канваса за экран (IntersectionObserver); рендер троттлится до 30fps (физика — каждый кадр). Узлы по 3 уровням иерархии (TIERS). Glow узлов — pre-baked offscreen-спрайты (`drawImage`), без `createRadialGradient` каждый кадр. Батарея/CPU на мобиле
+- **BusinessCardModal** — настоящий диалог: `role="dialog"`/`aria-modal`/`aria-labelledby`, фокус переводится внутрь и возвращается на триггер, focus-trap на `Tab`, `Esc` закрывает
+- **Гайд по лендингам** — [`docs/LANDING_GUIDE.md`](docs/LANDING_GUIDE.md): дизайн-система, каркас, правила анимации/a11y/формы, процесс (issue → единый источник → скриншоты → 5 ревью → PR) и разбор проделанной работы
 
 ## Структура
 
