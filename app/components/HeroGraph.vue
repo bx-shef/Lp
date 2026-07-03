@@ -157,9 +157,11 @@ function tick() {
   const cx = w > 900 ? w * 0.70 : w * 0.75
   const cy = w > 900 ? h * 0.58 : h * 0.22
 
-  // Photo zone repulsion (desktop only — off-screen sentinel on mobile)
-  const photoX = w > 900 ? Math.max(0, (w - 1080) / 2) + PHOTO_CONTAINER_OFFSET_X : -9999
-  const photoY = h * PHOTO_RELATIVE_Y
+  // Photo zone repulsion. Desktop: photo in the right column of the
+  // max-w-[1080px] container. Mobile: photo is top-left (order-first,
+  // justify-start, size-44) — keep nodes/particles off the portrait there too.
+  const photoX = w > 900 ? Math.max(0, (w - 1080) / 2) + PHOTO_CONTAINER_OFFSET_X : w * 0.28
+  const photoY = w > 900 ? h * PHOTO_RELATIVE_Y : h * 0.20
 
   for (let i = 0; i < nodes.length; i++) {
     const a = nodes[i]!

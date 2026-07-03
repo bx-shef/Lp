@@ -33,8 +33,9 @@ const navItems = [
   ]
 ]
 
-const title = 'Кастомная разработка под Битрикс24: AI, интеграции, MCP-серверы | bx-shef.by'
-const description = 'Разрабатываю AI-помощников, интеграции и MCP-серверы для Битрикс24. Беру задачи, которые маркетплейс не закрывает. Разбор задачи — 30 минут, бесплатно.'
+// Единый источник — app/utils/content.ts (H1 берёт оттуда же, см. index.vue).
+const title = SEO_TITLE
+const description = SEO_DESCRIPTION
 const ogImage = `${config.public.siteUrl}/og-image.png`
 
 useSeoMeta({
