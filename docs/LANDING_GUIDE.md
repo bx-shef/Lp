@@ -2,10 +2,11 @@
 
 > Last reviewed: 2026-07-03
 
-Инструкция по дизайну, стеку и процессу создания лендингов в экосистеме
+Инструкция по дизайну, стеку, процессу и **настройке** лендингов в экосистеме
 `bx-shef` (основной сайт `offer.bx-shef.by` и продуктовые лендинги вроде
 `bank-import.bx-shef.by`). Держим одинаковый вид и одинаковый порядок работы —
-чтобы новые страницы получались «как надо» с первого раза.
+чтобы новые страницы получались «как надо» с первого раза. Конфигурация (env,
+форма, Метрика, деплой) — в §9.
 
 ---
 
@@ -160,7 +161,80 @@ hero+граф, подвал, визитка, форма), с контентом 
 - Чистые куски (билдер vCard, сборка URL формы) выносим в `utils` и покрываем
   тестами; inline-копии в разных местах ловим drift-тестом.
 
-## 9. Чеклист перед PR
+## 9. Настройка и запуск (env, форма, Метрика, деплой)
+
+Справочник по конфигурации — сверено с кодом (`nuxt.config.ts`, `.github/workflows/`).
+
+### Команды (`package.json`)
+
+```bash
+pnpm dev                  # дев-сервер (localhost:3000)
+pnpm generate             # SSG-сборка → .output/public/
+pnpm lint                 # ESLint
+pnpm typecheck            # nuxt typecheck (vue-tsc)
+pnpm test                 # vitest (юниты чистой логики из shared/)
+pnpm test:visual          # Playwright visual smoke (нужен pnpm generate; эталоны — test/visual)
+pnpm test:visual:update   # перегенерировать эталоны снапшотов (после осознанной правки вида)
+pnpm og                   # перегенерация public/og-image.png (после смены текста/фото)
+```
+
+### Переменные окружения (все `NUXT_PUBLIC_*` — публичные, видны в HTML)
+
+| Переменная | Где читается | Дефолт | Назначение |
+|-----------|--------------|--------|------------|
+| `NUXT_PUBLIC_SITE_URL` | `nuxt.config.ts` → `siteUrl` | `https://offer.bx-shef.by` | канонический URL, og/twitter, canonical, Schema.org |
+| `NUXT_PUBLIC_METRIKA_ID` | `nuxt.config.ts` (фильтр `\D` — только цифры) | `109399587` | id счётчика Метрики; пустой ⇒ счётчик не вставляется |
+| `NUXT_PUBLIC_B24_FORM_ID` | `runtimeConfig.public` → `BriefForm.vue` | `1` | id встроенной CRM-формы Б24 |
+| `NUXT_PUBLIC_B24_FORM_SECRET` | там же | `3c735r` | публичный embed-секрет формы (не тайна) |
+| `NUXT_PUBLIC_B24_FORM_SCRIPT_URL` | там же | `…/b37817748/crm/form/loader_1.js` | URL загрузчика формы (хост из allowlist Б24) |
+| `NUXT_PUBLIC_BUILD_ID` | `runtimeConfig.public` → подвал | `dev` (в CI — `github.sha`) | коммит сборки в подвале |
+| `NUXT_ALLOWED_HOSTS` | `nuxt.config.ts` → vite | — | только для dev-туннелей (доп. hostnames) |
+| `GITHUB_TOKEN` | `server/api/github-contrib.get.ts` | — | GraphQL для heatmap контрибуций (в Actions выдаётся авто; локально — PAT scope `read:user`) |
+| `PLAYWRIGHT_CHROMIUM_PATH` | `scripts/generate-og.mjs` | — | путь к Chromium для `pnpm og` (если бандл Playwright не найден); иначе — авто |
+
+### Настроить B24-форму
+
+Форма — официальный embed CRM-формы Bitrix24 (`app/components/BriefForm.vue`), скрипт
+грузится **только с allowlist-доменов** Б24 (`.bitrix24.com/.by/.ru/.kz/.tech`) + валидация
+id/secret. По умолчанию вшита форма #1 портала `b37817748`. Сменить форму — задать три
+`NUXT_PUBLIC_B24_FORM_*` (id, secret, script-url из конструктора формы Б24). Пустые
+значения ⇒ остаются дефолты (в CI пустые `vars` не перебивают дефолт — см. деплой).
+
+### Настроить Метрику и цели
+
+Счётчик — inline-сниппет в `nuxt.config.ts` (обязан быть в HTML для валидатора Метрики),
+id из `NUXT_PUBLIC_METRIKA_ID`. Цели шлём **только** через `useMetrikaGoal().reachGoal()`.
+Список целей в коде: `brief_submit` (сабмит формы, `BriefForm.vue`), `booking_click`,
+`sticky_cta_click`, `bankimport_click`, `card_copy_link`, `card_qr_reveal`. **Новую цель
+после добавления надо завести в кабинете Метрики** — иначе события не считаются.
+
+### Прочая конфигурация
+
+- Ссылка онлайн-записи Б24 — `app/utils/booking.ts` (`B24_BOOKING_URL`); при смене портала — там.
+- Тема — `app/app.config.ts` (`colorModeInitialValue: 'dark'`, ключ хранения `bx-shef-lp`).
+- Домен — `public/CNAME` (`offer.bx-shef.by`); фавикон версионируется (`?v=3`); `theme-color` `#030022`.
+- Единый источник контента/SEO — `app/utils/content.ts` (H1 + `SEO_TITLE`/`SEO_DESCRIPTION`).
+- Пререндер — `nitro.prerender.routes` (`/`, `/api/github-contrib`) + `crawlLinks` (тянет `/privacy`, `/legal`).
+
+### Деплой (GitHub Actions → rsync на VPS)
+
+- **CI на ветках** (`ci.yml`, всё кроме `main`) → переиспользует `build.yml`: lint → typecheck →
+  test → generate → `test:visual`. Это и есть проверки PR.
+- **Деплой** (`deploy.yml`) — на push в `main` **и по cron `0 22 * * *`** (ежедневный пересбор,
+  чтобы GitHub-граф контрибуций не устаревал в статике). Сначала `build.yml`, затем `rsync`
+  (`--delete --checksum`, с бэкапом `.bak` и авто-rollback) на VPS + smoke (проверка `index.html`
+  и `og:image`).
+- **Конфиг сборки в CI берётся из GitHub-настроек репо, не из кода:**
+  - **Variables** (`Settings → Secrets and variables → Actions → Variables`):
+    `NUXT_PUBLIC_B24_FORM_ID/SECRET/SCRIPT_URL` — пустые **пропускаются шагом сборки**
+    (`build.yml`), остаются дефолты; `NUXT_PUBLIC_METRIKA_ID` — передаётся всегда, но
+    пустой падает в дефолт через `|| '…'` и фильтр `\D` в `nuxt.config.ts`. Итог для обоих:
+    не задал ⇒ дефолт.
+  - **Secrets**: `DEPLOY_HOST`, `DEPLOY_USER`, `DEPLOY_PORT`, `DEPLOY_PATH`, `DEPLOY_SSH_KEY`,
+    `DEPLOY_HOST_KEY` (пиннинг ключа хоста — без него keyscan отключён, деплой падает, анти-MITM).
+  - Внешние GitHub-экшены запинены к commit-SHA (guard в `build.yml` роняет сборку при откате к `@vN`).
+
+## 10. Чеклист перед PR
 
 - [ ] Тексты — из issue, в едином источнике; H1 = SEO title.
 - [ ] Секции по каркасу §2; воронка «два входа, одна точка».
