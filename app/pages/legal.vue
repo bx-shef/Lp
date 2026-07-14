@@ -164,7 +164,7 @@ onUnmounted(() => {
               {{ k }}
             </div>
             <div class="flex items-start gap-2 text-sm text-white/90 font-mono">
-              <span class="min-w-0 break-all">{{ v }}</span>
+              <span class="min-w-0 break-words">{{ v }}</span>
               <button
                 type="button"
                 class="shrink-0 mt-0.5 text-white/30 hover:text-white transition-colors"
