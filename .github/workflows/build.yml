@@ -117,6 +117,8 @@ jobs:
           grep -q 'build ' .output/public/index.html             || (echo "ERR: build-id missing in footer" && exit 1)
           grep -q 'bel.bitrix24.by' .output/public/index.html     || (echo "ERR: ссылка «Назначить созвон» (booking URL) отсутствует" && exit 1)
           grep -q 'currency-converter.bx-shef.by' .output/public/index.html || (echo "ERR: блок инструментов в футере не отрендерился" && exit 1)
+          grep -q 'bank-import.bx-shef.by' .output/public/index.html  || (echo "ERR: ссылка на приложение импорта клиент-банка отсутствует на карточке «Интеграции»" && exit 1)
+          grep -q 'price-import.bx-shef.by' .output/public/index.html || (echo "ERR: ссылка на приложение AI-импорта документов отсутствует на карточке «Интеграции»" && exit 1)
           grep -q 'aria-label="GitHub"' .output/public/index.html || (echo "ERR: GitHub-кнопка в подвале отсутствует" && exit 1)
           # GitHub-граф рендерится только при наличии данных (v-if). Не блокируем
           # сборку (graceful degradation by design), но подсвечиваем annotation —

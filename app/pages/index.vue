@@ -12,13 +12,20 @@ import RocketIcon from '@bitrix24/b24icons-vue/main/RocketIcon'
 useCardGlow()
 const { reachGoal } = useMetrikaGoal()
 
+interface ServiceLink {
+  href: string
+  label: string
+  /** Цель Метрики при клике */
+  goal: string
+}
+
 interface ServiceItem {
   id: string
   icon: Component
   title: string
   text: string
-  /** Опциональная ссылка «в дело» (напр. на готовое приложение) */
-  link?: { href: string, label: string }
+  /** Опциональные ссылки «в дело» (готовые приложения) */
+  links?: ServiceLink[]
 }
 
 interface DifferentiatorItem {
@@ -58,7 +65,10 @@ const services: ServiceItem[] = [
     icon: CloudTransferDataIcon,
     title: 'Интеграции и обмен данными',
     text: 'Клиент-банк, поставщики, маркетплейсы, любой SaaS через REST/MCP ↔ Б24. Один раз настроили — забыли про экспорт-импорт.',
-    link: { href: 'https://bank-import.bx-shef.by', label: 'Приложение: импорт выписки клиент-банка' }
+    links: [
+      { href: 'https://bank-import.bx-shef.by', label: 'Приложение: импорт выписки клиент-банка', goal: 'bankimport_click' },
+      { href: 'https://price-import.bx-shef.by', label: 'Приложение: AI-импорт документов (счета, прайсы)', goal: 'priceimport_click' }
+    ]
   }
 ]
 
@@ -241,17 +251,23 @@ const process: ProcessStep[] = [
             <p class="text-sm sm:text-base text-white/65 leading-relaxed">
               {{ s.text }}
             </p>
-            <a
-              v-if="s.link"
-              :href="s.link.href"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="mt-auto inline-flex items-center gap-1.5 text-sm font-semibold text-[rgb(var(--color-accent-primary-ch))] hover:underline"
-              @click="reachGoal('bankimport_click')"
+            <div
+              v-if="s.links"
+              class="mt-auto flex flex-col gap-2"
             >
-              {{ s.link.label }}
-              <ArrowRightLIcon class="size-4" />
-            </a>
+              <a
+                v-for="l in s.links"
+                :key="l.href"
+                :href="l.href"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-1.5 text-sm font-semibold text-[rgb(var(--color-accent-primary-ch))] hover:underline"
+                @click="reachGoal(l.goal)"
+              >
+                {{ l.label }}
+                <ArrowRightLIcon class="size-4 shrink-0" />
+              </a>
+            </div>
           </div>
         </div>
       </div>
