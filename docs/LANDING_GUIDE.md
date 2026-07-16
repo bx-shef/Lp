@@ -98,8 +98,10 @@
 - Событие сабмита формы → цель Метрики `brief_submit` (через `postMessage`,
   т.к. событие живёт внутри iframe).
 - Цели Метрики — только через `useMetrikaGoal().reachGoal()`, snake_case
-  (`brief_submit`, `booking_click`, `sticky_cta_click`, `bankimport_click`, …).
-  Новую цель после добавления надо зарегистрировать в кабинете Метрики.
+  (`brief_submit`, `booking_click`, `sticky_cta_click`, `bankimport_click`,
+  `priceimport_click`, …).
+  Новую цель после добавления надо зарегистрировать в кабинете Метрики
+  **и** дописать в оба списка целей — здесь и в `CLAUDE.md`.
 
 ## 6. Доступность (a11y) — минимум для модалок
 
@@ -205,8 +207,9 @@ id/secret. По умолчанию вшита форма #1 портала `b378
 Счётчик — inline-сниппет в `nuxt.config.ts` (обязан быть в HTML для валидатора Метрики),
 id из `NUXT_PUBLIC_METRIKA_ID`. Цели шлём **только** через `useMetrikaGoal().reachGoal()`.
 Список целей в коде: `brief_submit` (сабмит формы, `BriefForm.vue`), `booking_click`,
-`sticky_cta_click`, `bankimport_click`, `card_copy_link`, `card_qr_reveal`. **Новую цель
-после добавления надо завести в кабинете Метрики** — иначе события не считаются.
+`sticky_cta_click`, `bankimport_click`, `priceimport_click`, `card_copy_link`,
+`card_qr_reveal`. **Новую цель после добавления надо завести в кабинете Метрики** —
+иначе события не считаются.
 
 ### Прочая конфигурация
 
