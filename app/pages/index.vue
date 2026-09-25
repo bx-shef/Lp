@@ -9,6 +9,8 @@ import CloudTransferDataIcon from '@bitrix24/b24icons-vue/main/CloudTransferData
 import CodeIcon from '@bitrix24/b24icons-vue/common-service/CodeIcon'
 import RocketIcon from '@bitrix24/b24icons-vue/main/RocketIcon'
 
+// Текст страницы продублирован для ИИ-агентов в public/index.md (и оффер —
+// в public/llms.txt): правка контента здесь = правка там же, в том же PR.
 useCardGlow()
 const { reachGoal } = useMetrikaGoal()
 

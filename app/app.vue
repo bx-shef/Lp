@@ -38,13 +38,33 @@ const title = SEO_TITLE
 const description = SEO_DESCRIPTION
 const ogImage = `${config.public.siteUrl}/og-image.png`
 
+// Canonical по маршруту: раньше /legal/ и /privacy/ указывали canonical на главную
+// и выпадали из индекса. Слэш на конце — так статика отдаёт вложенные страницы
+// (/legal → 301 → /legal/).
+const route = useRoute()
+const pageUrl = computed(() => route.path === '/'
+  ? config.public.siteUrl
+  : `${config.public.siteUrl}${route.path.replace(/\/$/, '')}/`)
+
+// Markdown-двойники страниц для ИИ-агентов (public/*.md, пишутся вручную —
+// при правке текста страницы править и двойник). См. docs/agent-readiness.md.
+const MARKDOWN_TWINS: Record<string, string> = {
+  '/': '/index.md',
+  '/legal': '/legal.md'
+}
+const markdownTwin = computed(() => MARKDOWN_TWINS[route.path.replace(/(.)\/$/, '$1')])
+
 useSeoMeta({
   title,
   description,
   ogTitle: title,
   ogDescription: description,
   ogImage,
-  ogUrl: config.public.siteUrl,
+  ogImageType: 'image/png',
+  ogImageWidth: 1200,
+  ogImageHeight: 630,
+  ogImageAlt: 'Кастомная разработка под Битрикс24 — Игорь Шевчик. AI, интеграции, MCP',
+  ogUrl: pageUrl,
   ogType: 'website',
   ogLocale: 'ru_RU',
   ogSiteName: 'bx-shef.by',
@@ -55,8 +75,12 @@ useSeoMeta({
 })
 
 useHead({
-  link: [
-    { rel: 'canonical', href: config.public.siteUrl }
+  link: () => [
+    { rel: 'canonical', href: pageUrl.value },
+    { rel: 'describedby', href: `${config.public.siteUrl}/llms.txt` },
+    ...(markdownTwin.value
+      ? [{ rel: 'alternate', type: 'text/markdown', href: `${config.public.siteUrl}${markdownTwin.value}` }]
+      : [])
   ],
   script: [
     {

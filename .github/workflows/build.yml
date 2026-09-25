@@ -127,6 +127,11 @@ jobs:
             || echo "::warning::GitHub-граф отсутствует в index.html (нет GITHUB_TOKEN либо GitHub API недоступен). Сайт собран, секция активности скрыта."
           echo "OK: все обязательные артефакты на месте"
 
+      # llms.txt, Markdown-двойники, <link>-ы для агентов, оффер-блок, OG-карточка
+      # (docs/agent-readiness.md). Скрипт тот же, что гоняется локально.
+      - name: Agent readiness
+        run: scripts/check-agent-readiness.sh .output/public
+
       # Визуальный smoke (issue #59): ловит CSS/визуальные регрессы, которые
       # grep-валидация выше не видит. Гоняет chromium против .output (pnpm preview).
       - name: Install Playwright (chromium)
