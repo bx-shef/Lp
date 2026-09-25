@@ -47,7 +47,7 @@ const card = {
   email: 'offer@bx-shef.by',
   telegram: '@bxshefby',
   city: 'Минск, Беларусь',
-  legalAddress: 'пр. Дзержинского, д. 131, кв. 234, г. Минск, Беларусь, 220025',
+  legalAddress: 'пр. Дзержинского, д. 131, кв. 234, г. Минск, Беларусь, 220045',
   site: 'offer.bx-shef.by',
   // Ссылка онлайн-записи Б24 — общий модуль (используется и в hero).
   callUrl: B24_BOOKING_URL
@@ -179,7 +179,7 @@ function downloadVCard() {
     `TEL;TYPE=CELL:${card.phoneTel}`,
     `EMAIL:${card.email}`,
     `URL:https://${card.site}`,
-    `ADR;TYPE=WORK:;;пр. Дзержинского\\, д. 131\\, кв. 234;Минск;;220025;BY`,
+    `ADR;TYPE=WORK:;;пр. Дзержинского\\, д. 131\\, кв. 234;Минск;;220045;BY`,
     `NOTE:AI\\, интеграции\\, MCP под Битрикс24. ${card.unp}.`,
     'END:VCARD'
   ].join('\r\n')
