@@ -67,7 +67,8 @@ const services: ServiceItem[] = [
     text: 'Клиент-банк, поставщики, маркетплейсы, любой SaaS через REST/MCP ↔ Б24. Один раз настроили — забыли про экспорт-импорт.',
     links: [
       { href: 'https://bank-import.bx-shef.by', label: 'Приложение: импорт выписки клиент-банка', goal: 'bankimport_click' },
-      { href: 'https://price-import.bx-shef.by', label: 'Приложение: AI-импорт документов (счета, прайсы)', goal: 'priceimport_click' }
+      { href: 'https://price-import.bx-shef.by', label: 'Приложение: AI-импорт документов (счета, прайсы)', goal: 'priceimport_click' },
+      { href: 'https://obmen.bx-shef.by', label: 'Кейс: обмен 1С ↔ сайт через RabbitMQ', goal: 'obmen_click' }
     ]
   }
 ]
