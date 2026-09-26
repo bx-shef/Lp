@@ -62,7 +62,7 @@ curl -s $S/ | grep -oE '<link rel="(canonical|alternate|describedby)"[^>]*>'
 Блок делает:
 
 - `.md` → `text/markdown; charset=utf-8`, `.txt` → явный `utf-8` (`AddDefaultCharset` распространяется только на `text/html` и `text/plain`, и без charset кириллица в Markdown ломается);
-- content negotiation: `/` и `/legal/` (и `…/index.html`) отдают двойник на `Accept: text/markdown`; `text/markdown;q=0` (в т. ч. `q=0.0`, пробелы, регистр) и `text/markdownx` получают HTML;
+- content negotiation: `/` и `/legal/` (и `…/index.html`) отдают двойник на `Accept: text/markdown`; `text/markdown;q=0` (в т. ч. `q=0.0`, пробелы, регистр, `q=0` не первым параметром) и `text/markdownx` получают HTML;
 - `Vary: Accept` на HTML с двойником и на `.md`; `Link` с `alternate` + `describedby` на HTML и `canonical` + `describedby` на `.md`, `nosniff` на `.md`.
 
 Проверено на Apache 2.4.58 с `AllowOverride All` и `AddDefaultCharset UTF-8` (как у BitrixVM): 11 вариантов `Accept` на обе страницы, `/privacy/` без изменений, `/sub/index.html` не цепляется.
@@ -71,11 +71,11 @@ curl -s $S/ | grep -oE '<link rel="(canonical|alternate|describedby)"[^>]*>'
 
 ```bash
 cd <DEPLOY_PATH>                              # корень сайта offer.bx-shef.by
-cp -a .htaccess .htaccess.bak 2>/dev/null     # если уже есть — сохранить
+cp -a .htaccess ~/offer.htaccess.$(date +%F) 2>/dev/null  # если уже есть — сохранить ВНЕ корня (деплой с --delete удалит копию рядом)
 # вставить содержимое docs/server/agents.htaccess В НАЧАЛО .htaccess (или создать файл)
 ```
 
-Нужны модули `mod_rewrite`, `mod_headers`, `mod_mime` (в BitrixVM включены; блок обёрнут в `<IfModule>`, без модуля он молча не сработает, а не уронит сайт). Если в `.htaccess` уже есть правила Битрикс (`urlrewrite.php`) — блок ставится выше них.
+Нужны модули `mod_rewrite`, `mod_headers`, `mod_mime` (в BitrixVM включены; блок обёрнут в `<IfModule>`, без модуля он молча не сработает, а не уронит сайт). Если в `.htaccess` уже есть правила Битрикс (`urlrewrite.php`) — блок ставится выше них. Откат деплоя (`deploy.yml`, «Rollback on failure») `.htaccess` не трогает.
 
 ### Проверка после установки
 
@@ -87,6 +87,7 @@ curl -s -o /dev/null -w '%{content_type}\n' -H 'Accept: text/html,*/*;q=0.8' $S/
 curl -s -o /dev/null -w '%{content_type}\n' -H 'Accept: text/markdown;q=0, text/html' $S/  # text/html; charset=UTF-8
 curl -sI $S/ | grep -iE '^(vary|link):'                                                     # Vary: … Accept; Link: …index.md…
 curl -sI $S/index.md | grep -i '^link:'                                                      # rel="canonical"
+curl -sI -H 'Accept: text/markdown' $S/ | grep -i '^vary:'                                  # Accept (nginx не срезал)
 ```
 
 Если у `.md` нет `charset=utf-8` и negotiation не срабатывает — Apache не читает `.htaccess`: проверить `AllowOverride` для корня сайта в конфиге виртуального хоста Apache.

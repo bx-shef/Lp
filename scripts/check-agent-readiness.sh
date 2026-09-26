@@ -42,6 +42,11 @@ done
 
 # --- Оффер-блок одинаковый в llms.txt и index.md ----------------------------
 offer() { sed -n '/<!-- offer:start/,/<!-- offer:end -->/p' "$1" 2>/dev/null || true; }
+for f in llms.txt index.md; do
+  [ -f "$DIR/$f" ] || continue
+  [ "$(grep -c '<!-- offer:start' "$DIR/$f" || true)" = 1 ] && [ "$(grep -c '<!-- offer:end -->' "$DIR/$f" || true)" = 1 ] \
+    || err "$f: маркеры <!-- offer:start --> и <!-- offer:end --> должны встречаться ровно по одному разу"
+done
 a="$(offer "$DIR/llms.txt")"; b="$(offer "$DIR/index.md")"
 if [ -z "$a" ] || [ -z "$b" ]; then
   err "оффер-блок (<!-- offer:start … offer:end -->) не найден в llms.txt или index.md"

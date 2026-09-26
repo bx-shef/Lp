@@ -15,9 +15,9 @@
 # «text/markdown;q=0» (и q=0.0) уважается — такой клиент получает HTML.
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    RewriteCond %{HTTP:Accept} "text/markdown(?=\s*(?:[,;]|$))(?!\s*;\s*q=0(?:\.0+)?\s*(?:[,;]|$))" [NC]
+    RewriteCond %{HTTP:Accept} "text/markdown(?=\s*(?:[,;]|$))(?![^,]*;\s*q=0(?:\.0+)?\s*(?:[,;]|$))" [NC]
     RewriteRule ^(index\.html)?$ /index.md [L]
-    RewriteCond %{HTTP:Accept} "text/markdown(?=\s*(?:[,;]|$))(?!\s*;\s*q=0(?:\.0+)?\s*(?:[,;]|$))" [NC]
+    RewriteCond %{HTTP:Accept} "text/markdown(?=\s*(?:[,;]|$))(?![^,]*;\s*q=0(?:\.0+)?\s*(?:[,;]|$))" [NC]
     RewriteRule ^legal/(index\.html)?$ /legal.md [L]
 </IfModule>
 
