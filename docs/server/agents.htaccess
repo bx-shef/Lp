@@ -1,0 +1,47 @@
+# ─── ИИ-агенты: Markdown-двойники (docs/agent-readiness.md) ─────────────────
+# Блок для .htaccess в корне сайта на сервере (BitrixVM: .html/.md/.txt отдаёт
+# Apache за nginx). Деплой .htaccess не трогает (rsync --exclude) — ставится
+# руками один раз; при добавлении страницы с двойником дописать её сюда.
+
+# .md — как text/markdown в UTF-8 (AddDefaultCharset не касается text/markdown,
+# без charset кириллица у части клиентов превращается в кракозябры).
+<IfModule mod_mime.c>
+    AddType text/markdown .md
+    AddCharset utf-8 .md .txt
+</IfModule>
+
+# Content negotiation: на «Accept: text/markdown» (так ходят Claude Code и др.)
+# страница отдаёт свой двойник. Браузеры text/markdown не шлют. Явный отказ
+# «text/markdown;q=0» (и q=0.0) уважается — такой клиент получает HTML.
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{HTTP:Accept} "text/markdown(?=\s*(?:[,;]|$))(?![^,]*;\s*q=0(?:\.0+)?\s*(?:[,;]|$))" [NC]
+    RewriteRule ^(index\.html)?$ /index.md [L]
+    RewriteCond %{HTTP:Accept} "text/markdown(?=\s*(?:[,;]|$))(?![^,]*;\s*q=0(?:\.0+)?\s*(?:[,;]|$))" [NC]
+    RewriteRule ^legal/(index\.html)?$ /legal.md [L]
+</IfModule>
+
+# Vary — чтобы кэши не путали HTML и Markdown по одному URL; Link — те же
+# ссылки, что в <head>, но видны и без разбора HTML; canonical у .md — на HTML,
+# чтобы в поиске была страница, а не её двойник.
+<IfModule mod_headers.c>
+    <If "%{REQUEST_URI} =~ m#^/(index\.html)?$#">
+        Header merge Vary Accept
+        Header set Link "<https://offer.bx-shef.by/index.md>; rel=\"alternate\"; type=\"text/markdown\", <https://offer.bx-shef.by/llms.txt>; rel=\"describedby\""
+    </If>
+    <ElseIf "%{REQUEST_URI} =~ m#^/legal/(index\.html)?$#">
+        Header merge Vary Accept
+        Header set Link "<https://offer.bx-shef.by/legal.md>; rel=\"alternate\"; type=\"text/markdown\", <https://offer.bx-shef.by/llms.txt>; rel=\"describedby\""
+    </ElseIf>
+    <ElseIf "%{REQUEST_URI} == '/index.md'">
+        Header merge Vary Accept
+        Header set Link "<https://offer.bx-shef.by/>; rel=\"canonical\", <https://offer.bx-shef.by/llms.txt>; rel=\"describedby\""
+        Header set X-Content-Type-Options nosniff
+    </ElseIf>
+    <ElseIf "%{REQUEST_URI} == '/legal.md'">
+        Header merge Vary Accept
+        Header set Link "<https://offer.bx-shef.by/legal/>; rel=\"canonical\", <https://offer.bx-shef.by/llms.txt>; rel=\"describedby\""
+        Header set X-Content-Type-Options nosniff
+    </ElseIf>
+</IfModule>
+# ─── /ИИ-агенты ──────────────────────────────────────────────────────────────

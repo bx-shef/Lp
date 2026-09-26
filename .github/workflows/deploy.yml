@@ -117,6 +117,8 @@ jobs:
             "grep -q 'og:image' ${{ secrets.DEPLOY_PATH }}/index.html \
               || (echo 'ERR: og:image не найден в index.html' && exit 1)"
 
+      # .bak собран без исключённых путей — без тех же --exclude откат с --delete
+      # снёс бы с сервера .htaccess (docs/server/agents.htaccess) и каталоги Битрикс.
       - name: Rollback on failure
         if: failure() && (steps.sync.outcome == 'failure' || steps.verify.outcome == 'failure' || steps.smoke.outcome == 'failure')
         run: |
@@ -124,7 +126,16 @@ jobs:
             -o StrictHostKeyChecking=yes \
             ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} \
             "if test -d ${{ secrets.DEPLOY_PATH }}.bak; then \
-                rsync -a --delete ${{ secrets.DEPLOY_PATH }}.bak/ ${{ secrets.DEPLOY_PATH }}/ \
+                rsync -a --delete \
+                  --exclude='bitrix'      \
+                  --exclude='local'       \
+                  --exclude='personal'    \
+                  --exclude='support'     \
+                  --exclude='upload'      \
+                  --exclude='.access.php' \
+                  --exclude='.htaccess'   \
+                  --exclude='.htsecure'   \
+                  ${{ secrets.DEPLOY_PATH }}.bak/ ${{ secrets.DEPLOY_PATH }}/ \
                 && echo 'OK: rollback выполнен из .bak' \
                 || (echo 'ERR: rsync rollback не удался' && exit 1); \
               else echo 'WARN: .bak не найден, rollback пропущен'; fi"

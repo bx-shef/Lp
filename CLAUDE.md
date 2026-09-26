@@ -28,6 +28,7 @@ pnpm og           # перегенерация og-image.png (только пос
 - **Воронка лендинга** — «два входа, одна точка»: первичный CTA «Описать задачу» (#brief), вторичный «Назначить созвон» (B24-запись). На мобиле первичный продублирован sticky-кнопкой (`MobileBriefCta.vue`). Инструменты-крючки вынесены в футер, вне зоны конверсии
 - **HeroGraph** — уважает `prefers-reduced-motion` (статичный кадр), ставит анимацию на паузу при скрытой вкладке и при уходе канваса за экран (IntersectionObserver); рендер троттлится до 30fps (физика — каждый кадр). Узлы по 3 уровням иерархии (TIERS). Glow узлов — pre-baked offscreen-спрайты (`drawImage`), без `createRadialGradient` каждый кадр. Батарея/CPU на мобиле
 - **BusinessCardModal** — настоящий диалог: `role="dialog"`/`aria-modal`/`aria-labelledby`, фокус переводится внутрь и возвращается на триггер, focus-trap на `Tab`, `Esc` закрывает
+- **Готовность для ИИ-агентов** — `public/llms.txt` + ручные Markdown-двойники (`public/index.md`, `public/legal.md`), `<link rel="alternate" type="text/markdown">`/`describedby` в `app.vue` (`MARKDOWN_TWINS`), проверка `scripts/check-agent-readiness.sh` в CI. **Правка текста страницы = правка её двойника в том же PR**; оффер-блок в `llms.txt` и `index.md` должен совпадать. См. [`docs/agent-readiness.md`](docs/agent-readiness.md)
 - **Гайд по лендингам** — [`docs/LANDING_GUIDE.md`](docs/LANDING_GUIDE.md): дизайн-система, каркас, правила анимации/a11y/формы, процесс (issue → единый источник → скриншоты → 5 ревью → PR) и разбор проделанной работы
 
 ## Структура
@@ -54,8 +55,13 @@ test/
   *.test.ts           # vitest-юниты чистой логики из shared/
 public/
   igor.jpg / og-image.png / CNAME / favicon.ico
+  llms.txt / index.md / legal.md  # для ИИ-агентов (см. docs/agent-readiness.md)
+  robots.txt / sitemap.xml
 scripts/
   generate-og.mjs     # Playwright-рендер OG 1200×630
+  check-agent-readiness.sh  # проверка статики для агентов (CI + локально)
+docs/server/
+  agents.htaccess     # блок .htaccess для BitrixVM/Apache: MIME .md, negotiation, Link (ставится руками)
 docs/
   handoff-*.md        # handoff-документы (самый новый — актуален)
 legacy/               # архив: старые версии HTML и тексты
