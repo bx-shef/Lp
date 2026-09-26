@@ -48,20 +48,49 @@ curl -s -o /dev/null -w '%{http_code} %{content_type}\n' $S/index.md   # 200 tex
 curl -s $S/ | grep -oE '<link rel="(canonical|alternate|describedby)"[^>]*>'
 ```
 
-## Сервер (не в репозитории, делается руками)
+## Сервер (BitrixVM, делается руками один раз)
 
-Сайт отдаёт nginx → Apache (BitrixVM); конфиг сервера деплоем не трогается (`rsync` исключает `.htaccess`). Статика выше работает и без правок сервера. Что даёт только сервер:
+Сайт на BitrixVM: nginx спереди, Apache сзади. Проверено на проде по ответам (ETag, `Expires`, страницы 404):
 
-1. **MIME и кодировка для `.md`.** Нужно `text/markdown; charset=utf-8`, иначе кириллица у части агентов станет кракозябрами. Проверить первой командой выше; если тип другой — добавить `text/markdown md;` в `types` и `text/markdown text/plain` в `charset_types` nginx (или `AddType 'text/markdown; charset=utf-8' .md` в Apache).
-2. **Content negotiation** — главная отдаёт `index.md` на `Accept: text/markdown` (Claude Code и др. шлют такой заголовок). Рабочий пример для nginx с учётом `q=0` и якоря по URI — раздел 4 правила obmen; для этого сайта карта такая:
+| Кто отдаёт | Что |
+|---|---|
+| nginx сам | статика по расширению: `png`, `ico`, `css`, `js` (кэш 30 дней) |
+| Apache (через nginx) | `.html`, `.txt`, `.md`, `.xml` и всё остальное |
 
-   ```nginx
-   map "$uri|$http_accept" $markdown_target {
-       default "";
-       "~*^/(index\.html)?\|.*text/markdown(?!\s*;\s*q=0(?:\.0+)?\s*(?:[,;]|$))"     /index.md;
-       "~*^/legal/(index\.html)?\|.*text/markdown(?!\s*;\s*q=0(?:\.0+)?\s*(?:[,;]|$))" /legal.md;
-   }
-   ```
+Поэтому всё для агентов настраивается **в Apache через `.htaccess` в корне сайта**, а не в nginx: `llms.txt`, `.md` и HTML nginx не обслуживает, а свои конфиги в `/etc/nginx/bx/` BitrixVM перезаписывает при изменении настроек сайта из меню. `.htaccess` деплой не трогает (`rsync --exclude='.htaccess'`), поэтому он не версионируется на сервере — эталон лежит в репозитории: [`docs/server/agents.htaccess`](server/agents.htaccess).
 
-   плюс `Vary: Accept` на HTML и `.md`, `Link: <…/index.md>; rel="alternate"; type="text/markdown"` на HTML и `Link: <https://offer.bx-shef.by/>; rel="canonical"` на `.md`.
-3. **Логи агентов** (по желанию) — `log_format` с `$http_accept` и `$http_user_agent`, без `$remote_addr` (раздел 2.4 правила).
+Блок делает:
+
+- `.md` → `text/markdown; charset=utf-8`, `.txt` → явный `utf-8` (`AddDefaultCharset` распространяется только на `text/html` и `text/plain`, и без charset кириллица в Markdown ломается);
+- content negotiation: `/` и `/legal/` (и `…/index.html`) отдают двойник на `Accept: text/markdown`; `text/markdown;q=0` (в т. ч. `q=0.0`, пробелы, регистр) и `text/markdownx` получают HTML;
+- `Vary: Accept` на HTML с двойником и на `.md`; `Link` с `alternate` + `describedby` на HTML и `canonical` + `describedby` на `.md`, `nosniff` на `.md`.
+
+Проверено на Apache 2.4.58 с `AllowOverride All` и `AddDefaultCharset UTF-8` (как у BitrixVM): 11 вариантов `Accept` на обе страницы, `/privacy/` без изменений, `/sub/index.html` не цепляется.
+
+### Установка
+
+```bash
+cd <DEPLOY_PATH>                              # корень сайта offer.bx-shef.by
+cp -a .htaccess .htaccess.bak 2>/dev/null     # если уже есть — сохранить
+# вставить содержимое docs/server/agents.htaccess В НАЧАЛО .htaccess (или создать файл)
+```
+
+Нужны модули `mod_rewrite`, `mod_headers`, `mod_mime` (в BitrixVM включены; блок обёрнут в `<IfModule>`, без модуля он молча не сработает, а не уронит сайт). Если в `.htaccess` уже есть правила Битрикс (`urlrewrite.php`) — блок ставится выше них.
+
+### Проверка после установки
+
+```bash
+S=https://offer.bx-shef.by
+curl -s -o /dev/null -w '%{content_type}\n' $S/index.md                                     # text/markdown; charset=utf-8
+curl -s -o /dev/null -w '%{content_type}\n' -H 'Accept: text/markdown, */*' $S/            # text/markdown; charset=utf-8
+curl -s -o /dev/null -w '%{content_type}\n' -H 'Accept: text/html,*/*;q=0.8' $S/           # text/html; charset=UTF-8
+curl -s -o /dev/null -w '%{content_type}\n' -H 'Accept: text/markdown;q=0, text/html' $S/  # text/html; charset=UTF-8
+curl -sI $S/ | grep -iE '^(vary|link):'                                                     # Vary: … Accept; Link: …index.md…
+curl -sI $S/index.md | grep -i '^link:'                                                      # rel="canonical"
+```
+
+Если у `.md` нет `charset=utf-8` и negotiation не срабатывает — Apache не читает `.htaccess`: проверить `AllowOverride` для корня сайта в конфиге виртуального хоста Apache.
+
+### Логи агентов (по желанию)
+
+Сколько агентов приходит за Markdown — видно по `Accept` в логе Apache. Формат без `%h` (IP — персональные данные): `LogFormat "%t %>s \"%r\" \"%{Accept}i\" \"%{User-Agent}i\"" agents`, затем `grep -c text/markdown` по логу.

@@ -60,6 +60,8 @@ public/
 scripts/
   generate-og.mjs     # Playwright-рендер OG 1200×630
   check-agent-readiness.sh  # проверка статики для агентов (CI + локально)
+docs/server/
+  agents.htaccess     # блок .htaccess для BitrixVM/Apache: MIME .md, negotiation, Link (ставится руками)
 docs/
   handoff-*.md        # handoff-документы (самый новый — актуален)
 legacy/               # архив: старые версии HTML и тексты
