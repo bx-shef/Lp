@@ -8,13 +8,15 @@
  *           data-services="Яндекс Метрику (статистика и запись действий на странице) и метки формы Битрикс24"></script>
  *   <script>BxConsent.onAnalytics(function () { ...код Яндекс Метрики... })</script>
  * Ссылка «Настройки cookie»: любой элемент с атрибутом data-cookie-settings.
+ * Внутри фрейма (приложение в портале Битрикс24) баннера нет и аналитика не запускается.
+ * data-exclude — регулярное выражение пути, где баннера нет (служебные страницы).
  *
  * Выбор хранится в cookie `cookie_consent` (granted | denied) на 1 год; на *.bx-shef.by —
  * общий для всех поддоменов. До согласия аналитика не загружается.
  */
 (function (w, d) {
   'use strict'
-  var VERSION = '1.1.0'
+  var VERSION = '1.2.0'
   if (w.BxConsent) return
 
   var NAME = 'cookie_consent'
@@ -23,6 +25,7 @@
   var policy = (me && me.getAttribute('data-policy')) || 'https://offer.bx-shef.by/privacy'
   var services = (me && me.getAttribute('data-services'))
     || 'Яндекс Метрику (статистика и запись действий на странице) и метки формы Битрикс24'
+  var exclude = me && me.getAttribute('data-exclude')
   var queue = []
   var box = null
 
@@ -136,5 +139,14 @@
     if (t) { e.preventDefault(); w.BxConsent.open() }
   })
 
+  var framed = false
+  try { framed = w.self !== w.top } catch (e) { framed = true }
+  var excluded = false
+  try { excluded = !!exclude && new RegExp(exclude).test(w.location.pathname) } catch (e) { /* кривое выражение — баннер показываем */ }
+  if (framed || excluded) {
+    // Здесь согласия не спрашиваем — значит, и аналитику не запускаем никогда.
+    w.BxConsent.onAnalytics = function () {}
+    return
+  }
   if (!read()) ready(show)
 })(window, document)
