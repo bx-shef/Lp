@@ -11,6 +11,7 @@ if (!metrikaId) {
 // разметке: иначе валидатор установки Метрики его не находит, а на SSG не
 // срабатывает ssr-детект. ID подставляется на этапе сборки — конфигурируемость
 // через NUXT_PUBLIC_METRIKA_ID сохраняется. ssr:true — режим для статики.
+// Сниппет остаётся в разметке, но выполняется только после согласия (ниже).
 const metrikaSnippet = `(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};m[i].l=1*new Date();for(var j=0;j<e.scripts.length;j++){if(e.scripts[j].src===r){return;}}k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})(window,document,'script','https://mc.yandex.ru/metrika/tag.js?id=${metrikaId}','ym');ym(${metrikaId},'init',{ssr:true,webvisor:true,clickmap:true,accurateTrackBounce:true,trackLinks:true});`
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
@@ -36,10 +37,12 @@ export default defineNuxtConfig({
       link: [
         { rel: 'icon', href: '/favicon.ico?v=3' }
       ],
-      script: metrikaId ? [{ innerHTML: metrikaSnippet }] : [],
-      noscript: metrikaId
-        ? [{ innerHTML: `<div><img src="https://mc.yandex.ru/watch/${metrikaId}" style="position:absolute;left:-9999px;" alt="" /></div>` }]
-        : []
+      // Метрика — только после согласия на cookie (Закон 99-З): баннер public/cookie-consent.js
+      // зовёт код из BxConsent.onAnalytics(). Пиксель <noscript> убран — он считал бы без согласия.
+      script: [
+        { 'src': '/cookie-consent.js', 'data-policy': `${siteUrl}/privacy` },
+        ...(metrikaId ? [{ innerHTML: `BxConsent.onAnalytics(function(){${metrikaSnippet}})` }] : [])
+      ]
     }
   },
 

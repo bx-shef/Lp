@@ -33,7 +33,23 @@ function onFrameMessage(e: MessageEvent) {
   w.ym?.(id, 'reachGoal', 'brief_submit')
 }
 
+// Загрузчик формы Б24 пишет метки посетителя (b24_crm_guest_*) — до согласия на cookie
+// форма грузится только по кнопке: человек сам просит форму.
+const needsClick = ref(false)
+
 onMounted(() => {
+  const w = window as Window & { BxConsent?: { granted: () => boolean, onAnalytics: (fn: () => void) => void } }
+  if (w.BxConsent && !w.BxConsent.granted()) {
+    needsClick.value = true
+    w.BxConsent.onAnalytics(loadForm)
+    return
+  }
+  loadForm()
+})
+
+function loadForm() {
+  needsClick.value = false
+  if (srcdoc.value) return
   const { b24FormScriptUrl, b24FormId, b24FormSecret } = config.public
 
   if (!b24FormScriptUrl || !b24FormId || !b24FormSecret) return
@@ -69,7 +85,7 @@ onMounted(() => {
     + `</body>`
 
   window.addEventListener('message', onFrameMessage)
-})
+}
 
 onUnmounted(() => {
   window.removeEventListener('message', onFrameMessage)
@@ -85,6 +101,22 @@ onUnmounted(() => {
       title="Форма обратной связи"
       loading="lazy"
     />
+
+    <div
+      v-else-if="needsClick"
+      class="min-h-[400px] flex flex-col items-center justify-center gap-4 px-6 text-center"
+    >
+      <p class="text-white/70 text-sm max-w-[420px]">
+        Форма работает на Битрикс24 и сохраняет в браузере метки визита.
+      </p>
+      <button
+        type="button"
+        class="min-h-[44px] px-5 rounded-xl bg-[#2fc6f6] text-[#0b1a22] font-semibold"
+        @click="loadForm"
+      >
+        Показать форму
+      </button>
+    </div>
 
     <div
       v-else
