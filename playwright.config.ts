@@ -23,7 +23,12 @@ export default defineConfig({
   },
   use: {
     baseURL: 'http://localhost:3000',
-    reducedMotion: 'reduce'
+    reducedMotion: 'reduce',
+    // Выбор в баннере cookie уже сделан — баннер не перекрывает эталоны.
+    storageState: {
+      cookies: [{ name: 'cookie_consent', value: 'denied', domain: 'localhost', path: '/', expires: -1, httpOnly: false, secure: false, sameSite: 'Lax' }],
+      origins: []
+    }
   },
   projects: [
     { name: 'mobile', use: { ...devices['Pixel 7'] } },

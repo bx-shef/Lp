@@ -46,6 +46,13 @@ const tools: ToolLink[] = [
       >
         Политика конфиденциальности
       </NuxtLink>
+      <button
+        type="button"
+        data-cookie-settings
+        class="hover:text-white hover:underline"
+      >
+        Настройки cookie
+      </button>
       <span class="font-mono text-white/30">build {{ buildId.slice(0, 7) }}</span>
     </div>
     <div class="flex flex-wrap items-center gap-x-4 gap-y-1 pt-1">
