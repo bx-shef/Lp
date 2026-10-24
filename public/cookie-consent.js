@@ -4,7 +4,8 @@
  * при правке — поднять VERSION и разнести копии.
  *
  * Подключение (до кода аналитики, без async/defer):
- *   <script src="/cookie-consent.js" data-policy="https://offer.bx-shef.by/privacy"></script>
+ *   <script src="/cookie-consent.js" data-policy="https://offer.bx-shef.by/privacy"
+ *           data-services="Яндекс Метрику (статистика и запись действий на странице) и метки формы Битрикс24"></script>
  *   <script>BxConsent.onAnalytics(function () { ...код Яндекс Метрики... })</script>
  * Ссылка «Настройки cookie»: любой элемент с атрибутом data-cookie-settings.
  *
@@ -13,13 +14,15 @@
  */
 (function (w, d) {
   'use strict'
-  var VERSION = '1.0.0'
+  var VERSION = '1.1.0'
   if (w.BxConsent) return
 
   var NAME = 'cookie_consent'
   var YEAR = 365 * 24 * 3600
   var me = d.currentScript
   var policy = (me && me.getAttribute('data-policy')) || 'https://offer.bx-shef.by/privacy'
+  var services = (me && me.getAttribute('data-services'))
+    || 'Яндекс Метрику (статистика и запись действий на странице) и метки формы Битрикс24'
   var queue = []
   var box = null
 
@@ -96,10 +99,10 @@
     box.setAttribute('aria-live', 'polite')
     box.setAttribute('aria-label', 'Согласие на cookie')
     box.innerHTML = '<p>Обязательные cookie нужны для работы сайта. С вашего согласия включим '
-      + 'Яндекс Метрику (статистика и запись действий на странице) и метки формы Битрикс24. '
-      + 'Подробнее — <a target="_blank" rel="noopener"></a>.</p>'
+      + '<span class="bxcc__svc"></span>. Подробнее — <a target="_blank" rel="noopener"></a>.</p>'
       + '<div class="bxcc__row"><button type="button" class="bxcc__no">Только обязательные</button>'
       + '<button type="button" class="bxcc__yes">Принять все</button></div>'
+    box.querySelector('.bxcc__svc').textContent = services
     var a = box.querySelector('a')
     a.href = policy
     a.textContent = 'в политике конфиденциальности'
