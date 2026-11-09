@@ -5,12 +5,14 @@
  *
  * Подключение (до кода аналитики, без async/defer):
  *   <script src="/cookie-consent.js" data-policy="https://offer.bx-shef.by/privacy"
- *           data-services="Яндекс Метрику (статистика и запись действий на странице) и метки формы Битрикс24"></script>
+ *           data-services="Яндекс Метрику (статистика посещений) и метки формы заявки Битрикс24"></script>
  *   <script>BxConsent.onAnalytics(function () { ...код Яндекс Метрики... })</script>
  * Баннер: «Принять все», «Отказаться от всех» (только обязательные), «Настроить» — окно выбора по типам:
  * обязательные (всегда включены), аналитические (переключатель); функциональных и рекламных cookie нет.
  * Ссылка «Настроить cookie»: любой элемент с атрибутом data-cookie-settings — открывает окно настроек.
- * Внутри фрейма (приложение в портале Битрикс24) баннера нет и аналитика не запускается.
+ * Внутри фрейма (приложение в портале Битрикс24) и на путях data-exclude баннера нет, аналитика не запускается,
+ * BxConsent.open() ничего не делает, granted() всегда false.
+ * data-policy — адрес политики (только http(s):// или путь от корня, иначе по умолчанию); в окне «Настроить» — ссылка «Политика cookie».
  * data-exclude — регулярное выражение пути, где баннера нет (служебные страницы).
  *
  * Выбор хранится в cookie `cookie_consent` (granted — аналитика включена, denied — только обязательные)
@@ -25,7 +27,8 @@
   var NAME = 'cookie_consent'
   var YEAR = 365 * 24 * 3600
   var me = d.currentScript
-  var policy = (me && me.getAttribute('data-policy')) || 'https://offer.bx-shef.by/privacy'
+  var policyAttr = me && me.getAttribute('data-policy')
+  var policy = policyAttr && /^(https?:|\/(?!\/))/.test(policyAttr) ? policyAttr : 'https://offer.bx-shef.by/privacy'
   var services = (me && me.getAttribute('data-services'))
     || 'Яндекс Метрику (статистика и запись действий на странице) и метки формы Битрикс24'
   var exclude = me && me.getAttribute('data-exclude')
@@ -33,6 +36,8 @@
   var box = null
   var dlg = null
   var lastFocus = null
+  var styled = false
+  var off = false
 
   function read() {
     var m = d.cookie.match(/(?:^|;\s*)cookie_consent=(granted|denied)/)
@@ -54,7 +59,7 @@
     var names = d.cookie.split(';').map(function (c) { return c.split('=')[0].trim() })
     var dom = domainAttr()
     names.forEach(function (n) {
-      if (/^_ym/.test(n)) {
+      if (/^(_ym|b24_crm_guest)/.test(n)) {
         d.cookie = n + '=; max-age=0; path=/'
         d.cookie = n + '=; max-age=0; path=/; domain=.' + w.location.hostname
         if (dom) d.cookie = n + '=; max-age=0; path=/' + dom
@@ -83,6 +88,8 @@
   }
 
   function css() {
+    if (styled) return
+    styled = true
     var s = d.createElement('style')
     s.textContent = '.bxcc{position:fixed;z-index:2147483000;left:16px;right:16px;bottom:16px;max-width:560px;'
       + 'margin:0 auto;padding:16px 18px;border-radius:14px;background:#1e2226;color:#e8eaec;'
@@ -133,7 +140,7 @@
     box.querySelector('.bxcc__svc').textContent = services
     var a = box.querySelector('a')
     a.href = policy
-    a.textContent = 'в политике конфиденциальности'
+    a.textContent = 'в политике cookie'
     box.querySelector('.bxcc__yes').onclick = function () { choose('granted') }
     box.querySelector('.bxcc__no').onclick = function () { choose('denied') }
     box.querySelector('.bxcc__cfg').onclick = function () { settings() }
@@ -169,6 +176,7 @@
 
   // Окно выбора по типам: обязательные — всегда включены; аналитические — переключатель; прочих типов нет.
   function settings() {
+    if (off || (dlg && !dlg.hidden)) return
     css()
     lastFocus = d.activeElement
     if (!dlg) {
@@ -183,7 +191,7 @@
         + '<span><b>Аналитические</b><small class="bxcs__svc"></small></span></label></div>'
         + '<div class="bxcs__t bxcs__t--off"><b>Функциональные</b><small>Не используются.</small></div>'
         + '<div class="bxcs__t bxcs__t--off"><b>Рекламные</b><small>Не используются.</small></div>'
-        + '<p><a target="_blank" rel="noopener">Политика cookie и конфиденциальности</a></p>'
+        + '<p><a target="_blank" rel="noopener">Политика cookie</a></p>'
         + '<button type="button" class="bxcs__save">Сохранить</button></div>'
       dlg.querySelector('.bxcs__svc').textContent = services.charAt(0).toUpperCase() + services.slice(1) + '.'
       var a = dlg.querySelector('a')
@@ -212,7 +220,7 @@
     version: VERSION,
     /** granted | denied | null (ещё не выбирал) */
     state: read,
-    granted: function () { return read() === 'granted' },
+    granted: function () { return !off && read() === 'granted' },
     /** fn — сразу, если согласие уже есть, иначе — после согласия на аналитику («Принять все» или «Сохранить» с ней). */
     onAnalytics: function (fn) {
       queue.push(fn)
@@ -233,6 +241,7 @@
   try { excluded = !!exclude && new RegExp(exclude).test(w.location.pathname) } catch (e) { /* кривое выражение — баннер показываем */ }
   if (framed || excluded) {
     // Здесь согласия не спрашиваем — значит, и аналитику не запускаем никогда.
+    off = true
     w.BxConsent.onAnalytics = function () {}
     return
   }

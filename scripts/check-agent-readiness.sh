@@ -96,5 +96,13 @@ done
 size="$(python3 -c 'import struct,sys; d=open(sys.argv[1],"rb").read(24); print("%dx%d" % struct.unpack(">II", d[16:24]) if d[:8]==b"\x89PNG\r\n\x1a\n" else "not-png")' "$DIR/og-image.png" 2>/dev/null || echo missing)"
 [ "$size" = "1200x630" ] || err "og-image.png должен быть PNG 1200×630 (сейчас: $size)"
 
+# --- Баннер cookie: ссылка «Настроить cookie» на каждой странице (политика cookie п. 5.1) ---
+for page in "${PAGES[@]}"; do
+  html="$DIR/$page"
+  [ -f "$html" ] || continue
+  tr '\n' ' ' < "$html" | grep -qE '<(button|a)[^>]*data-cookie-settings[^>]*>[[:space:]]*Настроить cookie[[:space:]]*</(button|a)>' \
+    || err "$page: нет ссылки «Настроить cookie» (data-cookie-settings)"
+done
+
 [ "$fail" -eq 0 ] && echo "OK: статика готова для ИИ-агентов"
 exit "$fail"
