@@ -44,7 +44,7 @@ export const PRODUCT_DOCS: ProductDocs[] = [
   },
   {
     code: 'shef.toolsai',
-    title: 'shef.toolsai — ИИ для CRM',
+    title: 'shef.toolsai — AI для CRM',
     offer: `${DOCS_BASE}/offer/shef.toolsai`,
     eula: `${DOCS_BASE}/eula/shef.toolsai`
   }

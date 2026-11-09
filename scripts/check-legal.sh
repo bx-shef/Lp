@@ -27,12 +27,21 @@ for needle in 'ООО «БэИксШефБай»' \
 done
 
 # Продавец — не ИП: ни в одной странице, ни в двойниках для агентов.
+# Шаблон ловит и «ИП&nbsp;Шевчик», и U+00A0 (в HTML, в бандле и в Markdown).
+NBSP="$(printf '\302\240')"
+IP_RE="ИП([[:space:]]|$NBSP|&nbsp;|&#160;|&#xA0;|\\\\u00a0|\\\\xa0)+Шевчик"
 for f in index.html legal/index.html privacy/index.html legal.md index.md llms.txt; do
   [ -f "$DIR/$f" ] || continue
-  if flat "$DIR/$f" | grep -qE 'ИП[[:space:]]+Шевчик|ИП Шевчик'; then
+  if flat "$DIR/$f" | grep -qE "$IP_RE"; then
     err "$f: «ИП Шевчик» как продавец"
   fi
 done
+# Тексты страниц лежат ещё и в JS-бандле (_nuxt/*.js, payload).
+if [ -d "$DIR/_nuxt" ]; then
+  while IFS= read -r f; do
+    if flat "$f" | grep -qE "$IP_RE"; then err "${f#"$DIR"/}: «ИП Шевчик» как продавец"; fi
+  done < <(find "$DIR/_nuxt" -type f -name '*.js')
+fi
 
 # /privacy — страница со ссылками на документы; подвал ведёт на политику на license.bx-shef.by.
 P="$(flat "$DIR/privacy/index.html")"

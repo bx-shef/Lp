@@ -133,7 +133,10 @@ make deploy-dry   # rsync --dry-run: что изменилось бы, на се
 make deploy
 ```
 
-`StrictHostKeyChecking=yes` всегда; `SKIP_BUILD=1` — выкатить уже собранный `.output/public`.
+`StrictHostKeyChecking=yes` всегда; `SKIP_BUILD=1` — выкатить уже собранный `.output/public`; `--dry` — то же, что `DRY=1`.
+`DEPLOY_PATH` — абсолютный, не меньше трёх сегментов, только `[A-Za-z0-9._/-]`, иначе отказ. При сборке нужен `GITHUB_TOKEN`
+(без него пропадёт граф GitHub-активности; `ALLOW_NO_GITHUB=1` — выкатить без графа). `NUXT_PUBLIC_B24_FORM_ID`, `…_FORM_SECRET`,
+`…_FORM_SCRIPT_URL`, `NUXT_PUBLIC_METRIKA_ID` берутся из окружения; не заданы — дефолты `nuxt.config.ts` с предупреждением.
 
 ## Контакты
 
