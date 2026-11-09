@@ -1,9 +1,9 @@
 import { test, expect } from '@playwright/test'
 
 /**
- * Визуальный smoke попап-визитки (BusinessCardModal) — компонент, который
- * чаще всего правится визуально (отступы, сегмент-кнопки, QR). Детерминирован:
- * фото статичное, QR кодирует фиксированный URL, динамики/токенов нет.
+ * Smoke попап-визитки (BusinessCardModal): открывается, фото и QR загружаются,
+ * продавец — ООО, окно не шире экрана. Без попиксельного сравнения
+ * (решение владельца 09.11): снимки зависят от шрифтов машины.
  */
 test('визитка — открытая модалка', async ({ page }) => {
   await page.goto('/')
@@ -26,5 +26,7 @@ test('визитка — открытая модалка', async ({ page }) => {
     (img: HTMLImageElement) => img.complete || new Promise<void>((r) => { img.onload = () => r() })
   )
 
-  await expect(card).toHaveScreenshot('business-card.png')
+  await expect(card).toContainText('ООО «БэИксШефБай»')
+  const box = await card.boundingBox()
+  expect(box?.width ?? 0).toBeLessThanOrEqual(page.viewportSize()?.width ?? 0)
 })

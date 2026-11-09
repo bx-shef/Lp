@@ -20,7 +20,7 @@
 - `<link rel="alternate" type="text/markdown">` — только у страниц с двойником (карта `MARKDOWN_TWINS`);
 - OG-карточка: `og:image` + `:type`/`:width`/`:height`/`:alt`, `twitter:card=summary_large_image`, `twitter:image`.
 
-`/privacy/` без двойника: агенту он не нужен, ссылка на HTML есть в `## Optional` в `llms.txt`.
+`/privacy/` без двойника (страница-указатель): политики, оферты и соглашения — прямые ссылки на `license.bx-shef.by` в `## Optional` в `llms.txt` и в `legal.md`.
 
 ## Где живёт текст — править вместе, в одном PR
 

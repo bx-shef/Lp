@@ -129,6 +129,9 @@ jobs:
 
       # llms.txt, Markdown-двойники, <link>-ы для агентов, оффер-блок, OG-карточка
       # (docs/agent-readiness.md). Скрипт тот же, что гоняется локально.
+      - name: Legal pages
+        run: scripts/check-legal.sh .output/public
+
       - name: Agent readiness
         run: scripts/check-agent-readiness.sh .output/public
 

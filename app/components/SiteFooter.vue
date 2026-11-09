@@ -1,11 +1,12 @@
 <script setup lang="ts">
-// Реквизиты ИП.
+import { SELLER, POLICY_URL } from '#shared/legal'
+
 const { public: { buildId } } = useRuntimeConfig()
 
 const legal = {
-  short: 'ИП Шевчик И. С.',
-  unp: 'УНП 192049017',
-  email: 'offer@bx-shef.by',
+  short: SELLER.name,
+  unp: `УНП ${SELLER.unp}`,
+  email: SELLER.email,
   city: 'Минск, Беларусь'
 }
 
@@ -40,12 +41,14 @@ const tools: ToolLink[] = [
       >
         Реквизиты
       </NuxtLink>
-      <NuxtLink
-        to="/privacy"
+      <a
+        :href="POLICY_URL"
+        target="_blank"
+        rel="noopener"
         class="hover:text-white hover:underline"
       >
         Политика конфиденциальности
-      </NuxtLink>
+      </a>
       <button
         type="button"
         data-cookie-settings
@@ -54,6 +57,9 @@ const tools: ToolLink[] = [
         Настроить cookie
       </button>
       <span class="font-mono text-white/30">build {{ buildId.slice(0, 7) }}</span>
+    </div>
+    <div class="text-white/40">
+      {{ SELLER.partner }}
     </div>
     <div class="flex flex-wrap items-center gap-x-4 gap-y-1 pt-1">
       <span class="uppercase tracking-[0.14em] text-white/30 font-mono text-[10px]">Бесплатные инструменты</span>

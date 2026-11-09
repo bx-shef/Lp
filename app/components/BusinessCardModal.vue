@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { SELLER, BANK } from '#shared/legal'
 import QRCode from 'qrcode'
 import DownloadIcon from '@bitrix24/b24icons-vue/actions/DownloadIcon'
 import PhoneAddIcon from '@bitrix24/b24icons-vue/outline/PhoneAddIcon'
@@ -36,18 +37,18 @@ let lastFocused: HTMLElement | null = null
 
 const siteUrl = useRuntimeConfig().public.siteUrl as string
 
-// Публичные реквизиты ИП — намеренно хардкодены, это публичная визитка.
+// Публичные реквизиты продавца — из shared/legal.ts, это публичная визитка.
 const card = {
   name: 'Игорь Шевчик',
   role: 'Кастомная разработка под Битрикс24',
-  org: 'ИП Шевчик И. С.',
-  unp: 'УНП 192049017',
-  phone: '+375 29 736-01-26',
-  phoneTel: '+375297360126',
-  email: 'offer@bx-shef.by',
+  org: SELLER.name,
+  unp: `УНП ${SELLER.unp}`,
+  phone: SELLER.phone,
+  phoneTel: SELLER.phoneTel,
+  email: SELLER.email,
   telegram: '@bxshefby',
   city: 'Минск, Беларусь',
-  legalAddress: 'пр. Дзержинского, д. 131, оф. 234, г. Минск, Беларусь, 220045',
+  legalAddress: SELLER.address,
   site: 'offer.bx-shef.by',
   // Ссылка онлайн-записи Б24 — общий модуль (используется и в hero).
   callUrl: B24_BOOKING_URL
@@ -179,7 +180,7 @@ function downloadVCard() {
     `TEL;TYPE=CELL:${card.phoneTel}`,
     `EMAIL:${card.email}`,
     `URL:https://${card.site}`,
-    `ADR;TYPE=WORK:;;пр. Дзержинского\\, д. 131\\, оф. 234;Минск;;220045;BY`,
+    `ADR;TYPE=WORK:;;пр-т Дзержинского\\, 127-488;Минск;;220045;BY`,
     `NOTE:AI\\, интеграции\\, MCP под Битрикс24. ${card.unp}.`,
     'END:VCARD'
   ].join('\r\n')
@@ -199,10 +200,8 @@ ${'═'.repeat(44)}
 
 ЮРИДИЧЕСКИЕ ДАННЫЕ
 ${'─'.repeat(44)}
-Наименование:         ИП Шевчик И. С.
-Ф.И.О.:               Шевчик Игорь Сергеевич
-УНП:                  192049017
-Свидетельство:        192049017 от 12.09.2013
+Наименование:         ${SELLER.name}
+УНП:                  ${SELLER.unp}
 Юр. адрес:            ${card.legalAddress}
 
 КОНТАКТЫ
@@ -214,25 +213,15 @@ Telegram:             ${card.telegram}
 
 БАНКОВСКИЕ РЕКВИЗИТЫ — ДЛЯ ОПЛАТЫ В BYN
 ${'─'.repeat(44)}
-Банк:                 ЗАО «Альфа-Банк», г. Минск
-Адрес банка:          Республика Беларусь, г. Минск,
-                      ул. Сурганова, 43-47
-БИК / SWIFT:          ALFABY2X
-Расчётный счёт:       BY09ALFA30132120160130270000
+Банк:                 ${BANK.bank}
+БИК:                  ${BANK.bic}
+Расчётный счёт:       ${BANK.account}
 Валюта:               BYN
-
-БАНКОВСКИЕ РЕКВИЗИТЫ — ДЛЯ ОПЛАТЫ В RUB (из России)
-${'─'.repeat(44)}
-Банк:                 ЗАО «Альфа-Банк», г. Минск
-БИК / SWIFT:          ALFABY2X
-Расчётный счёт (RUB): BY92ALFA30132120160010270000
-Корр. счёт (в РФ):    30101810200000000593
-Валюта:               RUB
 
 ${'═'.repeat(44)}
 ${siteUrl}
 `
-  triggerDownload(new Blob([txt], { type: 'text/plain;charset=utf-8' }), 'ip-shevchik-requisites.txt')
+  triggerDownload(new Blob([txt], { type: 'text/plain;charset=utf-8' }), 'bx-shef-requisites.txt')
 
   requisitesSaved.value = true
   if (reqTimer) clearTimeout(reqTimer)
