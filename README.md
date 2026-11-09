@@ -1,6 +1,6 @@
 # bx-shef.by — Lp
 
-Лендинг ИП Шевчик: «Кастомная разработка под Битрикс24. AI, интеграции, MCP».
+Лендинг ООО «БэИксШефБай» (разработчик — Игорь Шевчик): «Кастомная разработка под Битрикс24. AI, интеграции, MCP».
 
 **Стек:** Nuxt 4 + `@bitrix24/b24ui-nuxt` + Tailwind v4 + TypeScript, статическая
 генерация (`pnpm generate`), деплой на собственный хостинг. Контент живёт на
@@ -118,6 +118,23 @@ legacy/                # архив пред. итераций (статичес
 - **Тесты** — CI запускает lint + typecheck + test (vitest) + generate + validate output + **visual smoke** (Playwright). Юнит-тесты чистой логики — в `test/` (`shared/github-contrib`). Визуальный smoke — `pnpm test:visual` (скриншот попап-визитки на mobile+desktop против эталонов в `test/visual/`; обновлять эталоны после намеренных UI-правок — `pnpm test:visual:update`). Playwright также рендерит OG-картинку (`pnpm og`).
 - **Зависимости** — обновляются через Dependabot (`.github/dependabot.yml`): GitHub Actions запинены к commit-SHA, npm-пакеты — еженедельные PR (minor+patch одной группой; мажоры и `@bitrix24/b24ui-nuxt` — отдельными PR под ручной просмотр).
 
+## Выкатка руками
+
+Без GitHub Actions: `make deploy` (`scripts/deploy.sh`) повторяет шаги `.github/workflows/deploy.yml` —
+generate → validate (`check-legal.sh`, `check-agent-readiness.sh`) → backup `.bak` → rsync `--delete --checksum`
+(без `bitrix`, `local`, `personal`, `support`, `upload`, `.access.php`, `.htaccess`, `.htsecure`) → verify → smoke,
+при сбое — откат из `.bak`. Секретов в репозитории нет, всё из окружения:
+
+```bash
+export DEPLOY_HOST=… DEPLOY_USER=… DEPLOY_PATH=/home/bitrix/www   # обязательные
+export DEPLOY_PORT=22 DEPLOY_SSH_KEY=~/.ssh/deploy                # необязательные
+export DEPLOY_HOST_KEY="host ssh-ed25519 AAAA…"                   # ssh-keyscan -p PORT HOST | grep ed25519
+make deploy-dry   # rsync --dry-run: что изменилось бы, на сервере ничего не меняется
+make deploy
+```
+
+`StrictHostKeyChecking=yes` всегда; `SKIP_BUILD=1` — выкатить уже собранный `.output/public`.
+
 ## Контакты
 
-ИП Шевчик И. С., УНП 192049017, Минск. См. `/legal` и `/privacy`.
+ООО «БэИксШефБай», УНП XXXXXXX (заглушка до регистрации), 220045, г. Минск, пр-т Дзержинского, 127-488. См. `/legal` и `/privacy`; данные продавца — `shared/legal.ts`, документы (политики, оферты, соглашения) — на https://license.bx-shef.by.

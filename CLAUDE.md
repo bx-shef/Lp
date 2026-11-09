@@ -1,7 +1,7 @@
 # bx-shef.by — контекст для Claude Code
 <!-- Last reviewed: 2026-06-13 -->
 
-Лендинг ИП Шевчик: Nuxt 4 + @bitrix24/b24ui-nuxt + Tailwind v4 + TypeScript.
+Лендинг ООО «БэИксШефБай» (специалист — Игорь Шевчик): Nuxt 4 + @bitrix24/b24ui-nuxt + Tailwind v4 + TypeScript.
 Статическая генерация (SSG). Деплой: rsync на VPS через GitHub Actions.
 
 ## Команды
@@ -13,6 +13,7 @@ pnpm lint         # ESLint
 pnpm typecheck    # vue-tsc
 pnpm test         # vitest (юниты чистой логики из shared/)
 pnpm test:visual  # Playwright visual smoke (требует pnpm generate; эталоны в test/visual)
+make deploy       # выкатка руками без Actions (см. «Выкатка руками» в README.md)
 pnpm og           # перегенерация og-image.png (только после смены текста/фото)
 ```
 
@@ -30,6 +31,8 @@ pnpm og           # перегенерация og-image.png (только пос
 - **BusinessCardModal** — настоящий диалог: `role="dialog"`/`aria-modal`/`aria-labelledby`, фокус переводится внутрь и возвращается на триггер, focus-trap на `Tab`, `Esc` закрывает
 - **Готовность для ИИ-агентов** — `public/llms.txt` + ручные Markdown-двойники (`public/index.md`, `public/legal.md`), `<link rel="alternate" type="text/markdown">`/`describedby` в `app.vue` (`MARKDOWN_TWINS`), проверка `scripts/check-agent-readiness.sh` в CI. **Правка текста страницы = правка её двойника в том же PR**; оффер-блок в `llms.txt` и `index.md` должен совпадать. См. [`docs/agent-readiness.md`](docs/agent-readiness.md)
 - **Гайд по лендингам** — [`docs/LANDING_GUIDE.md`](docs/LANDING_GUIDE.md): дизайн-система, каркас, правила анимации/a11y/формы, процесс (issue → единый источник → скриншоты → 5 ревью → PR) и разбор проделанной работы
+
+- **Продавец — ООО «БэИксШефБай»** (решение владельца 08–09.11, bx-shef/toolsai#653). Данные продавца и ссылки на документы — `shared/legal.ts` (УНП и банк — заглушки `XXXXXXX`, выкатываем так). Политика ПД, cookie, оферты и соглашения живут на `license.bx-shef.by`, у нас — только прямые ссылки; `/privacy` — страница-указатель. Имя Игоря Шевчика — как специалиста — остаётся. Проверка статики — `scripts/check-legal.sh` (в CI и `make deploy`), юнит — `test/legal.test.ts`. Правка реквизитов = правка `public/legal.md`, оффер-блока и `llms.txt` в том же PR.
 
 ## Структура
 

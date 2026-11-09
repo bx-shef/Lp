@@ -91,12 +91,16 @@ useHead({
           {
             '@type': 'ProfessionalService',
             '@id': `${config.public.siteUrl}/#organization`,
-            'name': 'ИП Шевчик И. С.',
+            'name': 'ООО «БэИксШефБай»',
+            'legalName': 'ООО «БэИксШефБай»',
             'alternateName': 'bx-shef.by',
             'url': config.public.siteUrl,
             'email': 'offer@bx-shef.by',
+            'telephone': '+375297360126',
             'address': {
               '@type': 'PostalAddress',
+              'streetAddress': 'пр-т Дзержинского, 127-488',
+              'postalCode': '220045',
               'addressLocality': 'Минск',
               'addressCountry': 'BY'
             },

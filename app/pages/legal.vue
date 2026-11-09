@@ -1,50 +1,36 @@
 <script setup lang="ts">
 import CopyIcon from '@bitrix24/b24icons-vue/outline/CopyIcon'
 import CheckLIcon from '@bitrix24/b24icons-vue/outline/CheckLIcon'
+import { SELLER, BANK, POLICY_URL, COOKIES_URL, PRODUCT_DOCS } from '#shared/legal'
 
 useSeoMeta({
   title: 'Реквизиты — bx-shef.by',
-  description: 'Юридические и банковские реквизиты ИП Шевчик И. С.'
+  description: `Юридические и банковские реквизиты ${SELLER.name}`
 })
 
 // Реквизиты продублированы для ИИ-агентов в public/legal.md — менять вместе.
+// Источник данных — shared/legal.ts.
 const rows: [string, string][] = [
-  ['Сокращённое наименование', 'ИП Шевчик И. С.'],
-  ['Ф.И.О.', 'Шевчик Игорь Сергеевич'],
-  ['№ свидетельства о гос. регистрации', '192049017'],
-  ['Дата свидетельства', '12.09.2013'],
-  ['Орган регистрации', 'Мингорисполком'],
-  ['УНП', '192049017'],
-  ['Юридический адрес', 'пр. Дзержинского, д. 131, оф. 234, г. Минск, Беларусь, 220045'],
-  ['Почтовый адрес', 'пр. Дзержинского, д. 131, оф. 234, г. Минск, Беларусь, 220045']
+  ['Сокращённое наименование', SELLER.name],
+  ['УНП', SELLER.unp],
+  ['Юридический адрес', SELLER.address],
+  ['Почтовый адрес', SELLER.address]
 ]
 
 const contacts: [string, string, string][] = [
-  ['Email', 'offer@bx-shef.by', 'mailto:offer@bx-shef.by']
+  ['Телефон', SELLER.phone, `tel:${SELLER.phoneTel}`],
+  ['Email', SELLER.email, `mailto:${SELLER.email}`]
 ]
 
-// Два набора банковских реквизитов: BYN (Беларусь) и RUB (для оплаты из РФ —
-// рублёвый счёт в том же Альфа-Банке + корр. счёт в России).
+// Банковские реквизиты — заглушки до регистрации счёта.
 const bankGroups: { title: string, rows: [string, string][] }[] = [
   {
     title: 'Для оплаты в BYN (Беларусь)',
     rows: [
-      ['Банк', 'ЗАО «Альфа-Банк», г. Минск'],
-      ['Адрес банка', 'Республика Беларусь, г. Минск, ул. Сурганова, 43-47'],
-      ['БИК / SWIFT', 'ALFABY2X'],
-      ['Расчётный счёт', 'BY09ALFA30132120160130270000'],
+      ['Банк', BANK.bank],
+      ['БИК', BANK.bic],
+      ['Расчётный счёт', BANK.account],
       ['Валюта счёта', 'BYN']
-    ]
-  },
-  {
-    title: 'Для оплаты в RUB (из России)',
-    rows: [
-      ['Банк', 'ЗАО «Альфа-Банк», г. Минск'],
-      ['Адрес банка', 'Республика Беларусь, г. Минск, ул. Сурганова, 43-47'],
-      ['БИК / SWIFT', 'ALFABY2X'],
-      ['Расчётный счёт (RUB)', 'BY92ALFA30132120160010270000'],
-      ['Корр. счёт (в РФ)', '30101810200000000593'],
-      ['Валюта счёта', 'RUB']
     ]
   }
 ]
@@ -182,6 +168,56 @@ onUnmounted(() => {
         </div>
       </div>
     </section>
+
+    <section class="mb-12">
+      <h2 class="text-xl font-bold text-white mb-4">
+        Документы
+      </h2>
+      <ul
+        data-testid="legal-docs"
+        class="rounded-2xl border border-white/10 bg-white/[0.03] divide-y divide-white/5 text-sm"
+      >
+        <li class="px-5 py-3.5">
+          <a
+            :href="POLICY_URL"
+            target="_blank"
+            rel="noopener"
+            class="text-[rgb(var(--color-accent-primary-ch))] hover:underline"
+          >Политика обработки персональных данных</a>
+        </li>
+        <li class="px-5 py-3.5">
+          <a
+            :href="COOKIES_URL"
+            target="_blank"
+            rel="noopener"
+            class="text-[rgb(var(--color-accent-primary-ch))] hover:underline"
+          >Политика использования cookie</a>
+        </li>
+        <li
+          v-for="p in PRODUCT_DOCS"
+          :key="p.code"
+          class="px-5 py-3.5 flex flex-wrap gap-x-4 gap-y-1"
+        >
+          <span class="text-white/90">{{ p.title }}:</span>
+          <a
+            :href="p.offer"
+            target="_blank"
+            rel="noopener"
+            class="text-[rgb(var(--color-accent-primary-ch))] hover:underline"
+          >Публичная оферта</a>
+          <a
+            :href="p.eula"
+            target="_blank"
+            rel="noopener"
+            class="text-[rgb(var(--color-accent-primary-ch))] hover:underline"
+          >Лицензионное соглашение</a>
+        </li>
+      </ul>
+    </section>
+
+    <p class="text-xs text-white/45 mb-4">
+      {{ SELLER.partner }}.
+    </p>
 
     <p class="text-xs text-white/45">
       Документы и счета по запросу — напишите на <a
