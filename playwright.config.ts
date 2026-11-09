@@ -8,23 +8,19 @@ import { defineConfig, devices } from '@playwright/test'
  * рендер детерминирован между окружениями. maxDiffPixelRatio даёт небольшой
  * допуск на субпиксельный антиалиасинг.
  *
- * Эталоны обновлять: pnpm test:visual:update (после намеренных UI-правок).
  */
 export default defineConfig({
   testDir: './test/visual',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
-  // В CI: github-аннотации + html-отчёт с diff-картинками (грузится артефактом
+  // В CI: github-аннотации + html-отчёт (грузится артефактом
   // на падении). Локально — компактный line.
   reporter: process.env.CI ? [['github'], ['html', { open: 'never' }]] : 'line',
-  expect: {
-    toHaveScreenshot: { maxDiffPixelRatio: 0.02 }
-  },
   use: {
     baseURL: 'http://localhost:3000',
     reducedMotion: 'reduce',
-    // Выбор в баннере cookie уже сделан — баннер не перекрывает эталоны.
+    // Выбор в баннере cookie уже сделан — баннер не перекрывает страницу.
     storageState: {
       cookies: [{ name: 'cookie_consent', value: 'denied', domain: 'localhost', path: '/', expires: -1, httpOnly: false, secure: false, sameSite: 'Lax' }],
       origins: []

@@ -12,7 +12,7 @@ pnpm generate     # статическая сборка → .output/public/
 pnpm lint         # ESLint
 pnpm typecheck    # vue-tsc
 pnpm test         # vitest (юниты чистой логики из shared/)
-pnpm test:visual  # Playwright visual smoke (требует pnpm generate; эталоны в test/visual)
+pnpm test:visual  # Playwright smoke в браузере (требует pnpm generate; без попиксельных снимков)
 make deploy       # выкатка руками без Actions (см. «Выкатка руками» в README.md)
 pnpm og           # перегенерация og-image.png (только после смены текста/фото)
 ```

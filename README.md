@@ -115,7 +115,7 @@ legacy/                # архив пред. итераций (статичес
   Не зависим от Google Fonts CDN (важно для РБ/GDPR).
 - **Аналитика** — Яндекс Метрика (счётчик `NUXT_PUBLIC_METRIKA_ID`, дефолт `109399587`).
   Включены Вебвизор и clickmap. ID можно переопределить через ENV без перебилда.
-- **Тесты** — CI запускает lint + typecheck + test (vitest) + generate + validate output + **visual smoke** (Playwright). Юнит-тесты чистой логики — в `test/` (`shared/github-contrib`). Визуальный smoke — `pnpm test:visual` (скриншот попап-визитки на mobile+desktop против эталонов в `test/visual/`; обновлять эталоны после намеренных UI-правок — `pnpm test:visual:update`). Playwright также рендерит OG-картинку (`pnpm og`).
+- **Тесты** — CI запускает lint + typecheck + test (vitest) + generate + validate output + **visual smoke** (Playwright). Юнит-тесты чистой логики — в `test/` (`shared/github-contrib`). Smoke в браузере — `pnpm test:visual` (визитка и `/legal` на mobile+desktop: открываются, содержимое на месте, не шире экрана; попиксельных снимков нет). Playwright также рендерит OG-картинку (`pnpm og`).
 - **Зависимости** — обновляются через Dependabot (`.github/dependabot.yml`): GitHub Actions запинены к commit-SHA, npm-пакеты — еженедельные PR (minor+patch одной группой; мажоры и `@bitrix24/b24ui-nuxt` — отдельными PR под ручной просмотр).
 
 ## Выкатка руками

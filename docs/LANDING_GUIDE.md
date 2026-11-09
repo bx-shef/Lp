@@ -125,7 +125,7 @@
 5. **5 проверяющих ревью** параллельно (perf/lifecycle, ссылки/навигация,
    визуал/UX, deploy/CSP/тема, correctness/a11y) → замечания устранить.
 6. `pnpm lint && pnpm typecheck && pnpm test` — зелёные; для Lp ещё
-   `pnpm test:visual` (снапшоты визитки и `/legal`).
+   `pnpm test:visual` (smoke визитки и `/legal`, без попиксельных снимков).
 7. PR (не в `main` напрямую), после зелёного CI — squash-merge. Деплой Lp —
    rsync на VPS через GitHub Actions.
 
@@ -175,8 +175,7 @@ pnpm generate             # SSG-сборка → .output/public/
 pnpm lint                 # ESLint
 pnpm typecheck            # nuxt typecheck (vue-tsc)
 pnpm test                 # vitest (юниты чистой логики из shared/)
-pnpm test:visual          # Playwright visual smoke (нужен pnpm generate; эталоны — test/visual)
-pnpm test:visual:update   # перегенерировать эталоны снапшотов (после осознанной правки вида)
+pnpm test:visual          # Playwright smoke в браузере (нужен pnpm generate)
 pnpm og                   # перегенерация public/og-image.png (после смены текста/фото)
 ```
 
