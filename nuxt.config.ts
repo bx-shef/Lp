@@ -40,7 +40,7 @@ export default defineNuxtConfig({
       // Метрика — только после согласия на cookie (Закон 99-З): баннер public/cookie-consent.js
       // зовёт код из BxConsent.onAnalytics(). Пиксель <noscript> убран — он считал бы без согласия.
       script: [
-        { 'src': '/cookie-consent.js', 'data-policy': `${siteUrl}/privacy` },
+        { 'src': '/cookie-consent.js', 'data-policy': 'https://license.bx-shef.by/cookies' },
         ...(metrikaId ? [{ innerHTML: `BxConsent.onAnalytics(function(){${metrikaSnippet}})` }] : [])
       ]
     }
