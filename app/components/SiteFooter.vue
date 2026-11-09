@@ -51,7 +51,7 @@ const tools: ToolLink[] = [
         data-cookie-settings
         class="hover:text-white hover:underline"
       >
-        Настройки cookie
+        Настроить cookie
       </button>
       <span class="font-mono text-white/30">build {{ buildId.slice(0, 7) }}</span>
     </div>

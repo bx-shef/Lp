@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { formGate, type FormGate } from '#shared/form-gate'
+
 const config = useRuntimeConfig()
 
 const ID_RE = /^[a-zA-Z0-9_-]+$/
@@ -33,22 +35,34 @@ function onFrameMessage(e: MessageEvent) {
   w.ym?.(id, 'reachGoal', 'brief_submit')
 }
 
-// Загрузчик формы Б24 пишет метки посетителя (b24_crm_guest_*) — до согласия на cookie
-// форма грузится только по кнопке: человек сам просит форму.
-const needsClick = ref(false)
+// Загрузчик формы Б24 пишет метки посетителя (b24_crm_guest_*): без согласия на cookie аналитики
+// форма не грузится, вместо неё — пояснение; после согласия (onAnalytics) форма появляется сама.
+const gate = ref<FormGate>('load')
+
+type ConsentWindow = Window & { BxConsent?: { granted: () => boolean, onAnalytics: (fn: () => void) => void, open: () => void } }
+
+function openConsent() {
+  (window as ConsentWindow).BxConsent?.open()
+}
 
 onMounted(() => {
-  const w = window as Window & { BxConsent?: { granted: () => boolean, onAnalytics: (fn: () => void) => void } }
-  if (w.BxConsent && !w.BxConsent.granted()) {
-    needsClick.value = true
-    w.BxConsent.onAnalytics(loadForm)
+  const w = window as ConsentWindow
+  let framed = false
+  try {
+    framed = w.self !== w.top
+  } catch {
+    framed = true
+  }
+  gate.value = formGate(w.BxConsent, framed)
+  if (gate.value === 'load') {
+    loadForm()
     return
   }
-  loadForm()
+  w.BxConsent?.onAnalytics(loadForm)
 })
 
 function loadForm() {
-  needsClick.value = false
+  gate.value = 'load'
   if (srcdoc.value) return
   const { b24FormScriptUrl, b24FormId, b24FormSecret } = config.public
 
@@ -103,19 +117,25 @@ onUnmounted(() => {
     />
 
     <div
-      v-else-if="needsClick"
-      class="min-h-[400px] flex flex-col items-center justify-center gap-4 px-6 text-center"
+      v-else-if="gate !== 'load'"
+      id="brief-consent"
+      class="min-h-[240px] flex items-center justify-center px-6 py-8"
     >
-      <p class="text-white/70 text-sm max-w-[420px]">
-        Форма работает на Битрикс24 и сохраняет в браузере метки визита.
+      <p class="text-white/80 text-base leading-relaxed max-w-[460px] text-center [overflow-wrap:anywhere]">
+        Вы не приняли cookie аналитики — форма заявки работает с ними. Примите cookie в
+        <template v-if="gate === 'ask'">
+          <button
+            type="button"
+            class="inline underline underline-offset-4 text-[#2fc6f6] hover:text-white py-2"
+            @click="openConsent"
+          >
+            окне согласия
+          </button>
+        </template>
+        <template v-else>
+          окне согласия
+        </template>, и форма появится.
       </p>
-      <button
-        type="button"
-        class="min-h-[44px] px-5 rounded-xl bg-[#2fc6f6] text-[#0b1a22] font-semibold"
-        @click="loadForm"
-      >
-        Показать форму
-      </button>
     </div>
 
     <div
