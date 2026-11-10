@@ -19,9 +19,9 @@
 
 ## Готовые решения и кейсы
 
+- [shef.cowork — AI‑агент для коробочного Битрикс24](https://b24-crm-tools-ai.bx-shef.by/): поручения словами, выполнение в правах сотрудника
+- [shef.toolsai — свой AI в коробочном Битрикс24](https://b24-crm-tools-ai.bx-shef.by/toolsai): своя модель и промпты для BitrixGPT
 - [Импорт выписки клиент-банка в Битрикс24](https://bank-import.bx-shef.by): приложение
-- [AI-импорт документов в Битрикс24](https://price-import.bx-shef.by): счета и прайсы поставщиков, приложение
-- [Обмен 1С ↔ сайт через RabbitMQ](https://obmen.bx-shef.by): кейс — презентация и план работ
 
 ## Optional
 

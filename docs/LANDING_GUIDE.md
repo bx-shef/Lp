@@ -206,7 +206,7 @@ id/secret. По умолчанию вшита форма #1 портала `b378
 Счётчик — inline-сниппет в `nuxt.config.ts` (обязан быть в HTML для валидатора Метрики),
 id из `NUXT_PUBLIC_METRIKA_ID`. Цели шлём **только** через `useMetrikaGoal().reachGoal()`.
 Список целей в коде: `brief_submit` (сабмит формы, `BriefForm.vue`), `booking_click`,
-`sticky_cta_click`, `bankimport_click`, `priceimport_click`, `card_copy_link`,
+`sticky_cta_click`, `bankimport_click`, `cowork_click`, `toolsai_click`, `card_copy_link`,
 `card_qr_reveal`. **Новую цель после добавления надо завести в кабинете Метрики** —
 иначе события не считаются.
 
