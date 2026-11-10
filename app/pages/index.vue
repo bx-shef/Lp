@@ -4,7 +4,6 @@ import ArrowRightLIcon from '@bitrix24/b24icons-vue/outline/ArrowRightLIcon'
 import CheckLIcon from '@bitrix24/b24icons-vue/outline/CheckLIcon'
 import CircleMinusIcon from '@bitrix24/b24icons-vue/outline/CircleMinusIcon'
 import CopilotAi1Icon from '@bitrix24/b24icons-vue/main/CopilotAi1Icon'
-import MagicImageIcon from '@bitrix24/b24icons-vue/main/MagicImageIcon'
 import CloudTransferDataIcon from '@bitrix24/b24icons-vue/main/CloudTransferDataIcon'
 import CodeIcon from '@bitrix24/b24icons-vue/common-service/CodeIcon'
 import RocketIcon from '@bitrix24/b24icons-vue/main/RocketIcon'
@@ -53,25 +52,39 @@ const services: ServiceItem[] = [
   {
     id: 'ai',
     icon: CopilotAi1Icon,
-    title: 'AI-помощник в Битрикс24',
-    text: 'Чат к базе знаний, подсказки в задачах и сделках, помощь продажникам со скриптами и возражениями. На ваших данных из Б24 — не наружу.'
+    title: 'AI в коробочном Битрикс24',
+    text: 'Своя модель и свои промпты для BitrixGPT — shef.toolsai; AI-агент, который выполняет поручения в портале в правах сотрудника, — shef.cowork.',
+    links: [
+      { href: 'https://b24-crm-tools-ai.bx-shef.by/', label: 'shef.cowork — AI‑агент для вашего бизнеса', goal: 'cowork_click' },
+      { href: 'https://b24-crm-tools-ai.bx-shef.by/toolsai', label: 'shef.toolsai — свой AI в коробке', goal: 'toolsai_click' }
+    ]
   },
   {
-    id: 'content',
-    icon: MagicImageIcon,
-    title: 'Генерация и сборка контента',
-    text: 'Каталог Б24 + AI-генератор изображений → готовые комплекты и hero-картинки для публикации. Подходит, если у вас 500+ SKU.'
+    id: 'crm',
+    icon: RocketIcon,
+    title: 'Анализ и улучшение работы в CRM',
+    text: 'Разбор звонков, писем и чатов, оценка по скрипту, контроль сделок, промпты под ваши процессы.'
+  },
+  {
+    id: 'embed',
+    icon: CodeIcon,
+    title: 'Встраивание ваших модулей и приложений в AI-агента',
+    text: 'Функции вашего модуля портала или облачного приложения становятся инструментами агента: сотрудник поручает словами, агент выполняет.'
   },
   {
     id: 'integrations',
     icon: CloudTransferDataIcon,
     title: 'Интеграции и обмен данными',
-    text: 'Клиент-банк, поставщики, маркетплейсы, любой SaaS через REST/MCP ↔ Б24. Один раз настроили — забыли про экспорт-импорт.',
+    text: 'Клиент-банк, внешние системы ↔ Битрикс24 через REST и MCP. Один раз настроили — экспорт-импорт вручную не нужен.',
     links: [
-      { href: 'https://bank-import.bx-shef.by', label: 'Приложение: импорт выписки клиент-банка', goal: 'bankimport_click' },
-      { href: 'https://price-import.bx-shef.by', label: 'Приложение: AI-импорт документов (счета, прайсы)', goal: 'priceimport_click' },
-      { href: 'https://obmen.bx-shef.by', label: 'Кейс: обмен 1С ↔ сайт через RabbitMQ', goal: 'obmen_click' }
+      { href: 'https://bank-import.bx-shef.by', label: 'Приложение: импорт выписки клиент-банка', goal: 'bankimport_click' }
     ]
+  },
+  {
+    id: 'support',
+    icon: CheckLIcon,
+    title: 'Сопровождение и обновление Битрикс24',
+    text: 'Обновление коробки без простоя, настройка сервера, поиск причин ошибок.'
   }
 ]
 
@@ -230,16 +243,17 @@ const process: ProcessStep[] = [
             Что я делаю
           </h2>
           <p class="text-lg text-white/65">
-            Три направления. Один разработчик, фиксированная цена за этап,
+            Пять направлений. Один разработчик, фиксированная цена за этап,
             демо каждые 1–2 недели.
           </p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-5">
           <div
-            v-for="s in services"
+            v-for="(s, i) in services"
             :key="s.id"
             data-glow-card
+            :class="i < 3 ? 'lg:col-span-2' : (i === services.length - 1 ? 'md:col-span-2 lg:col-span-3' : 'lg:col-span-3')"
             class="rounded-2xl border border-white/10 bg-white/[0.03] p-7 flex flex-col gap-4 hover:border-white/25 transition-colors"
           >
             <div class="inline-flex items-center justify-center size-12 rounded-xl bg-[rgb(var(--color-accent-primary-ch)/0.15)] text-[rgb(var(--color-accent-primary-ch))]">
