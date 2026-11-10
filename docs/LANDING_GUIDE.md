@@ -99,7 +99,7 @@
   т.к. событие живёт внутри iframe).
 - Цели Метрики — только через `useMetrikaGoal().reachGoal()`, snake_case
   (`brief_submit`, `booking_click`, `sticky_cta_click`, `bankimport_click`,
-  `priceimport_click`, …).
+  `cowork_click`, `toolsai_click`, …).
   Новую цель после добавления надо зарегистрировать в кабинете Метрики
   **и** дописать в оба списка целей — здесь и в `CLAUDE.md`.
 
