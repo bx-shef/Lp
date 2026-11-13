@@ -17,7 +17,10 @@ describe('продавец и документы', () => {
     expect(SELLER.phone).toBe('+375 29 736-01-26')
     expect(SELLER.email).toBe('offer@bx-shef.by')
     expect(SELLER.partner).toBe('ООО «БэИксШефБай» — партнёр «Битрикс24»; программы — разработка партнёра, не продукты компании «1С‑Битрикс»')
-    expect(BANK.account).toBe('BYXX XXXX XXXX XXXX XXXX XXXX XXXX')
+    expect(SELLER.unp).toBe('194058497')
+    expect(BANK.account).toBe('BY23 ALFA 3012 2K66 7700 1027 0000')
+    expect(BANK.accountRub).toBe('BY08 ALFA 3012 2K66 7700 2027 0000')
+    expect(BANK.bic).toBe('ALFABY2X')
   })
 
   it('документы — прямые https-ссылки на license.bx-shef.by', () => {
