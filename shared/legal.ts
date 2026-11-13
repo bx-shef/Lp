@@ -4,7 +4,7 @@
 
 export const SELLER = {
   name: 'ООО «БэИксШефБай»',
-  unp: 'XXXXXXX', // заглушка до регистрации
+  unp: '194058497',
   zip: '220045',
   country: 'Республика Беларусь',
   city: 'г. Минск',
@@ -15,11 +15,12 @@ export const SELLER = {
   partner: 'ООО «БэИксШефБай» — партнёр «Битрикс24»; программы — разработка партнёра, не продукты компании «1С‑Битрикс»'
 } as const
 
-// Банковские реквизиты — заглушки (решение владельца, bx-shef/toolsai#653).
+// Банковские реквизиты ООО (данные владельца 11.11 и 13.11).
 export const BANK = {
-  bank: 'XXXXXXX',
-  account: 'BYXX XXXX XXXX XXXX XXXX XXXX XXXX',
-  bic: 'XXXXXXXX'
+  bank: 'ЗАО «Альфа-Банк», г. Минск',
+  account: 'BY23 ALFA 3012 2K66 7700 1027 0000',
+  accountRub: 'BY08 ALFA 3012 2K66 7700 2027 0000',
+  bic: 'ALFABY2X'
 } as const
 
 const DOCS_BASE = 'https://license.bx-shef.by'

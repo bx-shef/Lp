@@ -29,7 +29,8 @@ const bankGroups: { title: string, rows: [string, string][] }[] = [
     rows: [
       ['Банк', BANK.bank],
       ['БИК', BANK.bic],
-      ['Расчётный счёт', BANK.account],
+      ['Расчётный счёт (BYN)', BANK.account],
+      ['Расчётный счёт (RUB)', BANK.accountRub],
       ['Валюта счёта', 'BYN']
     ]
   }

@@ -215,7 +215,8 @@ Telegram:             ${card.telegram}
 ${'─'.repeat(44)}
 Банк:                 ${BANK.bank}
 БИК:                  ${BANK.bic}
-Расчётный счёт:       ${BANK.account}
+Расчётный счёт (BYN): ${BANK.account}
+Расчётный счёт (RUB): ${BANK.accountRub}
 Валюта:               BYN
 
 ${'═'.repeat(44)}
