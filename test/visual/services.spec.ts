@@ -17,8 +17,8 @@ test('услуги — пять направлений', async ({ page }) => {
     'Интеграции и обмен данными',
     'Сопровождение и обновление Битрикс24'
   ])
-  await expect(sec.locator('a[href="https://b24-crm-tools-ai.bx-shef.by/"]')).toBeVisible()
-  await expect(sec.locator('a[href="https://b24-crm-tools-ai.bx-shef.by/toolsai"]')).toBeVisible()
+  await expect(sec.locator('a[href="https://cowork.bx-shef.by/"]')).toBeVisible()
+  await expect(sec.locator('a[href="https://cowork.bx-shef.by/toolsai"]')).toBeVisible()
   await expect(sec.locator('a[href="https://bank-import.bx-shef.by"]')).toBeVisible()
   await expect(sec).not.toContainText('RabbitMQ')
   await expect(sec.locator('a[href*="price-import"], a[href*="obmen"]')).toHaveCount(0)
@@ -62,7 +62,7 @@ test('услуги — цели Метрики на ссылках продук�
   const id = Number((/metrikaId:"(\d*)"/.exec(await (await page.request.get('/')).text()) || [])[1])
   test.skip(!id, 'сборка без NUXT_PUBLIC_METRIKA_ID')
   await page.evaluate(() => document.addEventListener('click', e => e.preventDefault(), true))
-  for (const [href, goal] of [['https://b24-crm-tools-ai.bx-shef.by/', 'cowork_click'], ['https://b24-crm-tools-ai.bx-shef.by/toolsai', 'toolsai_click']]) {
+  for (const [href, goal] of [['https://cowork.bx-shef.by/', 'cowork_click'], ['https://cowork.bx-shef.by/toolsai', 'toolsai_click']]) {
     await page.click(`#services a[href="${href}"]`)
     expect(await page.evaluate(() => (window as unknown as { __goals: string[] }).__goals)).toContain(goal)
   }

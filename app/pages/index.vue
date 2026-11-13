@@ -55,8 +55,8 @@ const services: ServiceItem[] = [
     title: 'AI в коробочном Битрикс24',
     text: 'Своя модель и свои промпты для BitrixGPT — shef.toolsai; AI-агент, который выполняет поручения в портале в правах сотрудника, — shef.cowork.',
     links: [
-      { href: 'https://b24-crm-tools-ai.bx-shef.by/', label: 'shef.cowork — AI‑агент для вашего бизнеса', goal: 'cowork_click' },
-      { href: 'https://b24-crm-tools-ai.bx-shef.by/toolsai', label: 'shef.toolsai — свой AI в коробке', goal: 'toolsai_click' }
+      { href: 'https://cowork.bx-shef.by/', label: 'shef.cowork — AI‑агент для вашего бизнеса', goal: 'cowork_click' },
+      { href: 'https://cowork.bx-shef.by/toolsai', label: 'shef.toolsai — свой AI в коробке', goal: 'toolsai_click' }
     ]
   },
   {
