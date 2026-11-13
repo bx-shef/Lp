@@ -118,7 +118,7 @@ jobs:
           grep -q 'bel.bitrix24.by' .output/public/index.html     || (echo "ERR: ссылка «Назначить созвон» (booking URL) отсутствует" && exit 1)
           grep -q 'currency-converter.bx-shef.by' .output/public/index.html || (echo "ERR: блок инструментов в футере не отрендерился" && exit 1)
           grep -q 'bank-import.bx-shef.by' .output/public/index.html  || (echo "ERR: ссылка на приложение импорта клиент-банка отсутствует на карточке «Интеграции»" && exit 1)
-          grep -q 'b24-crm-tools-ai.bx-shef.by/toolsai' .output/public/index.html || (echo "ERR: ссылки на shef.cowork и shef.toolsai отсутствуют на карточке «AI в коробочном Битрикс24»" && exit 1)
+          grep -q 'cowork.bx-shef.by/toolsai' .output/public/index.html || (echo "ERR: ссылки на shef.cowork и shef.toolsai отсутствуют на карточке «AI в коробочном Битрикс24»" && exit 1)
           ! grep -q 'price-import.bx-shef.by\|obmen.bx-shef.by' .output/public/index.html || (echo "ERR: убранные услуги (AI-импорт документов, RabbitMQ) снова на странице" && exit 1)
           grep -q 'aria-label="GitHub"' .output/public/index.html || (echo "ERR: GitHub-кнопка в подвале отсутствует" && exit 1)
           # GitHub-граф рендерится только при наличии данных (v-if). Не блокируем
