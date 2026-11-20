@@ -33,5 +33,4 @@
 - [Оферта shef.toolsai](https://license.bx-shef.by/offer/shef.toolsai), [соглашение](https://license.bx-shef.by/eula/shef.toolsai)
 - ООО «БэИксШефБай» — партнёр «Битрикс24»; программы — разработка партнёра, не продукты компании «1С‑Битрикс»
 - [Конвертер валют](https://currency-converter.bx-shef.by/): бесплатный мини-инструмент
-- [BBCode ↔ Markdown](https://bx-shef.github.io/app-convert-bbocode-md/): бесплатный мини-инструмент
 - [GitHub Игоря Шевчика](https://github.com/IgorShevchik)

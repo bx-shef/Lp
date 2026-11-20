@@ -18,8 +18,7 @@ interface ToolLink {
 
 // Бесплатные мини-инструменты — крючок/доверие, держим вне зоны конверсии.
 const tools: ToolLink[] = [
-  { id: 'currency', label: 'Конвертер валют', href: 'https://currency-converter.bx-shef.by/' },
-  { id: 'bbcode', label: 'BBCode ↔ Markdown', href: 'https://bx-shef.github.io/app-convert-bbocode-md/' }
+  { id: 'currency', label: 'Конвертер валют', href: 'https://currency-converter.bx-shef.by/' }
 ]
 </script>
 
